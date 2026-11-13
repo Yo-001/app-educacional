@@ -153,7 +153,7 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
     <h2>▶ Ejercicios (¡monedas!)</h2>
     <div class="subj-grid" id="subjects"></div>
     <div class="row" style="margin-top:8px">
-      <button class="ghost" id="btnPractice" style="flex:1">🏋️ Práctica (24 ejercicios)</button>
+      <button class="ghost" id="btnPractice" style="flex:1">🏋️ Práctica de tus fotos (24)</button>
     </div>
     <div id="exercise" style="display:none">
       <div class="mut" id="exSubj" style="font-weight:800;margin-top:10px"></div>
@@ -173,10 +173,10 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
     <div class="mut" style="font-size:13px;margin-bottom:8px">Saca una foto de la tarea y genera ejercicios de práctica. La foto se lee aquí mismo (con conexión) o pega el texto.</div>
     <div class="row">
       <button class="ghost" id="btnCam" style="flex:1">📸 Tomar foto</button>
-      <button class="ghost" id="btnUpload" style="flex:1">🖼️ Subir imagen</button>
+      <button class="ghost" id="btnUpload" style="flex:1">🖼️ Subir imágenes</button>
     </div>
     <input type="file" id="fileCam" accept="image/*" capture="environment" style="display:none">
-    <input type="file" id="fileUp" accept="image/*" style="display:none">
+    <input type="file" id="fileUp" accept="image/*" multiple style="display:none">
     <img id="fotoPrev" style="display:none;width:100%;border-radius:12px;margin-top:10px" alt="Foto de la tarea">
     <div class="mut" id="ocrStat" style="margin-top:6px"></div>
     <textarea id="txtTarea" rows="4" placeholder="Texto de la tarea (se rellena con la foto o escríbelo aquí)…" style="width:100%;margin-top:8px;border:2px solid #dfe4f2;border-radius:12px;padding:10px;font:inherit;font-size:15px;resize:vertical"></textarea>
@@ -244,80 +244,81 @@ function defaultState(){
    Naturales, 2026-11-13). Reinforcement based on the material, not copies
    of the textbook. FOTO_EX seeds state.custom so "Tareas foto" always works. */
 const FOTO_EX=[
- {q:"¿Qué seres están formados por células?",opts:["Los seres vivos","Los seres inertes","Solo las piedras","Solo el aire"],tema:"de la foto 📷"},
- {q:"¿Cuál de estos es un ser inerte?",opts:["Una piedra","Un perro","Una flor","Un pájaro"],tema:"de la foto 📷"},
- {q:"Un ser unicelular tiene…",opts:["Una sola célula","Muchas células","Células y huesos","Huesos en vez de células"],tema:"de la foto 📷"},
- {q:"Los seres pluricelulares tienen…",opts:["Un gran número de células","Una sola célula","Solo células en las hojas","Solo huesos"],tema:"de la foto 📷"},
- {q:"¿Cuál es una función vital?",opts:["La nutrición","Bailar","Tocar la guitarra","Jugar al fútbol"],tema:"de la foto 📷"},
- {q:"Con la función de nutrición, los seres vivos…",opts:["Obtienen nutrientes para crecer","Perciben los cambios del entorno","Tienen descendencia","Recitan poemas"],tema:"de la foto 📷"},
- {q:"La función de relación hace que los seres vivos…",opts:["Perciban los cambios de su entorno","Coman alimentos","Fabriquen semillas","Pongan huevos"],tema:"de la foto 📷"},
- {q:"Con la función de reproducción los seres vivos…",opts:["Tienen descendencia","Recitan el abecedario","Duermen una siesta","Crecen las uñas"],tema:"de la foto 📷"},
- {q:"El componente vivo de un ecosistema está formado por…",opts:["Animales, plantas y bacterias","Agua, suelo y aire","Piedras y arena","Sol y nubes"],tema:"de la foto 📷"},
- {q:"El componente inerte de un ecosistema es…",opts:["El medio físico: agua, suelo y aire","Los animales","Las plantas","Los hongos"],tema:"de la foto 📷"},
- {q:"¿Cuántos reinos forman la clasificación de los seres vivos?",opts:["Cinco reinos","Dos reinos","Diez reinos","Siete reinos"],tema:"de la foto 📷"},
- {q:"Las bacterias pertenecen al reino…",opts:["Moneras","Plantas","Animales","Hongos"],tema:"de la foto 📷"},
- {q:"¿Qué animales son vertebrados?",opts:["La tortuga y la gaviota","La araña y el pulpo","La medusa y la lombriz","El caracol y la abeja"],tema:"de la foto 📷"},
- {q:"Las plantas con flores se reproducen mediante…",opts:["Semillas","Huevos","Crías","Hojas"],tema:"de la foto 📷"},
- {q:"Los animales ovíparos…",opts:["Nacen de huevos","Nacen del vientre de su madre","Nacen de semillas","Brotan del suelo"],tema:"de la foto 📷"},
- {q:"¿Qué tres partes distinguimos en muchas plantas?",opts:["Hoja, tallo y raíz","Flor, fruto y semilla","Cabeza, tronco y cola","Huesos, piel y carne"],tema:"de la foto 📷"},
- {q:"La hoja se une al tallo mediante…",opts:["El pecíolo","La raíz","El bulbo","El germen"],tema:"de la foto 📷"},
- {q:"¿Qué parte de la planta absorbe el agua del suelo?",opts:["La raíz","La flor","El fruto","La semilla"],tema:"de la foto 📷"},
- {q:"¿Qué parte sostiene la planta y transporta las sustancias?",opts:["El tallo","La hoja","La semilla","El pétalo"],tema:"de la foto 📷"},
- {q:"¿Dónde se elabora el alimento de la planta?",opts:["En las hojas","En las piedras","En el aire","En la sombra"],tema:"de la foto 📷"},
- {q:"Los musgos y los helechos son plantas…",opts:["Sin flores","Con flores muy grandes","Insectívoras","De hojas de colores"],tema:"de la foto 📷"},
- {q:"Las plantas con flores se reproducen a partir de…",opts:["Semillas","Huevos","Esporas","Hojas"],tema:"de la foto 📷"},
- {q:"Las gimnospermas tienen las semillas…",opts:["Sin protección de ningún fruto","Dentro de un fruto jugoso","En flores de colores","En huevos como los pájaros"],tema:"de la foto 📷"},
- {q:"Las angiospermas tienen las semillas…",opts:["Protegidas por un fruto","Sueltas en el aire","Escondidas bajo tierra","En los pétalos"],tema:"de la foto 📷"},
- {q:"¿Cómo se llama el proceso por el que las plantas fabrican su alimento?",opts:["Fotosíntesis","Respiración","Evaporación","Digestión"],tema:"de la foto 📷"},
- {q:"Las plantas toman del aire el…",opts:["Dióxido de carbono","Oxígeno","Polvo","Calor"],tema:"de la foto 📷"},
- {q:"¿Qué gas producen las plantas con la fotosíntesis?",opts:["Oxígeno","Dióxido de carbono","Humo","Nitrógeno"],tema:"de la foto 📷"},
- {q:"El alimento de la planta se llama…",opts:["Zumo elaborado","Zumo de naranja","Zumo de frutas","Zumo de hierbas"],tema:"de la foto 📷"},
- {q:"¿Cómo se llama el transporte del polen de una flor a otra?",opts:["Polinización","Regado","Trasplante","Poda"],tema:"de la foto 📷"},
- {q:"¿Qué parte masculina de la flor produce los granos de polen?",opts:["Los estambres","El pistilo","Los pétalos","El tallo"],tema:"de la foto 📷"},
- {q:"¿Dónde se forman los óvulos de la planta?",opts:["En el pistilo","En la raíz","En la hoja","En el suelo"],tema:"de la foto 📷"},
- {q:"¿Cuál es el orden correcto de la reproducción sexual de las plantas?",opts:["Polinización → fruto → germinación","Fruto → germinación → polinización","Germinación → polinización → fruto","Polinización → germinación → fruto"],tema:"de la foto 📷"},
- {q:"Las bacterias con forma de coma se llaman…",opts:["Vibrios","Cocos","Bacilos","Semillas"],tema:"de la foto 📷"},
- {q:"Las bacterias alargadas se llaman…",opts:["Bacilos","Cocos","Vibrios","Huevos"],tema:"de la foto 📷"},
- {q:"Los protozoos se alimentan de…",opts:["Otros seres vivos","Luz solar","Arena","Aire"],tema:"de la foto 📷"},
- {q:"Las algas fabrican su propio alimento porque tienen…",opts:["Clorofila","Huesos","Alas","Garras"],tema:"de la foto 📷"},
- {q:"Los hongos con sombrero y pie se reproducen por…",opts:["Esporas","Semillas","Huevos","Crías"],tema:"de la foto 📷"},
- {q:"Las levaduras sirven para…",opts:["Hacer pan","Fabricar fotosíntesis","Respirar oxígeno","Hacer frutos"],tema:"de la foto 📷"},
- {q:"Los animales vivíparos nacen…",opts:["Del vientre de su madre","De huevos","De semillas","De hojas"],tema:"de la foto 📷"},
- {q:"Los animales necesitan tomar…",opts:["Alimentos","Aire helado","Energía de la luna","Rocas molidas"],tema:"de la foto 📷"}
+ {q:"¿Qué seres están formados por células?",a:"Los seres vivos",opts:["Los seres vivos","Los seres inertes","Solo las piedras","Solo el aire"],tema:"de la foto 📷"},
+ {q:"¿Cuál de estos es un ser inerte?",a:"Una piedra",opts:["Una piedra","Un perro","Una flor","Un pájaro"],tema:"de la foto 📷"},
+ {q:"Un ser unicelular tiene…",a:"Una sola célula",opts:["Una sola célula","Muchas células","Células y huesos","Huesos en vez de células"],tema:"de la foto 📷"},
+ {q:"Los seres pluricelulares tienen…",a:"Un gran número de células",opts:["Un gran número de células","Una sola célula","Solo células en las hojas","Solo huesos"],tema:"de la foto 📷"},
+ {q:"¿Cuál es una función vital?",a:"La nutrición",opts:["La nutrición","Bailar","Tocar la guitarra","Jugar al fútbol"],tema:"de la foto 📷"},
+ {q:"Con la función de nutrición, los seres vivos…",a:"Obtienen nutrientes para crecer",opts:["Obtienen nutrientes para crecer","Perciben los cambios del entorno","Tienen descendencia","Recitan poemas"],tema:"de la foto 📷"},
+ {q:"La función de relación hace que los seres vivos…",a:"Perciban los cambios de su entorno",opts:["Perciban los cambios de su entorno","Coman alimentos","Fabriquen semillas","Pongan huevos"],tema:"de la foto 📷"},
+ {q:"Con la función de reproducción los seres vivos…",a:"Tienen descendencia",opts:["Tienen descendencia","Recitan el abecedario","Duermen una siesta","Crecen las uñas"],tema:"de la foto 📷"},
+ {q:"El componente vivo de un ecosistema está formado por…",a:"Animales, plantas y bacterias",opts:["Animales, plantas y bacterias","Agua, suelo y aire","Piedras y arena","Sol y nubes"],tema:"de la foto 📷"},
+ {q:"El componente inerte de un ecosistema es…",a:"El medio físico: agua, suelo y aire",opts:["El medio físico: agua, suelo y aire","Los animales","Las plantas","Los hongos"],tema:"de la foto 📷"},
+ {q:"¿Cuántos reinos forman la clasificación de los seres vivos?",a:"Cinco reinos",opts:["Cinco reinos","Dos reinos","Diez reinos","Siete reinos"],tema:"de la foto 📷"},
+ {q:"Las bacterias pertenecen al reino…",a:"Moneras",opts:["Moneras","Plantas","Animales","Hongos"],tema:"de la foto 📷"},
+ {q:"¿Qué animales son vertebrados?",a:"La tortuga y la gaviota",opts:["La tortuga y la gaviota","La araña y el pulpo","La medusa y la lombriz","El caracol y la abeja"],tema:"de la foto 📷"},
+ {q:"Las plantas con flores se reproducen mediante…",a:"Semillas",opts:["Semillas","Huevos","Crías","Hojas"],tema:"de la foto 📷"},
+ {q:"Los animales ovíparos…",a:"Nacen de huevos",opts:["Nacen de huevos","Nacen del vientre de su madre","Nacen de semillas","Brotan del suelo"],tema:"de la foto 📷"},
+ {q:"¿Qué tres partes distinguimos en muchas plantas?",a:"Hoja, tallo y raíz",opts:["Hoja, tallo y raíz","Flor, fruto y semilla","Cabeza, tronco y cola","Huesos, piel y carne"],tema:"de la foto 📷"},
+ {q:"La hoja se une al tallo mediante…",a:"El pecíolo",opts:["El pecíolo","La raíz","El bulbo","El germen"],tema:"de la foto 📷"},
+ {q:"¿Qué parte de la planta absorbe el agua del suelo?",a:"La raíz",opts:["La raíz","La flor","El fruto","La semilla"],tema:"de la foto 📷"},
+ {q:"¿Qué parte sostiene la planta y transporta las sustancias?",a:"El tallo",opts:["El tallo","La hoja","La semilla","El pétalo"],tema:"de la foto 📷"},
+ {q:"¿Dónde se elabora el alimento de la planta?",a:"En las hojas",opts:["En las hojas","En las piedras","En el aire","En la sombra"],tema:"de la foto 📷"},
+ {q:"Los musgos y los helechos son plantas…",a:"Sin flores",opts:["Sin flores","Con flores muy grandes","Insectívoras","De hojas de colores"],tema:"de la foto 📷"},
+ {q:"Las plantas con flores se reproducen a partir de…",a:"Semillas",opts:["Semillas","Huevos","Esporas","Hojas"],tema:"de la foto 📷"},
+ {q:"Las gimnospermas tienen las semillas…",a:"Sin protección de ningún fruto",opts:["Sin protección de ningún fruto","Dentro de un fruto jugoso","En flores de colores","En huevos como los pájaros"],tema:"de la foto 📷"},
+ {q:"Las angiospermas tienen las semillas…",a:"Protegidas por un fruto",opts:["Protegidas por un fruto","Sueltas en el aire","Escondidas bajo tierra","En los pétalos"],tema:"de la foto 📷"},
+ {q:"¿Cómo se llama el proceso por el que las plantas fabrican su alimento?",a:"Fotosíntesis",opts:["Fotosíntesis","Respiración","Evaporación","Digestión"],tema:"de la foto 📷"},
+ {q:"Las plantas toman del aire el…",a:"Dióxido de carbono",opts:["Dióxido de carbono","Oxígeno","Polvo","Calor"],tema:"de la foto 📷"},
+ {q:"¿Qué gas producen las plantas con la fotosíntesis?",a:"Oxígeno",opts:["Oxígeno","Dióxido de carbono","Humo","Nitrógeno"],tema:"de la foto 📷"},
+ {q:"El alimento de la planta se llama…",a:"Zumo elaborado",opts:["Zumo elaborado","Zumo de naranja","Zumo de frutas","Zumo de hierbas"],tema:"de la foto 📷"},
+ {q:"¿Cómo se llama el transporte del polen de una flor a otra?",a:"Polinización",opts:["Polinización","Regado","Trasplante","Poda"],tema:"de la foto 📷"},
+ {q:"¿Qué parte masculina de la flor produce los granos de polen?",a:"Los estambres",opts:["Los estambres","El pistilo","Los pétalos","El tallo"],tema:"de la foto 📷"},
+ {q:"¿Dónde se forman los óvulos de la planta?",a:"En el pistilo",opts:["En el pistilo","En la raíz","En la hoja","En el suelo"],tema:"de la foto 📷"},
+ {q:"¿Cuál es el orden correcto de la reproducción sexual de las plantas?",a:"Polinización → fruto → germinación",opts:["Polinización → fruto → germinación","Fruto → germinación → polinización","Germinación → polinización → fruto","Polinización → germinación → fruto"],tema:"de la foto 📷"},
+ {q:"Las bacterias con forma de coma se llaman…",a:"Vibrios",opts:["Vibrios","Cocos","Bacilos","Semillas"],tema:"de la foto 📷"},
+ {q:"Las bacterias alargadas se llaman…",a:"Bacilos",opts:["Bacilos","Cocos","Vibrios","Huevos"],tema:"de la foto 📷"},
+ {q:"Los protozoos se alimentan de…",a:"Otros seres vivos",opts:["Otros seres vivos","Luz solar","Arena","Aire"],tema:"de la foto 📷"},
+ {q:"Las algas fabrican su propio alimento porque tienen…",a:"Clorofila",opts:["Clorofila","Huesos","Alas","Garras"],tema:"de la foto 📷"},
+ {q:"Los hongos con sombrero y pie se reproducen por…",a:"Esporas",opts:["Esporas","Semillas","Huevos","Crías"],tema:"de la foto 📷"},
+ {q:"Las levaduras sirven para…",a:"Hacer pan",opts:["Hacer pan","Fabricar fotosíntesis","Respirar oxígeno","Hacer frutos"],tema:"de la foto 📷"},
+ {q:"Los animales vivíparos nacen…",a:"Del vientre de su madre",opts:["Del vientre de su madre","De huevos","De semillas","De hojas"],tema:"de la foto 📷"},
+ {q:"Los animales necesitan tomar…",a:"Alimentos",opts:["Alimentos","Aire helado","Energía de la luna","Rocas molidas"],tema:"de la foto 📷"}
 ];
 
 /* Review decks generated from the photos: part 1 (today) and part 2 (Sunday)*/
 const REVIEW1=[
- {q:"¿Qué raíces forman el cuerpo de muchas plantas?",opts:["Hoja, tallo y raíz","Raíz, ala y pico","Pétalo, hoja y fruto","Hueso, músculo y piel"],tema:"revisión de hoy"},
- {q:"¿Qué parte de la planta absorbe el agua y las sales minerales?",opts:["La raíz","La flor","El fruto","La semilla"],tema:"revisión de hoy"},
- {q:"¿Qué parte sostiene la planta y lleva las sustancias hasta las hojas?",opts:["El tallo","La raíz","El pétalo","La semilla"],tema:"revisión de hoy"},
- {q:"¿Dónde elaboran las plantas su alimento?",opts:["En las hojas","En las piedras","En el aire","En la sombra"],tema:"revisión de hoy"},
- {q:"¿Cómo se llama el proceso con el que las plantas fabrican su alimento?",opts:["Fotosíntesis","Respiración","Evaporación","Digestión"],tema:"revisión de hoy"},
- {q:"¿Qué gas toman las plantas del aire para la fotosíntesis?",opts:["Dióxido de carbono","Oxígeno","Vapor de agua","Humo"],tema:"revisión de hoy"},
- {q:"¿Qué gas producen las plantas al hacer la fotosíntesis?",opts:["Oxígeno","Dióxido de carbono","Polvo","Calor"],tema:"revisión de hoy"},
- {q:"Los musgos y los helechos son plantas…",opts:["Sin flores","Con flores vistosas","Insectívoras","Con frutas dulces"],tema:"revisión de hoy"},
- {q:"¿Qué parte de la flor produce los granos de polen?",opts:["Los estambres","El pistilo","Los pétalos","El tallo"],tema:"revisión de hoy"},
- {q:"¿Cómo se llama el paso del polen de una flor a otra?",opts:["Polinización","Regado","Trasplante","Cosecha"],tema:"revisión de hoy"}
+ {q:"¿Qué partes forman el cuerpo de muchas plantas?",a:"Hoja, tallo y raíz",opts:["Hoja, tallo y raíz","Raíz, ala y pico","Pétalo, hoja y fruto","Hueso, músculo y piel"],tema:"revisión de hoy"},
+ {q:"¿Qué parte de la planta absorbe el agua y las sales minerales?",a:"La raíz",opts:["La raíz","La flor","El fruto","La semilla"],tema:"revisión de hoy"},
+ {q:"¿Qué parte sostiene la planta y lleva las sustancias hasta las hojas?",a:"El tallo",opts:["El tallo","La raíz","El pétalo","La semilla"],tema:"revisión de hoy"},
+ {q:"¿Dónde elaboran las plantas su alimento?",a:"En las hojas",opts:["En las hojas","En las piedras","En el aire","En la sombra"],tema:"revisión de hoy"},
+ {q:"¿Cómo se llama el proceso con el que las plantas fabrican su alimento?",a:"Fotosíntesis",opts:["Fotosíntesis","Respiración","Evaporación","Digestión"],tema:"revisión de hoy"},
+ {q:"¿Qué gas toman las plantas del aire para la fotosíntesis?",a:"Dióxido de carbono",opts:["Dióxido de carbono","Oxígeno","Vapor de agua","Humo"],tema:"revisión de hoy"},
+ {q:"¿Qué gas producen las plantas al hacer la fotosíntesis?",a:"Oxígeno",opts:["Oxígeno","Dióxido de carbono","Polvo","Calor"],tema:"revisión de hoy"},
+ {q:"Los musgos y los helechos son plantas…",a:"Sin flores",opts:["Sin flores","Con flores vistosas","Insectívoras","Con frutas dulces"],tema:"revisión de hoy"},
+ {q:"¿Qué parte de la flor produce los granos de polen?",a:"Los estambres",opts:["Los estambres","El pistilo","Los pétalos","El tallo"],tema:"revisión de hoy"},
+ {q:"¿Cómo se llama el paso del polen de una flor a otra?",a:"Polinización",opts:["Polinización","Regado","Trasplante","Cosecha"],tema:"revisión de hoy"}
 ];
 const REVIEW2=[
- {q:"Las gimnospermas tienen las semillas…",opts:["Sin protección de ningún fruto","Dentro de un fruto","En flores de colores","En huevos"],tema:"revisión del domingo"},
- {q:"Las angiospermas tienen las semillas…",opts:["Protegidas por un fruto","Escondidas en las hojas","Sueltas al aire","En los pétalos"],tema:"revisión del domingo"},
- {q:"¿Cuál es el orden correcto de la reproducción sexual?",opts:["Polinización → fruto → germinación","Fruto → germinación → polinización","Germinación → fruto → polinización","Fruto → polinización → germinación"],tema:"revisión del domingo"},
- {q:"¿Dónde se forman los óvulos de la planta?",opts:["En el pistilo","En la raíz","En la hoja","En el tallo"],tema:"revisión del domingo"},
- {q:"Las bacterias con forma de coma se llaman…",opts:["Vibrios","Cocos","Bacilos","Flores"],tema:"revisión del domingo"},
- {q:"Las bacterias alargadas se llaman…",opts:["Bacilos","Cocos","Vibrios","Semillas"],tema:"revisión del domingo"},
- {q:"Las algas son del reino…",opts:["Protistas","Moneras","Hongos","Animales"],tema:"revisión del domingo"},
- {q:"Los protozoos se alimentan de…",opts:["Otros seres vivos","Luz solar","Arena","Piedras"],tema:"revisión del domingo"},
- {q:"Los hongos con sombrero y pie se reproducen por…",opts:["Esporas","Semillas","Huevos","Crías"],tema:"revisión del domingo"},
- {q:"Los animales vivíparos nacen…",opts:["Del vientre de su madre","De huevos","De semillas","De burbujas"],tema:"revisión del domingo"}
+ {q:"Las gimnospermas tienen las semillas…",a:"Sin protección de ningún fruto",opts:["Sin protección de ningún fruto","Dentro de un fruto","En flores de colores","En huevos"],tema:"revisión del domingo"},
+ {q:"Las angiospermas tienen las semillas…",a:"Protegidas por un fruto",opts:["Protegidas por un fruto","Escondidas en las hojas","Sueltas al aire","En los pétalos"],tema:"revisión del domingo"},
+ {q:"¿Cuál es el orden correcto de la reproducción sexual?",a:"Polinización → fruto → germinación",opts:["Polinización → fruto → germinación","Fruto → germinación → polinización","Germinación → fruto → polinización","Fruto → polinización → germinación"],tema:"revisión del domingo"},
+ {q:"¿Dónde se forman los óvulos de la planta?",a:"En el pistilo",opts:["En el pistilo","En la raíz","En la hoja","En el tallo"],tema:"revisión del domingo"},
+ {q:"Las bacterias con forma de coma se llaman…",a:"Vibrios",opts:["Vibrios","Cocos","Bacilos","Flores"],tema:"revisión del domingo"},
+ {q:"Las bacterias alargadas se llaman…",a:"Bacilos",opts:["Bacilos","Cocos","Vibrios","Semillas"],tema:"revisión del domingo"},
+ {q:"Las algas son del reino…",a:"Protistas",opts:["Protistas","Moneras","Hongos","Animales"],tema:"revisión del domingo"},
+ {q:"Los protozoos se alimentan de…",a:"Otros seres vivos",opts:["Otros seres vivos","Luz solar","Arena","Piedras"],tema:"revisión del domingo"},
+ {q:"Los hongos con sombrero y pie se reproducen por…",a:"Esporas",opts:["Esporas","Semillas","Huevos","Crías"],tema:"revisión del domingo"},
+ {q:"Los animales vivíparos nacen…",a:"Del vientre de su madre",opts:["Del vientre de su madre","De huevos","De semillas","De burbujas"],tema:"revisión del domingo"}
 ];
+/* fotos das tarefas: os 40 exercícios das 29 fotos entram sempre, sem subir nada */
+function withFoto(st){ if(!Array.isArray(st.custom)) st.custom=[]; const seenQ=new Set(st.custom.map(e=>e.q)); FOTO_EX.forEach(e=>{ if(!seenQ.has(e.q)) st.custom.push(e); }); return st; }
 function load(){
   try{const s=JSON.parse(localStorage.getItem(LS_KEY)||"null");
-    if(!s||s.v!==LS_VER) return defaultState();
+    if(!s||s.v!==LS_VER) return withFoto(defaultState());
     const st=Object.assign(defaultState(),s);
-    if(!st.custom||!st.custom.length) st.custom=FOTO_EX.slice();
-    return st;}
-  catch(e){return defaultState();}
+    return withFoto(st);}
+  catch(e){return withFoto(defaultState());}
 }
 function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(state));}catch(e){}}
 let state=load();
@@ -368,7 +369,7 @@ function extractExercises(text){
   const cleanWord=w=>w.replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g,"");
   for(const ln of lines) ln.split(" ").forEach(w=>{const c=cleanWord(w); if(c.length>=4&&!STOP.has(c.toLowerCase())) words.push(c);});
   for(const ln of lines){
-    if(out.length>=8)break;
+    if(out.length>=40)break;
     const ws=ln.split(" ").map(cleanWord).filter(c=>c.length>=4&&!STOP.has(c.toLowerCase()));
     if(!ws.length)continue;
     const target=pick(ws);
@@ -377,12 +378,12 @@ function extractExercises(text){
     out.push({q:"Completa: "+q,a:target,opts:opts4(target,others)});
   }
   const nums=clean.match(/\d+/g)||[];
-  if(nums.length>=2&&out.length<8){
+  if(nums.length>=2&&out.length<40){
     const a=pick(nums),b=pick(nums),op=pick(["+","−"]);
     const r=op==="+"?Number(a)+Number(b):Math.max(0,Number(a)-Number(b));
     out.push({q:"¿Cuánto es "+a+" "+op+" "+b+"?",a:String(r),opts:opts4(String(r),[String(r+1),String(r-1),String(r+10)])});
   }
-  return out.slice(0,8);
+  return out.slice(0,40);
 }
 const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 const pick=a=>a[rnd(0,a.length-1)];
@@ -534,8 +535,14 @@ function nextInDeck(){
   paintExercise(ex,()=>{ setTimeout(nextInDeck,800); });
 }
 function buildPractice(){
-  const ids=Object.keys(SUBJECTS).filter(id=>id!=="foto"||state.custom.length);
-  const list=[]; for(let i=0;i<PRACTICE_N;i++) list.push(SUBJECTS[pick(ids)].gen());
+  const pool=(state.custom&&state.custom.length)?state.custom:FOTO_EX;
+  const list=[]; let bag=[];
+  while(list.length<PRACTICE_N){
+    if(!bag.length){ bag=pool.slice();
+      for(let i=bag.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=bag[i];bag[i]=bag[j];bag[j]=t;}
+    }
+    list.push(bag.pop());
+  }
   return list;
 }
 /* regla de recompensa: 1er intento acertar = 10 (nunca la respuesta directa) */
@@ -652,23 +659,31 @@ function readFoto(file){
   const rd=new FileReader();
   rd.onload=()=>{const p=$("fotoPrev");p.src=rd.result;p.style.display="";};
   rd.readAsDataURL(file);
-  $("ocrStat").textContent="Leyendo la foto…";
-  ocrFoto(file);
 }
 async function ocrFoto(file){
   try{
     if(!window.Tesseract) await loadScript("https://cdn.jsdelivr.net/npm/tesseract.js@5.0.5/dist/tesseract.min.js");
     const r=await Tesseract.recognize(file,"spa");
-    $("txtTarea").value=(r.data.text||"").trim();
-    $("ocrStat").textContent="Texto listo. Revisa y pulsa «Generar ejercicios».";
-  }catch(e){
-    $("ocrStat").textContent="Sin conexión para leer la foto: escribe el texto aquí o envía la foto por el chat.";
+    return (r.data.text||"").trim();
+  }catch(e){ return null; }
+}
+async function procesarFotos(list){
+  const files=[...list].filter(f=>f&&(!f.type||f.type.indexOf("image")===0));
+  if(!files.length)return;
+  readFoto(files[0]);
+  let all="", fail=0;
+  for(let i=0;i<files.length;i++){
+    $("ocrStat").textContent="Leyendo foto "+(i+1)+" de "+files.length+"…";
+    const t=await ocrFoto(files[i]);
+    if(t===null) fail++; else if(t) all+=(all?"\n":"")+t;
   }
+  $("txtTarea").value=all;
+  $("ocrStat").textContent=fail?("No pude leer "+fail+" foto(s): escribe el texto aquí o envía la foto por el chat."):("Texto listo. Revisa y pulsa «Generar ejercicios».");
 }
 $("btnCam").onclick=()=>$("fileCam").click();
 $("btnUpload").onclick=()=>$("fileUp").click();
-$("fileCam").onchange=e=>readFoto(e.target.files[0]);
-$("fileUp").onchange=e=>readFoto(e.target.files[0]);
+$("fileCam").onchange=e=>procesarFotos(e.target.files);
+$("fileUp").onchange=e=>procesarFotos(e.target.files);
 $("btnGenFoto").onclick=()=>{
   const exs=extractExercises($("txtTarea").value);
   if(!exs.length){toast("No encontré frases suficientes. Prueba con otro texto.");return;}
