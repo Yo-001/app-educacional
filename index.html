@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>🐱 Estudio y Monedas — PWA offline</title>
+<meta name="theme-color" content="#4a7cff">
+<style>
+:root{
+  --bg:#f4f6ff; --card:#fff; --ink:#1c2333; --mut:#5c6577; --accent:#4a7cff;
+  --coin:#f5a623; --coin-bg:#fff6e3; --good:#22b573; --bad:#e74c3c;
+  --lock:#aab0c0; --shadow:0 2px 10px rgba(28,35,51,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.app{max-width:480px;margin:0 auto;padding:12px 12px 100px}
+/* header */
+.top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.avatar{width:78px;height:78px;border-radius:50%;background:linear-gradient(145deg,#ffe9b0,#ffd166);
+  display:grid;place-items:center;font-size:30px;border:3px solid #fff;box-shadow:var(--shadow);position:relative;flex-shrink:0}
+.avatar .hat{position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-size:22px;pointer-events:none;z-index:6}
+#catSvg{width:70px;height:64px;animation:bob 3.2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.eye{transform-box:fill-box;transform-origin:center;animation:blink 3.8s infinite}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}95%,97%{transform:scaleY(.06)}}
+.earL{transform-box:fill-box;transform-origin:bottom right;animation:twitchL 5s infinite}
+@keyframes twitchL{0%,88%,100%{transform:rotate(0)}90%,94%{transform:rotate(-8deg)}}
+.earR{transform-box:fill-box;transform-origin:bottom left;animation:twitchR 6.5s infinite 2s}
+@keyframes twitchR{0%,88%,100%{transform:rotate(0)}90%,94%{transform:rotate(8deg)}}
+#mouthOpen{transform-box:fill-box;transform-origin:center;display:none}
+#catSvg.talking #mouthOpen{display:block;animation:chomp .16s infinite alternate}
+#catSvg.talking #mouthW{display:none}
+@keyframes chomp{from{transform:scaleY(.35)}to{transform:scaleY(1.15)}}
+.speech{position:relative;background:#fff;border-radius:14px;padding:10px 14px;margin:0 0 12px;
+  box-shadow:var(--shadow);font-weight:700;font-size:14px;line-height:1.3}
+.speech:after{content:"";position:absolute;top:-7px;left:32px;border:7px solid transparent;border-bottom-color:#fff;border-top:0}
+
+.wallet{margin-left:auto;background:var(--coin-bg);border:2px solid var(--coin);border-radius:999px;
+  padding:6px 12px;font-weight:800;display:flex;gap:6px;align-items:center;box-shadow:var(--shadow)}
+.wallet .c{font-size:18px}
+.card{background:var(--card);border-radius:16px;padding:14px;box-shadow:var(--shadow);margin-bottom:12px}
+h2{margin:0 0 8px;font-size:18px}
+h3{margin:0 0 6px;font-size:15px}
+.mut{color:var(--mut)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.big{flex:1;min-width:0;padding:13px 14px;border-radius:14px;background:var(--accent);color:#fff;font-weight:800;
+  font-size:17px;box-shadow:var(--shadow);text-align:center}
+.big:active{transform:scale(.98)}
+.ghost{padding:11px 14px;border-radius:14px;border:2px solid var(--accent);color:var(--accent);font-weight:700;text-align:center}
+.ghost:active{transform:scale(.98)}
+/* ejercicios */
+.subj-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.subj{padding:14px 10px;border-radius:14px;background:#eef2ff;text-align:center;border:2px solid transparent}
+.subj:active{border-color:var(--accent)}
+.subj .em{font-size:26px}
+.subj .n{font-weight:800;margin-top:2px}
+.q{font-size:22px;font-weight:800;margin:10px 0 14px;line-height:1.25}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{padding:14px;border-radius:12px;background:#f4f6ff;border:2px solid #e3e8f8;font-weight:700;font-size:16px;text-align:left}
+.opt:active{transform:scale(.99)}
+.opt.ok{background:#e6f9ef;border-color:var(--good)}
+.opt.no{background:#fdecea;border-color:var(--bad)}
+.feedback{min-height:28px;font-weight:800;text-align:center;margin-top:10px;font-size:17px}
+.feedback.good{color:var(--good)} .feedback.bad{color:var(--bad)}
+/* tienda */
+.cat{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:10px}
+.cat button{padding:8px 12px;border-radius:999px;background:#eef2ff;font-weight:800;white-space:nowrap}
+.cat button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.items{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.item{border:2px solid #e8ecf9;border-radius:14px;padding:12px;text-align:center;background:#fff}
+.item .em{font-size:34px}
+.item .nm{font-weight:800;margin:4px 0 2px}
+.item .pr{color:var(--coin);font-weight:800}
+.item .buy{margin-top:8px;width:100%;padding:10px;border-radius:10px;background:var(--accent);color:#fff;font-weight:800}
+.item .buy:disabled{background:#e3e8f8;color:var(--mut);cursor:default}
+.item.owned .buy{background:#e6f9ef;color:var(--good)}
+.item.rare{border-color:#f3c37a;background:#fffaf0}
+.item .tag{font-size:11px;color:#b97a1a;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:24px;background:var(--ink);color:#fff;
+  padding:12px 18px;border-radius:12px;font-weight:800;opacity:0;pointer-events:none;transition:.25s;z-index:30;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+/* confete */
+.confetti{position:fixed;top:-10px;width:9px;height:14px;border-radius:2px;z-index:40;pointer-events:none;
+  animation:fall 1.25s ease-in forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:0}}
+/* dibujo / minijuego */
+.paint{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;margin:10px 0}
+.px{aspect-ratio:1;border-radius:4px;background:#eef2ff;border:1px solid #dfe4f2}
+.px.on{background:var(--pc,#4a7cff)}
+.palette{display:flex;gap:6px;flex-wrap:wrap}
+.sw{width:34px;height:34px;border-radius:50%;border:3px solid transparent}
+.sw[aria-pressed="true"]{border-color:var(--ink)}
+.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0}
+.mem button{aspect-ratio:1;border-radius:12px;background:#eef2ff;font-size:26px;font-weight:800}
+.mem button.open{background:#fff;border:2px solid var(--accent)}
+.mem button.done{background:#e6f9ef;border-color:var(--good);color:var(--good)}
+/* informe */
+.rep td,.rep th{padding:6px 4px;border-bottom:1px solid #eef0f7;text-align:left;font-size:14px}
+.verdict{font-size:17px;font-weight:800}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.badge{background:#eef2ff;border-radius:999px;padding:5px 10px;font-weight:800;font-size:13px}
+hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
+.foot{font-size:12px;color:var(--mut);text-align:center}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- CABECERA -->
+  <div class="top">
+    <div class="avatar" id="avatar" title="El gatito">
+      <svg id="catSvg" viewBox="0 0 220 200" aria-hidden="true">
+        <defs>
+          <radialGradient id="fur" cx="42%" cy="34%" r="82%">
+            <stop offset="0%" stop-color="#ffe3ad"/><stop offset="58%" stop-color="#ffb75c"/><stop offset="100%" stop-color="#f59a33"/>
+          </radialGradient>
+          <radialGradient id="cheek" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ff9d9d" stop-opacity=".8"/><stop offset="100%" stop-color="#ff9d9d" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="110" cy="188" rx="60" ry="11" fill="#000" opacity=".10"/>
+        <path class="earL" d="M46 64 L38 10 L94 36 Z" fill="url(#fur)" stroke="#e08a26" stroke-width="3"/>
+        <path class="earR" d="M174 64 L182 10 L126 36 Z" fill="url(#fur)" stroke="#e08a26" stroke-width="3"/>
+        <path d="M54 48 L52 22 L78 36 Z" fill="#ffb3c1"/>
+        <path d="M166 48 L168 22 L142 36 Z" fill="#ffb3c1"/>
+        <circle cx="110" cy="114" r="78" fill="url(#fur)" stroke="#e08a26" stroke-width="3"/>
+        <path d="M92 42 q4 14 0 22 M110 40 v22 M128 42 q-4 14 0 22" stroke="#e08a26" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <circle cx="58" cy="142" r="17" fill="url(#cheek)"/>
+        <circle cx="162" cy="142" r="17" fill="url(#cheek)"/>
+        <g class="eye"><ellipse cx="76" cy="108" rx="11" ry="13" fill="#fff"/><circle cx="77" cy="110" r="6.5" fill="#2b1d0e"/><circle cx="79" cy="106" r="2.3" fill="#fff"/></g>
+        <g class="eye"><ellipse cx="144" cy="108" rx="11" ry="13" fill="#fff"/><circle cx="143" cy="110" r="6.5" fill="#2b1d0e"/><circle cx="141" cy="106" r="2.3" fill="#fff"/></g>
+        <path d="M104 130 h12 l-6 8 z" fill="#ff7b93"/>
+        <path id="mouthW" d="M110 138 q-6 8 -14 2 M110 138 q6 8 14 2" stroke="#8a5a12" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <ellipse id="mouthOpen" cx="110" cy="146" rx="10" ry="7" fill="#7a3b2e"/>
+        <g stroke="#8a5a12" stroke-width="2.2" stroke-linecap="round" opacity=".55">
+          <path d="M42 130 l-24 -4 M44 140 l-22 6 M178 130 l24 -4 M176 140 l22 6"/>
+        </g>
+      </svg>
+      <span class="hat" id="hatEmoji" style="display:none">🧢</span>
+    </div>
+    <div>
+      <div style="font-weight:800;font-size:17px">Mi Clase</div>
+      <div class="mut" id="levelLine">Nivel 1 · 0 monedas ganadas</div>
+    </div>
+    <div class="wallet"><span class="c">🪙</span><span id="coins">0</span></div>
+  </div>
+  <div id="speech" class="speech" style="display:none"></div>
+
+  <!-- EJERCICIOS -->
+  <div class="card" id="card-ex">
+    <h2>▶ Ejercicios (¡monedas!)</h2>
+    <div class="subj-grid" id="subjects"></div>
+    <div class="row" style="margin-top:8px">
+      <button class="ghost" id="btnPractice" style="flex:1">🏋️ Práctica (24 ejercicios)</button>
+    </div>
+    <div id="exercise" style="display:none">
+      <div class="mut" id="exSubj" style="font-weight:800;margin-top:10px"></div>
+      <div class="q" id="exQ"></div>
+      <div class="opts" id="exOpts"></div>
+      <div class="feedback" id="exFb"></div>
+      <div class="row" style="margin-top:8px">
+        <button class="ghost" id="btnNew" style="flex:1">Nuevo ejercicio</button>
+        <button class="ghost" id="btnBack" style="flex:1">Cambiar materia</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CÁMARA -->
+  <div class="card" id="card-cam">
+    <h2>📷 Cámara de la tarea</h2>
+    <div class="mut" style="font-size:13px;margin-bottom:8px">Saca una foto de la tarea y genera ejercicios de práctica. La foto se lee aquí mismo (con conexión) o pega el texto.</div>
+    <div class="row">
+      <button class="ghost" id="btnCam" style="flex:1">📸 Tomar foto</button>
+      <button class="ghost" id="btnUpload" style="flex:1">🖼️ Subir imagen</button>
+    </div>
+    <input type="file" id="fileCam" accept="image/*" capture="environment" style="display:none">
+    <input type="file" id="fileUp" accept="image/*" style="display:none">
+    <img id="fotoPrev" style="display:none;width:100%;border-radius:12px;margin-top:10px" alt="Foto de la tarea">
+    <div class="mut" id="ocrStat" style="margin-top:6px"></div>
+    <textarea id="txtTarea" rows="4" placeholder="Texto de la tarea (se rellena con la foto o escríbelo aquí)…" style="width:100%;margin-top:8px;border:2px solid #dfe4f2;border-radius:12px;padding:10px;font:inherit;font-size:15px;resize:vertical"></textarea>
+    <div class="row" style="margin-top:8px">
+      <button class="ghost" id="btnGenFoto" style="flex:1">✨ Generar ejercicios</button>
+    </div>
+  </div>
+
+  <!-- REVISIÓN -->
+  <div class="card" id="card-rev">
+    <h2>📚 Revisión del examen</h2>
+    <div class="mut" style="font-size:13px;margin-bottom:8px">Dos partes: la 1 se hace hoy; la 2, el domingo. Contenido listo cuando envíes las fotos.</div>
+    <div class="row">
+      <button class="ghost" id="btnRev1" style="flex:1">Revisión 1 · hoy</button>
+      <button class="ghost" id="btnRev2" style="flex:1">Revisión 2 · domingo 🔒</button>
+    </div>
+  </div>
+
+  <!-- TIENDA -->
+  <div class="card">
+    <h2>🛍️ Tienda de recompensas</h2>
+    <div class="mut" style="font-size:13px;margin-bottom:8px">Gana monedas haciendo ejercicios. Cámbialas por cosas chulas — una vez desbloqueado, es tuyo para siempre.</div>
+    <div class="cat" id="cats"></div>
+    <div class="items" id="items"></div>
+  </div>
+
+  <!-- DIBUJO -->
+  <div class="card" id="card-desenho" style="display:none">
+    <h2>🎨 Dibujo</h2>
+    <div class="palette" id="palette"></div>
+    <div class="paint" id="paint"></div>
+    <div class="row"><button class="ghost" id="btnClear" style="flex:1">Borrar</button></div>
+  </div>
+
+  <!-- MINIJUEGO DE MEMORIA -->
+  <div class="card" id="card-mem" style="display:none">
+    <h2>🧠 Juego de Memoria</h2>
+    <div class="mut" id="memStat">¡Encuentra las parejas!</div>
+    <div class="mem" id="mem"></div>
+  </div>
+
+  <!-- INFORME -->
+  <div class="card">
+    <h2>📋 Informe para los padres</h2>
+    <div class="verdict" id="verdict"></div>
+    <table class="rep" style="width:100%;margin-top:6px"><tbody id="repBody"></tbody></table>
+    <div class="badges" id="badges"></div>
+    <hr>
+    <div class="row"><button class="ghost" id="btnReset" style="flex:1">Empezar de nuevo</button></div>
+    <div class="foot">Datos guardados en este dispositivo (localStorage) — nada sale de aquí.</div>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============== ESTADO ============== */
+const LS_KEY="estudo_v1";
+const LS_VER=1;
+function defaultState(){
+  return {v:LS_VER, coins:0, totalEarned:0, totalSpent:0, exDone:0, exRight:0,
+    streakDay:"", streak:0, bestStreak:0, lastDay:"", owned:[], wornHat:null, lastUnlockedAt:null, custom:[]};
+}
+/* Exercises generated by the assistant from the homework photos (Ciencias
+   Naturales, 2026-11-13). Reinforcement based on the material, not copies
+   of the textbook. FOTO_EX seeds state.custom so "Tareas foto" always works. */
+const FOTO_EX=[
+ {q:"¿Qué seres están formados por células?",opts:["Los seres vivos","Los seres inertes","Solo las piedras","Solo el aire"],tema:"de la foto 📷"},
+ {q:"¿Cuál de estos es un ser inerte?",opts:["Una piedra","Un perro","Una flor","Un pájaro"],tema:"de la foto 📷"},
+ {q:"Un ser unicelular tiene…",opts:["Una sola célula","Muchas células","Células y huesos","Huesos en vez de células"],tema:"de la foto 📷"},
+ {q:"Los seres pluricelulares tienen…",opts:["Un gran número de células","Una sola célula","Solo células en las hojas","Solo huesos"],tema:"de la foto 📷"},
+ {q:"¿Cuál es una función vital?",opts:["La nutrición","Bailar","Tocar la guitarra","Jugar al fútbol"],tema:"de la foto 📷"},
+ {q:"Con la función de nutrición, los seres vivos…",opts:["Obtienen nutrientes para crecer","Perciben los cambios del entorno","Tienen descendencia","Recitan poemas"],tema:"de la foto 📷"},
+ {q:"La función de relación hace que los seres vivos…",opts:["Perciban los cambios de su entorno","Coman alimentos","Fabriquen semillas","Pongan huevos"],tema:"de la foto 📷"},
+ {q:"Con la función de reproducción los seres vivos…",opts:["Tienen descendencia","Recitan el abecedario","Duermen una siesta","Crecen las uñas"],tema:"de la foto 📷"},
+ {q:"El componente vivo de un ecosistema está formado por…",opts:["Animales, plantas y bacterias","Agua, suelo y aire","Piedras y arena","Sol y nubes"],tema:"de la foto 📷"},
+ {q:"El componente inerte de un ecosistema es…",opts:["El medio físico: agua, suelo y aire","Los animales","Las plantas","Los hongos"],tema:"de la foto 📷"},
+ {q:"¿Cuántos reinos forman la clasificación de los seres vivos?",opts:["Cinco reinos","Dos reinos","Diez reinos","Siete reinos"],tema:"de la foto 📷"},
+ {q:"Las bacterias pertenecen al reino…",opts:["Moneras","Plantas","Animales","Hongos"],tema:"de la foto 📷"},
+ {q:"¿Qué animales son vertebrados?",opts:["La tortuga y la gaviota","La araña y el pulpo","La medusa y la lombriz","El caracol y la abeja"],tema:"de la foto 📷"},
+ {q:"Las plantas con flores se reproducen mediante…",opts:["Semillas","Huevos","Crías","Hojas"],tema:"de la foto 📷"},
+ {q:"Los animales ovíparos…",opts:["Nacen de huevos","Nacen del vientre de su madre","Nacen de semillas","Brotan del suelo"],tema:"de la foto 📷"}
+];
+
+/* Review decks generated from the photos: part 1 (today) and part 2 (Sunday)*/
+const REVIEW1=[
+ {q:"¿Qué diferencia a los seres vivos de los inertes?",opts:["Están formados por células y realizan funciones vitales","Son siempre muy grandes","Vuelan por el cielo","Viven bajo el agua"],tema:"revisión de hoy"},
+ {q:"Un ser inerte es un ser que…",opts:["No está formado por células ni realiza funciones vitales","Tiene células y crece","Come y se reproduce","Solo vive en el bosque"],tema:"revisión de hoy"},
+ {q:"Una célula es…",opts:["Una estructura compleja que forma la materia de los seres vivos","Un animal diminuto","Una piedra pequeña","Un órgano de los sentidos"],tema:"revisión de hoy"},
+ {q:"¿Cuáles son las tres funciones vitales?",opts:["Nutrición, relación y reproducción","Comer, dormir y jugar","Nadar, volar y correr","Ver, oír y oler"],tema:"revisión de hoy"},
+ {q:"La función de nutrición sirve para…",opts:["Obtener nutrientes y crecer","Tener hijos","Percibir cambios","Moverse rápido"],tema:"revisión de hoy"},
+ {q:"En una charca pequeña, ¿cuál es su componente inerte?",opts:["El agua","Los renacuajos","Las algas","Los patos"],tema:"revisión de hoy"},
+ {q:"En un ecosistema, ¿quiénes forman el componente vivo?",opts:["Los animales y las plantas","El sol y el aire","El suelo y las piedras","La lluvia y el viento"],tema:"revisión de hoy"},
+ {q:"Aunque es un ser inerte, ¿cuál es imprescindible para los seres vivos?",opts:["El agua","La arena","La piedra","El cristal"],tema:"revisión de hoy"},
+ {q:"¿Qué tienen en común todos los seres vivos?",opts:["Realizan funciones vitales y están formados por células","Son grandes","Vuelan","Viven en el agua"],tema:"revisión de hoy"},
+ {q:"¿Un hongo está formado por células?",opts:["Sí, es un ser vivo","No, es un ser inerte","Solo si es grande","Solo de noche"],tema:"revisión de hoy"}
+];
+const REVIEW2=[
+ {q:"¿Cuáles son los cinco reinos de los seres vivos?",opts:["Moneras, protistas, hongos, plantas y animales","Plantas, animales, peces y aves","Moneras, animales, insectos y peces","Plantas, hongos, bacterias y animales"],tema:"revisión del domingo"},
+ {q:"Las moneras son seres…",opts:["Microscópicos, como las bacterias","Enormes, como las ballenas","Con alas y plumas","Con esqueleto interno"],tema:"revisión del domingo"},
+ {q:"Las algas pertenecen al reino…",opts:["Protistas","Moneras","Plantas","Animales"],tema:"revisión del domingo"},
+ {q:"Los protozoos se alimentan de…",opts:["Otros seres vivos","Luz solar","Aire","Piedras"],tema:"revisión del domingo"},
+ {q:"Los hongos se alimentan de…",opts:["Restos de seres vivos","Luz del sol","Arena del mar","Plumas de aves"],tema:"revisión del domingo"},
+ {q:"Las plantas con flores se reproducen por…",opts:["Semillas","Huevos","Hojas","Crías"],tema:"revisión del domingo"},
+ {q:"¿Qué planta no tiene flores?",opts:["El musgo","El lirio","La margarita","La rosa"],tema:"revisión del domingo"},
+ {q:"Los animales vertebrados tienen…",opts:["Esqueleto interno y columna vertebral","Sin esqueleto","Conchas duras","Alas en la espalda"],tema:"revisión del domingo"},
+ {q:"¿Cuál es un animal invertebrado?",opts:["El pulpo","La tortuga","La gaviota","El perro"],tema:"revisión del domingo"},
+ {q:"Los animales ovíparos…",opts:["Nacen de huevos","Nacen del vientre de su madre","Nacen de semillas","Brotan de la tierra"],tema:"revisión del domingo"},
+ {q:"¿Cómo nacen los animales vivíparos?",opts:["Del vientre de su madre","De huevos que ponen","De semillas en los árboles","De burbujas en el agua"],tema:"revisión del domingo"}
+];
+function load(){
+  try{const s=JSON.parse(localStorage.getItem(LS_KEY)||"null");
+    if(!s||s.v!==LS_VER) return defaultState();
+    const st=Object.assign(defaultState(),s);
+    if(!st.custom||!st.custom.length) st.custom=FOTO_EX.slice();
+    return st;}
+  catch(e){return defaultState();}
+}
+function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(state));}catch(e){}}
+let state=load();
+
+/* helpers — invariantes de la economía */
+const fmt=n=>Number(n).toLocaleString("es-ES");
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");
+  clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2200);}
+function confetti(){const colors=["#4a7cff","#22b573","#f5a623","#ff70a6","#ffd166","#9d6bff"];
+  for(let i=0;i<28;i++){const d=document.createElement("div");d.className="confetti";
+    d.style.left=Math.random()*100+"vw";d.style.background=colors[i%colors.length];
+    d.style.animationDelay=(Math.random()*0.25)+"s";document.body.appendChild(d);
+    setTimeout(()=>d.remove(),1600);}}
+function vibrate(ms){try{navigator.vibrate&&navigator.vibrate(ms);}catch(e){}}
+
+/* moneda: nunca negativa, debitar solo si hay saldo, idempotente vía owned */
+function earn(n,why){
+  if(!Number.isFinite(n)||n<=0) return;
+  state.coins+=n; state.totalEarned+=n; save(); renderWallet();
+  toast("+ "+fmt(n)+" 🪙 "+(why?"· "+why:""));
+  if(n>=5) confetti();
+}
+function tryBuy(id,price){
+  if(state.owned.includes(id)) return false;
+  if(state.coins<price) return false;
+  state.coins-=price; state.totalSpent+=price; state.owned.push(id); state.lastUnlockedAt=Date.now();
+  save(); renderWallet(); return true;
+}
+
+/* ============== MATERIAS + EJERCICIOS (refuerzo, nunca la respuesta directa) ============== */
+const SUBJECTS={
+  ingles:{em:"🟦",nm:"Inglés",gen:genEng},
+  mat:{em:"➕",nm:"Matemáticas",gen:genMat},
+  cast:{em:"🟥",nm:"Castellano",gen:genCast},
+  gal:{em:"🟨",nm:"Gallego",gen:genGal},
+  nat:{em:"🌿",nm:"Naturales",gen:genNat},
+  soc:{em:"🗺️",nm:"Sociales",gen:genSoc},
+  foto:{em:"📷",nm:"Tareas foto",gen:genFoto},
+};
+const PRACTICE_N=24;
+function genFoto(){const c=state.custom;return c.length?pick(c):{q:"¡Toma una foto primero! 📷",a:"📷",opts:["📷","🆗","⭐","🎈"]};}
+/* texto de la tarea → ejercicios de práctica (rellena-hueco + suma/resta) */
+function extractExercises(text){
+  const out=[]; const words=[];
+  const clean=(text||"").replace(/\s+/g," ").trim();
+  const STOP=new Set(["para","con","este","esta","estos","estas","como","pero","porque","donde","cuando","también","muy","mucho","cada","sobre","hasta","entre","desde"]);
+  const lines=clean.split(/[\n.!?]/).map(s=>s.trim()).filter(s=>s.split(" ").length>=4);
+  const cleanWord=w=>w.replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g,"");
+  for(const ln of lines) ln.split(" ").forEach(w=>{const c=cleanWord(w); if(c.length>=4&&!STOP.has(c.toLowerCase())) words.push(c);});
+  for(const ln of lines){
+    if(out.length>=8)break;
+    const ws=ln.split(" ").map(cleanWord).filter(c=>c.length>=4&&!STOP.has(c.toLowerCase()));
+    if(!ws.length)continue;
+    const target=pick(ws);
+    const others=words.filter(w=>w!==target);
+    const q=ln.replace(new RegExp("\\b"+target+"\\b","i"),"_____");
+    out.push({q:"Completa: "+q,a:target,opts:opts4(target,others)});
+  }
+  const nums=clean.match(/\d+/g)||[];
+  if(nums.length>=2&&out.length<8){
+    const a=pick(nums),b=pick(nums),op=pick(["+","−"]);
+    const r=op==="+"?Number(a)+Number(b):Math.max(0,Number(a)-Number(b));
+    out.push({q:"¿Cuánto es "+a+" "+op+" "+b+"?",a:String(r),opts:opts4(String(r),[String(r+1),String(r-1),String(r+10)])});
+  }
+  return out.slice(0,8);
+}
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[rnd(0,a.length-1)];
+function opts4(answer,choices){
+  const set=new Set([String(answer)]); const out=[String(answer)];
+  for(const c of choices){if(out.length>=4)break; if(!set.has(String(c))){set.add(String(c));out.push(String(c));}}
+  while(out.length<4){const d=String(answer)+""; out.push(d);}
+  // mezcla
+  for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]];}
+  return out;
+}
+function genMat(){const t=pick(["+","−","×"]);
+  if(t==="+"){const a=rnd(3,40),b=rnd(3,40);return{q:a+" + "+b+" = ?",a:String(a+b),
+    opts:opts4(String(a+b),[a+b+1,a+b-1,a+b+2,a+b+10,a+b-2])};}
+  if(t==="−"){const a=rnd(15,60),b=rnd(3,a-1);return{q:a+" − "+b+" = ?",a:String(a-b),
+    opts:opts4(String(a-b),[a-b+1,a-b-1,a-b+2,a-b+10,a-b-2])};}
+  const a=rnd(2,9),b=rnd(2,9);return{q:a+" × "+b+" = ?",a:String(a*b),
+  opts:opts4(String(a*b),[a*b+1,a*b-1,a*b+2,a*b+10,a*b+b])};}
+function lexGen(pairs,ask){const [w,t]=pick(pairs);
+  const others=pairs.filter(p=>p[1]!==t).map(p=>p[1]);
+  return {q:ask==="w"?("¿Cómo se dice \""+t+"\" en inglés?"):("¿Qué significa \""+w+"\" en inglés?"),
+    a:ask==="w"?w:t, opts:opts4(ask==="w"?w:t,others)};}
+const LEX=[["cat","gato"],["dog","perro"],["house","casa"],["water","agua"],["sun","sol"],["school","escuela"],
+["book","libro"],["fish","pez"],["tree","árbol"],["friend","amigo"],["happy","feliz"],["big","grande"]];
+function genEng(){return lexGen(LEX,pick(["w","t"]));}
+const ES=[["perro","animal que ladra"],["gato","animal que maúlla"],["casa","donde vivimos"],["libro","para leer"],["agua","para beber"],["sol","nos calienta"],["amigo","persona que queremos"],["escuela","donde aprendemos"],["árbol","tiene tronco y hojas"],["pequeño","corto de tamaño"]];
+function genCast(){const [w,t]=pick(ES);const others=ES.filter(p=>p[1]!==t).map(p=>p[1]);
+  return{q:"¿Qué significa «"+w+"»?",a:t,opts:opts4(t,others)};}
+const GL=[["gato","animal que maúlla"],["can","animal que ladra"],["casa","donde vivimos"],["libro","para leer"],["auga","para beber"],["sol","nos calienta"],["amigo","persona que queremos"],["escola","donde aprendemos"],["árbore","tiene tronco y hojas"],["pequeno","corto de tamaño"]];
+function genGal(){const [w,t]=pick(GL);const others=GL.filter(p=>p[1]!==t).map(p=>p[1]);
+  return{q:"En gallego, «"+w+"» significa…",a:t,opts:opts4(t,others)};}
+const NAT=[["¿Qué necesitan las plantas para crecer?","Sol, agua y aire"],["¿Qué planeta es conocido como el planeta rojo?","Marte"],["¿Qué animal es un mamífero que vuela?","El murciélago"],["¿Qué hacen las abejas en la naturaleza?","Polinizan las flores"],["¿Qué órgano bombea la sangre?","El corazón"]];
+function genNat(){const [q,a]=pick(NAT);const others=NAT.filter(p=>p[1]!==a).map(p=>p[1]);
+  return{q,a,opts:opts4(a,others)};}
+const SOC=[["¿Cuál es la capital de Galicia?","Santiago de Compostela"],["¿Cuál es el océano más grande del mundo?","El Océano Pacífico"],["¿En qué continente está España?","Europa"],["¿Qué río pasa por Santiago de Compostela?","El río Sarela"],["¿Cómo se llama el mapa que muestra países?","El mapamundi"]];
+function genSoc(){const [q,a]=pick(SOC);const others=SOC.filter(p=>p[1]!==a).map(p=>p[1]);
+  return{q,a,opts:opts4(a,others)};}
+
+/* ============== TIENDA ============== */
+const SHOP=[
+ {cat:"Juegos", id:"memoria", em:"🧠", nm:"Juego de Memoria", pr:40, tag:"juegos", act:showMem},
+ {cat:"Juegos", id:"desenho", em:"🎨", nm:"Página de Dibujo", pr:25, tag:"juegos", act:showDesenho},
+ {id:"selva1", cat:"Pegatinas", em:"🦁", nm:"Pegatina León", pr:15},
+ {id:"selva2", cat:"Pegatinas", em:"🐙", nm:"Pegatina Pulpo", pr:20},
+ {id:"selva3", cat:"Pegatinas", em:"🦄", nm:"Pegatina Unicornio RARO", pr:80, rare:true},
+ {id:"selva4", cat:"Pegatinas", em:"🐼", nm:"Pegatina Panda RARO", pr:120, rare:true},
+ {id:"roupa1", cat:"Ropa", em:"🧢", nm:"Gorra azul", pr:30, hat:true},
+ {id:"roupa2", cat:"Ropa", em:"🎩", nm:"Chistera", pr:60, hat:true},
+ {id:"roupa3", cat:"Ropa", em:"🔑", nm:"Sombrero dorado RARO", pr:150, rare:true, hat:true},
+];
+const CATS=["Todos","Juegos","Pegatinas","Ropa"];
+let curCat="Todos";
+
+/* ============== GATITO: frases + boca animada ============== */
+const LINES={
+  greet:"¡Hola! Soy el gatito de las monedas. ¡Elige una materia y vamos a aprender juntos!",
+  good:["¡Muy bien! +10 monedas!","¡Eso, genial!","¡Correcto! ¡Bien!"],
+  bad:"¡Casi! Sin prisa — ¡inténtalo otra vez.",
+  buy:"¡Qué bien! ¡Lo desbloqueaste! 🎉"
+};
+let speechTimer=null;
+function speak(line){
+  const b=$("speech"), svg=$("catSvg");
+  if(!b||!line) return;
+  b.textContent=line; b.style.display="";
+  if(svg) svg.classList.add("talking");
+  const stop=()=>{ if(svg) svg.classList.remove("talking"); b.style.display="none"; };
+  clearTimeout(speechTimer);
+  try{
+    if(window.speechSynthesis&&window.SpeechSynthesisUtterance){
+      window.speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance(line);
+      u.lang="es-ES"; u.rate=1.05; u.pitch=1.15;
+      let started=false;
+      u.onstart=()=>{started=true;};
+      // solo parar antes de tiempo cuando la voz empezó de verdad;
+      // si el sintetizador falla al instante, el temporizador manda
+      u.onend=()=>{if(started)stop();};
+      u.onerror=()=>{if(started)stop();};
+      window.speechSynthesis.speak(u);
+    }
+  }catch(e){/* sin voz: solo boca+globo */}
+  speechTimer=setTimeout(stop,Math.max(1800,line.length*95));
+}
+
+/* ============== UI ============== */
+const $=id=>document.getElementById(id);
+function renderWallet(){
+  $("coins").textContent=fmt(state.coins);
+  const lvl=1+Math.floor(state.totalEarned/100);
+  $("levelLine").textContent="Nivel "+lvl+" · "+fmt(state.totalEarned)+" monedas ganadas";
+}
+function renderSubjects(){
+  const g=$("subjects"); g.innerHTML="";
+  Object.entries(SUBJECTS).forEach(([id,s])=>{
+    const b=document.createElement("button"); b.className="subj";
+    b.innerHTML="<div class='em'>"+s.em+"</div><div class='n'>"+s.nm+"</div>";
+    b.onclick=()=>{ if(id==="foto"&&!state.custom.length){ toast("Primero toma una foto en la sección Cámara 📷"); return; } startExercise(id); }; g.appendChild(b);
+  });
+}
+let curSubj=null, curEx=null, exId=0, exAnswered=false;
+function startExercise(id){
+  curSubj=id; exId++; exAnswered=false;
+  $("subjects").parentElement.querySelector("#subjects").style.display="none";
+  $("exercise").style.display="";
+  $("exSubj").textContent=SUBJECTS[id].em+" "+SUBJECTS[id].nm;
+  showEx();
+}
+/* pinta un ejercicio y llama a after(ok) tras la primera respuesta */
+function paintExercise(ex,after){
+  curEx=ex; exAnswered=false;
+  $("exQ").textContent=ex.q; $("exFb").textContent=""; $("exFb").className="feedback";
+  const box=$("exOpts"); box.innerHTML="";
+  ex.opts.forEach(o=>{
+    const b=document.createElement("button"); b.className="opt"; b.textContent=o;
+    b.onclick=()=>{
+      if(exAnswered) return; exAnswered=true;
+      const ok=o===ex.a;
+      b.className="opt "+(ok?"ok":"no");
+      if(!ok){[...box.children].forEach(x=>{if(x.textContent===ex.a)x.className="opt ok";});}
+      const fb=$("exFb"); fb.textContent=ok?("¡Bien! +10 🪙"):("¡Ups! ¡Inténtalo otra vez!"); fb.className="feedback "+(ok?"good":"bad");
+      registerResult(ok);
+      if(after) after(ok);
+    };
+    box.appendChild(b);
+  });
+}
+function showEx(){
+  paintExercise(SUBJECTS[curSubj].gen(),null);
+}
+/* ======= Mazo: práctica (24) y revisión del examen ======= */
+let deckQ=[],deckN=0,deckLabel="",deckBonus=0;
+function startDeck(list,label,bonus){
+  deckQ=list.slice(); deckN=list.length; deckLabel=label; deckBonus=bonus;
+  $("subjects").style.display="none"; $("exercise").style.display="";
+  $("btnNew").style.display="none";
+  nextInDeck();
+}
+function nextInDeck(){
+  if(!deckQ.length){
+    $("exercise").style.display="none"; $("subjects").style.display="";
+    $("btnNew").style.display="";
+    earn(deckBonus,"colección terminada");
+    speak("¡Completaste "+deckLabel+"! +"+deckBonus+" monedas 🎉"); confetti();
+    renderSubjects(); return;
+  }
+  const ex=deckQ.shift(); const done=deckN-deckQ.length;
+  $("exSubj").textContent=deckLabel+" · "+done+"/"+deckN;
+  paintExercise(ex,()=>{ setTimeout(nextInDeck,800); });
+}
+function buildPractice(){
+  const ids=Object.keys(SUBJECTS).filter(id=>id!=="foto"||state.custom.length);
+  const list=[]; for(let i=0;i<PRACTICE_N;i++) list.push(SUBJECTS[pick(ids)].gen());
+  return list;
+}
+/* regla de recompensa: 1er intento acertar = 10 (nunca la respuesta directa) */
+let attempts=0;
+function registerResult(ok){
+  attempts=0; // nuevo ejercicio (showEx)
+  state.exDone++;
+  if(ok){ state.exRight++; earn(10,"ejercicio correcto"); speak(pick(LINES.good)); }
+  else { speak(LINES.bad); }
+  streakTouch(ok);
+  save(); renderReport();
+}
+function streakTouch(){ const today=new Date().toISOString().slice(0,10);
+  if(state.lastDay!==today){ if(state.lastDay===minusDays(today,1)) state.streak++; else state.streak=1;
+    state.lastDay=today; if(state.streak>state.bestStreak) state.bestStreak=state.streak; } }
+function minusDays(d,n){const t=new Date(d+"T12:00:00");t.setDate(t.getDate()-n);return t.toISOString().slice(0,10);}
+
+function renderShop(){
+  const cc=$("cats"); cc.innerHTML="";
+  CATS.forEach(c=>{const b=document.createElement("button");b.textContent=c;b.setAttribute("aria-pressed",c===curCat);
+    b.onclick=()=>{curCat=c;renderShop();};cc.appendChild(b);});
+  const box=$("items"); box.innerHTML="";
+  SHOP.filter(i=>curCat==="Todos"||i.cat===curCat).forEach(item=>{
+    const owned=state.owned.includes(item.id);
+    const d=document.createElement("div"); d.className="item"+(owned?" owned":"")+(item.rare?" rare":"");
+    const can=!owned&&state.coins>=item.pr;
+    d.innerHTML=(item.rare?"<div class='tag'>raro</div>":"")+"<div class='em'>"+item.em+"</div><div class='nm'>"+item.nm+"</div><div class='pr'>"+(owned?"✓ Desbloqueado":fmt(item.pr)+" 🪙")+"</div>";
+    const b=document.createElement("button"); b.className="buy"; b.textContent=owned?"Usar":("Comprar · "+fmt(item.pr)+" 🪙");
+    b.disabled=!owned&&!can;
+    b.onclick=()=>{
+      if(owned){ if(item.hat){ state.wornHat=state.wornHat===item.id?null:item.id; save(); renderAvatar(); toast(item.hat?"¡Visual actualizado!":"¡Ya desbloqueado! ✨"); } else if(item.act){ item.act(); } return; }
+      if(!tryBuy(item.id,item.pr)){ toast("¡Monedas insuficientes — haz más ejercicios!"); return; }
+      toast("Desbloqueado: "+item.nm+" 🎉"); confetti(); vibrate(60); speak(LINES.buy);
+      if(item.hat){ state.wornHat=item.id; save(); renderAvatar(); }
+      if(item.act) item.act();
+      renderShop();
+    };
+    d.appendChild(b); box.appendChild(d);
+  });
+}
+function renderAvatar(){
+  const h=$("hatEmoji");
+  if(state.wornHat){ const it=SHOP.find(x=>x.id===state.wornHat); if(it){ h.textContent=it.em; h.style.display=""; return; } }
+  h.style.display="none";
+}
+
+/* página de dibujo (cuadrícula 8×8) */
+let paintColor="#4a7cff";
+const PAINT_COLORS=["#4a7cff","#22b573","#f5a623","#ff70a6","#8e6ff0","#33c4c4","#555555","#ffffff"];
+function buildPaint(){
+  const p=$("palette"); p.innerHTML="";
+  PAINT_COLORS.forEach(c=>{const b=document.createElement("button");b.className="sw";
+    b.style.background=c;b.setAttribute("aria-pressed",c===paintColor);
+    b.onclick=()=>{paintColor=c;buildPaint();};p.appendChild(b);});
+  const g=$("paint"); g.innerHTML="";
+  for(let i=0;i<64;i++){const d=document.createElement("div");d.className="px";
+    d.onclick=()=>{d.classList.toggle("on");d.style.setProperty("--pc",paintColor);};
+    g.appendChild(d);}
+}
+$("btnClear").onclick=()=>{document.querySelectorAll(".px").forEach(d=>d.classList.remove("on"));};
+function showDesenho(){ $("card-desenho").style.display=""; $("card-desenho").scrollIntoView({behavior:"smooth"}); buildPaint(); }
+
+/* minijuego de memoria (4 parejas) */
+function showMem(){
+  $("card-mem").style.display=""; $("card-mem").scrollIntoView({behavior:"smooth"});
+  const emojis=["🍎","🚀","🐠","⭐"]; const cards=[...emojis,...emojis].sort(()=>Math.random()-0.5);
+  const box=$("mem"); box.innerHTML=""; let open=[],done=0,moves=0;
+  cards.forEach(e=>{
+    const b=document.createElement("button"); b.textContent="❓";
+    b.onclick=()=>{
+      if(b.classList.contains("done")||open.includes(b))return;
+      b.textContent=e;b.classList.add("open");open.push(b);
+      if(open.length===2){ moves++;
+        if(open[0].textContent===open[1].textContent){
+          open.forEach(x=>x.classList.add("done")); done++; open=[]; vibrate(40);
+          $("memStat").textContent="¡Pareja! "+done+"/4 · movimientos "+moves;
+          if(done===4){ earn(15,"juego de memoria"); confetti(); $("memStat").textContent="🏆 ¡Completaste todo! +15 🪙"; }
+        } else { const c=[...open]; open=[];
+          setTimeout(()=>c.forEach(x=>{x.textContent="❓";x.classList.remove("open");}),550); }
+      } };
+    box.appendChild(b);
+  });
+  $("memStat").textContent="¡Encuentra las parejas!";
+}
+
+/* ============== INFORME ============== */
+function renderReport(){
+  const acc=state.exDone?Math.round(100*state.exRight/state.exDone):0;
+  const v= state.exDone>=8&&acc>=70?["👏 Muy bien. ¡Sigue así!",true]
+        : state.exDone>=3?["🙂 Buen ritmo — practica un poco cada día.",true]
+        : ["🌱 Empieza hoy: haz 3 ejercicios para ganar monedas.",false];
+  $("verdict").textContent=v[0];
+  const rows=[
+    ["Ejercicios hechos",state.exDone],["Aciertos (1er intento)",state.exRight+" ("+acc+"%)"],
+    ["Monedas ganadas (total)",fmt(state.totalEarned)+" 🪙"],["Saldo actual",fmt(state.coins)+" 🪙"],
+    ["Monedas gastadas en la tienda",fmt(state.totalSpent)+" 🪙"],["Artículos desbloqueados",state.owned.length+" / "+SHOP.length],
+    ["Racha de días (actual/máx.)",state.streak+" / "+state.bestStreak+" días"],
+  ];
+  $("repBody").innerHTML=rows.map(r=>"<tr><td class='mut'>"+r[0]+"</td><td style='font-weight:800'>"+r[1]+"</td></tr>").join("");
+  const bg=$("badges"); bg.innerHTML="";
+  if(state.bestStreak>=3) bg.innerHTML+="<span class='badge'>🔥 Racha de 3+ días</span>";
+  if(state.exDone>=10) bg.innerHTML+="<span class='badge'>💪 10 ejercicios hechos</span>";
+  if(state.owned.some(id=>SHOP.find(i=>i.id===id&&i.rare))) bg.innerHTML+="<span class='badge'>🌟 ¡Tiene un artículo raro!</span>";
+  if(state.owned.some(id=>SHOP.find(i=>i.id===id&&i.hat))) bg.innerHTML+="<span class='badge'>👗 Cambió el visual</span>";
+}
+$("btnNew").onclick=()=>{ attempts=0; showEx(); };
+$("btnBack").onclick=()=>{ deckQ=[]; $("btnNew").style.display=""; $("exercise").style.display="none"; $("subjects").style.display=""; };
+$("btnReset").onclick=()=>{ if(confirm("¿Empezar de nuevo? Borra monedas y desbloqueos.")){ state=defaultState(); save(); renderWallet(); renderShop(); renderReport(); renderAvatar(); } };
+
+/* ======= CÁMARA: foto → texto → ejercicios ======= */
+function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
+function readFoto(file){
+  if(!file)return;
+  const rd=new FileReader();
+  rd.onload=()=>{const p=$("fotoPrev");p.src=rd.result;p.style.display="";};
+  rd.readAsDataURL(file);
+  $("ocrStat").textContent="Leyendo la foto…";
+  ocrFoto(file);
+}
+async function ocrFoto(file){
+  try{
+    if(!window.Tesseract) await loadScript("https://cdn.jsdelivr.net/npm/tesseract.js@5.0.5/dist/tesseract.min.js");
+    const r=await Tesseract.recognize(file,"spa");
+    $("txtTarea").value=(r.data.text||"").trim();
+    $("ocrStat").textContent="Texto listo. Revisa y pulsa «Generar ejercicios».";
+  }catch(e){
+    $("ocrStat").textContent="Sin conexión para leer la foto: escribe el texto aquí o envía la foto por el chat.";
+  }
+}
+$("btnCam").onclick=()=>$("fileCam").click();
+$("btnUpload").onclick=()=>$("fileUp").click();
+$("fileCam").onchange=e=>readFoto(e.target.files[0]);
+$("fileUp").onchange=e=>readFoto(e.target.files[0]);
+$("btnGenFoto").onclick=()=>{
+  const exs=extractExercises($("txtTarea").value);
+  if(!exs.length){toast("No encontré frases suficientes. Prueba con otro texto.");return;}
+  state.custom=state.custom.concat(exs).slice(-40); save();
+  toast("¡"+exs.length+" ejercicios nuevos en «Tareas foto»! 📷");
+};
+$("btnPractice").onclick=()=>startDeck(buildPractice(),"Práctica",20);
+$("btnRev1").onclick=()=>{ if(!REVIEW1.length){toast("Revisión 1: envía las fotos primero 📷");return;} startDeck(REVIEW1,"Revisión 1",30); };
+$("btnRev2").onclick=()=>{
+  if(new Date().getDay()!==0){toast("Revisión 2: disponible el domingo 📚");return;}
+  if(!REVIEW2.length){toast("Revisión 2: envía las fotos primero 📷");return;}
+  startDeck(REVIEW2,"Revisión 2",30);
+};
+
+renderWallet(); renderSubjects(); renderShop(); renderReport(); renderAvatar();
+speak(LINES.greet);
+</script>
+</body>
+</html>
