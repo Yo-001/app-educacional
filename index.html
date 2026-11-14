@@ -21,6 +21,38 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 .avatar{width:78px;height:78px;border-radius:50%;background:linear-gradient(145deg,#ffe9b0,#ffd166);
   display:grid;place-items:center;font-size:30px;border:3px solid #fff;box-shadow:var(--shadow);position:relative;flex-shrink:0}
 .avatar .hat{position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-size:22px;pointer-events:none;z-index:6}
+.avatar .ove{position:absolute;top:44%;left:50%;transform:translateX(-50%);font-size:17px;pointer-events:none;z-index:6}
+.avatar .ovm{position:absolute;top:66%;left:50%;transform:translateX(-50%);font-size:15px;pointer-events:none;z-index:6}
+.avatar .tilt{transform:translateX(-50%) rotate(-28deg)}
+/* quadro de pegatinas */
+.board{position:relative;height:280px;background:linear-gradient(135deg,#fff8ec,#fdf2df);border:2px dashed #e6d3a8;border-radius:14px;overflow:hidden;touch-action:none;margin-top:10px}
+.stk{position:absolute;font-size:32px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+.stk.sel{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
+/* minijuegos */
+.fallbox{position:relative;height:230px;background:linear-gradient(#eaf1ff,#f7faff);border-radius:12px;overflow:hidden;margin:10px 0;touch-action:manipulation}
+.fall{position:absolute;top:-36px;font-size:30px;cursor:pointer;animation:drop 3s linear forwards;z-index:2}
+@keyframes drop{to{transform:translateY(290px)}}
+.basket{position:absolute;bottom:4px;left:10px;font-size:26px}
+.simon{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.simon button{aspect-ratio:1.5;border-radius:14px;font-size:30px;opacity:.85;transition:opacity .15s,transform .1s}
+.simon button.on{opacity:1;transform:scale(.96)}
+/* ===== abas de navegação ===== */
+#nav{position:fixed;left:0;right:0;bottom:0;display:flex;gap:2px;background:#fff;border-top:2px solid #e6e9f5;padding:4px 4px calc(4px + env(safe-area-inset-bottom));z-index:60;box-shadow:0 -4px 14px rgba(30,40,90,.06)}
+#nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 2px;border-radius:12px;font-size:11px;font-weight:800;color:#5a6080;border:none;background:transparent;cursor:pointer}
+#nav button .em{font-size:23px;filter:grayscale(1);opacity:.55}
+#nav button.on{background:#eef1ff;color:#2a2f55}
+#nav button.on .em{filter:none;opacity:1}
+body{padding-bottom:78px}
+/* ===== chat do gato ===== */
+#chatLog{max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:10px;background:#f6f8ff;border-radius:12px;border:1px solid #e6e9f5}
+.msg{max-width:85%;padding:8px 12px;border-radius:14px;font-size:14.5px;line-height:1.35;white-space:pre-wrap;word-break:break-word}
+.msg.cat{align-self:flex-start;background:#fff;border:1px solid #e6e9f5;border-bottom-left-radius:4px}
+.msg.kid{align-self:flex-end;background:#4a7cff;color:#fff;border-bottom-right-radius:4px}
+#chatTyping{display:none;font-size:12.5px;color:#5a6080;font-style:italic;margin-top:6px}
+/* ===== colorear ===== */
+#coSvg{width:100%;max-width:280px;display:block;margin:8px auto}
+.co-btn{border-radius:12px;padding:10px 8px;font-size:14px;color:#fff;font-weight:700;border:none;cursor:pointer}
+.co-btn.no{opacity:.35;text-decoration:line-through}
 #catSvg{width:70px;height:64px;animation:bob 3.2s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 .eye{transform-box:fill-box;transform-origin:center;animation:blink 3.8s infinite}
@@ -144,6 +176,8 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
         </g>
       </svg>
       <span class="hat" id="hatEmoji" style="display:none">🧢</span>
+      <span class="ove" id="eyeEmoji" style="display:none"></span>
+      <span class="ovm" id="mouthEmoji" style="display:none"></span>
     </div>
     <div>
       <div style="font-weight:800;font-size:17px">Mi Clase</div>
@@ -153,13 +187,23 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
   </div>
   <div id="speech" class="speech" style="display:none"></div>
 
+  <!-- BARRA DE NAVEGACIÓN (abas) -->
+  <nav id="nav" aria-label="Secciones">
+    <button data-tab="ex" class="on"><span class="em">🏫</span>Ejercicios</button>
+    <button data-tab="rev"><span class="em">📚</span>Repaso</button>
+    <button data-tab="chat"><span class="em">💬</span>Gato</button>
+    <button data-tab="shop"><span class="em">🛒</span>Tienda</button>
+    <button data-tab="pa"><span class="em">👪</span>Papás</button>
+  </nav>
+
   <!-- EJERCICIOS -->
-  <div class="card" id="card-ex">
+  <div class="card" id="card-ex" data-tab="ex">
     <h2>▶ Ejercicios (¡monedas!)</h2>
     <div class="subj-grid" id="subjects"></div>
     <div class="row" style="margin-top:8px">
       <button class="ghost" id="btnPractice" style="flex:1">🏋️ Práctica de tus fotos (24)</button>
       <button class="ghost" id="btnBlitz" style="flex:1">⚡ Relámpago (12)</button>
+      <button class="ghost" id="btnColor" style="flex:1">🎨 Colorear</button>
     </div>
     <div id="exercise" style="display:none">
       <div class="mut" id="exSubj" style="font-weight:800;margin-top:10px"></div>
@@ -173,8 +217,27 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
     </div>
   </div>
 
+  <!-- COLOREAR -->
+  <div class="card" id="card-color" style="display:none" data-tab="ex">
+    <h2>🎨 Colorear y aprender</h2>
+    <div class="mut" id="coStat">Responde y pinta tu gato…</div>
+    <svg id="coSvg" viewBox="0 0 200 200" aria-label="Dibujo para colorear">
+      <ellipse id="co-body" cx="100" cy="163" rx="48" ry="30" fill="#eceff5" stroke="#c9cede" stroke-width="2"/>
+      <polygon id="co-earL" points="58,62 42,22 82,46" fill="#eceff5" stroke="#c9cede" stroke-width="2"/>
+      <polygon id="co-earR" points="142,62 158,22 118,46" fill="#eceff5" stroke="#c9cede" stroke-width="2"/>
+      <ellipse id="co-head" cx="100" cy="92" rx="55" ry="50" fill="#eceff5" stroke="#c9cede" stroke-width="2"/>
+      <circle id="co-eyeL" cx="80" cy="86" r="9" fill="#fff" stroke="#c9cede" stroke-width="2"/>
+      <circle id="co-eyeR" cx="120" cy="86" r="9" fill="#fff" stroke="#c9cede" stroke-width="2"/>
+      <path id="co-nose" d="M92 106 Q100 116 108 106 Q100 124 92 106 Z" fill="#eceff5" stroke="#c9cede" stroke-width="2"/>
+      <path d="M70 110 Q76 118 82 112 M118 112 Q124 118 130 110" fill="none" stroke="#9aa2b8" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+    <div class="q" id="coQ" style="font-weight:800"></div>
+    <div class="opts" id="coOpts"></div>
+    <div class="row"><button class="ghost" id="btnCoClose" style="flex:1">Volver a los ejercicios</button></div>
+  </div>
+
   <!-- CÁMARA -->
-  <div class="card" id="card-cam">
+  <div class="card" id="card-cam" data-tab="pa">
     <h2>📷 Cámara de la tarea</h2>
     <div class="mut" style="font-size:13px;margin-bottom:8px">Saca una foto de la tarea y genera ejercicios de práctica. La foto se lee con IA y puedes corregir el texto antes de generar.</div>
     <div class="row">
@@ -194,17 +257,18 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
   </div>
 
   <!-- REVISIÓN -->
-  <div class="card" id="card-rev">
-    <h2>📚 Revisión del examen</h2>
-    <div class="mut" style="font-size:13px;margin-bottom:8px">Dos partes: la 1 se hace hoy; la 2, el domingo. Generadas desde las fotos de Naturales.</div>
-    <div class="row">
-      <button class="ghost" id="btnRev1" style="flex:1">Revisión 1 · hoy</button>
-      <button class="ghost" id="btnRev2" style="flex:1">Revisión 2 · domingo 🔒</button>
+  <div class="card" id="card-rev" data-tab="rev">
+    <h2>📚 Repaso del examen</h2>
+    <div class="mut" style="font-size:14px;margin-bottom:10px">¡Toca un libro para repasar lo que entra en el examen!</div>
+    <div class="row" style="gap:10px">
+      <button class="big" id="btnRev1" style="flex:1;padding:22px 10px;font-size:17px;font-weight:800">📗 Repaso 1<br><span style="font-size:12px;font-weight:600">10 ejercicios</span></button>
+      <button class="big" id="btnRev2" style="flex:1;padding:22px 10px;font-size:17px;font-weight:800">📙 Repaso 2<br><span style="font-size:12px;font-weight:600" id="rev2Hint">domingo 🔒</span></button>
     </div>
+    <div class="mut" id="revHint" style="font-size:12px;margin-top:6px"></div>
   </div>
 
   <!-- TIENDA -->
-  <div class="card">
+  <div class="card" data-tab="shop">
     <h2>🛍️ Tienda de recompensas</h2>
     <div class="mut" style="font-size:13px;margin-bottom:8px">Gana monedas haciendo ejercicios. Cámbialas por cosas chulas — una vez desbloqueado, es tuyo para siempre.</div>
     <div class="cat" id="cats"></div>
@@ -212,7 +276,7 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
   </div>
 
   <!-- DIBUJO -->
-  <div class="card" id="card-desenho" style="display:none">
+  <div class="card" id="card-desenho" style="display:none" data-tab="ex">
     <h2>🎨 Dibujo</h2>
     <div class="palette" id="palette"></div>
     <div class="paint" id="paint"></div>
@@ -220,14 +284,67 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
   </div>
 
   <!-- MINIJUEGO DE MEMORIA -->
-  <div class="card" id="card-mem" style="display:none">
+  <div class="card" id="card-mem" style="display:none" data-tab="ex">
     <h2>🧠 Juego de Memoria</h2>
     <div class="mut" id="memStat">¡Encuentra las parejas!</div>
     <div class="mem" id="mem"></div>
   </div>
 
+  <!-- MINIJUEGO: LLUVIA DE FRUTAS -->
+  <div class="card" id="card-lluvia" style="display:none" data-tab="ex">
+    <h2>🎯 Lluvia de frutas</h2>
+    <div class="mut" id="lluviaStat">Toca las frutas antes de que caigan.</div>
+    <div class="fallbox" id="fallbox"><div class="basket">🧺</div></div>
+    <div class="row"><button class="big" id="btnLluvia" style="flex:1">Jugar · 30 s</button></div>
+  </div>
+
+  <!-- MINIJUEGO: SIMON -->
+  <div class="card" id="card-simon" style="display:none" data-tab="ex">
+    <h2>🎵 Simón Gatuno</h2>
+    <div class="mut" id="simonStat">Mira la secuencia y repítela.</div>
+    <div class="simon" id="simon"></div>
+    <div class="row"><button class="big" id="btnSimon" style="flex:1">Jugar</button></div>
+  </div>
+
+  <!-- MINIJUEGO: SUMAS -->
+  <div class="card" id="card-sumas" style="display:none" data-tab="ex">
+    <h2>➕ Suma veloz</h2>
+    <div class="mut" id="sumasStat">Resuelve 10 sumas — cada acierto +2 🪙.</div>
+    <div class="q" id="sumasQ"></div>
+    <div class="opts" id="sumasOpts"></div>
+  </div>
+
+  <!-- CHAT DO GATO (IA) -->
+  <div class="card" id="card-chat" data-tab="chat">
+    <h2>💬 Habla con Gatuno</h2>
+    <div class="mut" style="font-size:13px;margin-bottom:8px" id="chatHint">Tu gato tutor te escucha 🎤 — pídele juegos, chistes o ayuda con la escuela.</div>
+    <div class="row" id="nameRow" style="margin-bottom:8px">
+      <input id="chatName" placeholder="¿Cómo te llamas? Escribe aquí…" style="flex:1">
+    </div>
+    <div id="chatLog"></div>
+    <div id="chatTyping">Gatuno está pensando…</div>
+    <div class="row" style="margin-top:8px">
+      <button class="big" id="btnMic" style="flex:0 0 auto;padding:12px 16px" title="Hablar">🎤</button>
+      <input id="chatIn" placeholder="Escríbele a Gatuno…" style="flex:1" autocomplete="off">
+      <button class="big" id="btnChatSend" style="flex:0 0 auto;padding:12px 16px" title="Enviar">➤</button>
+    </div>
+  </div>
+
+  <!-- QUADRO DE PEGATINAS -->
+  <div class="card" id="card-board" data-tab="shop">
+    <h2>🖼️ Quadro de pegatinas</h2>
+    <div class="mut" style="font-size:13px">Toca una pegatina de abajo y luego toca el quadro para pegarla. Arrastra las pegatinas para moverlas.</div>
+    <div class="board" id="board"><div id="boardStk"></div></div>
+    <div class="mut" style="font-size:13px;margin-top:8px">Tus pegatinas:</div>
+    <div class="row" id="stkBar" style="margin-top:4px;flex-wrap:wrap"></div>
+    <div class="row" style="margin-top:8px">
+      <button class="ghost" id="btnStkDel" style="flex:1" disabled>Quitar elegida</button>
+      <button class="ghost" id="btnStkClear" style="flex:1">Limpiar todo</button>
+    </div>
+  </div>
+
   <!-- PREPARAR PARA EL EXAMEN (padres) -->
-  <div class="card" id="card-examen">
+  <div class="card" id="card-examen" data-tab="pa">
     <h2>🎓 Preparar para el examen</h2>
     <div class="mut" style="font-size:13px;margin-bottom:8px">Sube fotos del libro y cuaderno (pueden ser varias) y escribe las materias o temas que entran en el examen. Genero los ejercicios y las revisiones.</div>
     <div class="row">
@@ -251,7 +368,7 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
   </div>
 
   <!-- INFORME -->
-  <div class="card">
+  <div class="card" data-tab="pa">
     <h2>📋 Informe para los padres</h2>
     <div class="verdict" id="verdict"></div>
     <table class="rep" style="width:100%;margin-top:6px"><tbody id="repBody"></tbody></table>
@@ -270,7 +387,7 @@ const LS_KEY="estudo_v1";
 const LS_VER=1;
 function defaultState(){
   return {v:LS_VER, coins:0, totalEarned:0, totalSpent:0, exDone:0, exRight:0,
-    streakDay:"", streak:0, bestStreak:0, lastDay:"", owned:[], wornHat:null, lastUnlockedAt:null, custom:[], examen:[], examen1:[], examen2:[]};
+    streakDay:"", streak:0, bestStreak:0, lastDay:"", name:"", owned:[], wornHat:null, worn:{}, board:[], lastUnlockedAt:null, custom:[], examen:[], examen1:[], examen2:[]};
 }
 /* Exercises generated by the assistant from the homework photos (Ciencias
    Naturales, 2026-11-13). Reinforcement based on the material, not copies
@@ -368,6 +485,8 @@ function load(){
   try{const s=JSON.parse(localStorage.getItem(LS_KEY)||"null");
     if(!s||s.v!==LS_VER) return withFoto(defaultState());
     const st=Object.assign(defaultState(),s);
+    if(!st.worn||typeof st.worn!=="object") st.worn= st.wornHat?{hat:st.wornHat}:{};
+    if(!Array.isArray(st.board)) st.board=[];
     return withFoto(st);}
   catch(e){return withFoto(defaultState());}
 }
@@ -477,15 +596,44 @@ function genSoc(){const [q,a]=pick(SOC);const others=SOC.filter(p=>p[1]!==a).map
 const SHOP=[
  {cat:"Juegos", id:"memoria", em:"🧠", nm:"Juego de Memoria", pr:40, tag:"juegos", act:showMem},
  {cat:"Juegos", id:"desenho", em:"🎨", nm:"Página de Dibujo", pr:25, tag:"juegos", act:showDesenho},
+ {cat:"Juegos", id:"lluvia", em:"🎯", nm:"Lluvia de frutas", pr:35, tag:"juegos", act:showLluvia},
+ {cat:"Juegos", id:"simon", em:"🎵", nm:"Simón Gatuno", pr:50, tag:"juegos", act:showSimon},
+ {cat:"Juegos", id:"sumas", em:"➕", nm:"Suma veloz", pr:45, tag:"juegos", act:showSumas},
  {id:"selva1", cat:"Pegatinas", em:"🦁", nm:"Pegatina León", pr:15},
  {id:"selva2", cat:"Pegatinas", em:"🐙", nm:"Pegatina Pulpo", pr:20},
  {id:"selva3", cat:"Pegatinas", em:"🦄", nm:"Pegatina Unicornio RARO", pr:80, rare:true},
  {id:"selva4", cat:"Pegatinas", em:"🐼", nm:"Pegatina Panda RARO", pr:120, rare:true},
+ {id:"stk5", cat:"Pegatinas", em:"🐯", nm:"Pegatina Tigre", pr:15},
+ {id:"stk6", cat:"Pegatinas", em:"🐬", nm:"Pegatina Delfín", pr:20},
+ {id:"stk7", cat:"Pegatinas", em:"🦖", nm:"Pegatina Dino", pr:30},
+ {id:"stk8", cat:"Pegatinas", em:"🦉", nm:"Pegatina Búho", pr:20},
+ {id:"stk9", cat:"Pegatinas", em:"🚀", nm:"Pegatina Cohete", pr:30},
+ {id:"stk10", cat:"Pegatinas", em:"🌟", nm:"Pegatina Estrella RARO", pr:60, rare:true},
+ {id:"stk11", cat:"Pegatinas", em:"🪐", nm:"Pegatina Planeta", pr:40},
+ {id:"stk12", cat:"Pegatinas", em:"🍩", nm:"Pegatina Donut", pr:15},
+ {id:"stk13", cat:"Pegatinas", em:"🍦", nm:"Pegatina Helado", pr:20},
+ {id:"stk14", cat:"Pegatinas", em:"🧁", nm:"Pegatina Cupcake", pr:20},
  {id:"roupa1", cat:"Ropa", em:"🧢", nm:"Gorra azul", pr:30, hat:true},
  {id:"roupa2", cat:"Ropa", em:"🎩", nm:"Chistera", pr:60, hat:true},
  {id:"roupa3", cat:"Ropa", em:"🔑", nm:"Sombrero dorado RARO", pr:150, rare:true, hat:true},
+ {id:"acc1", cat:"Accesorios", em:"👓", nm:"Gafas de ver", pr:30, wear:"eyes"},
+ {id:"acc2", cat:"Accesorios", em:"🕶️", nm:"Gafas de sol", pr:35, wear:"eyes"},
+ {id:"acc3", cat:"Accesorios", em:"🥽", nm:"Gafas de bucear", pr:45, wear:"eyes"},
+ {id:"acc4", cat:"Accesorios", em:"🦄", nm:"Chifre de unicornio RARO", pr:90, rare:true, wear:"hat", cl:"tilt"},
+ {id:"acc5", cat:"Accesorios", em:"👑", nm:"Corona real RARO", pr:110, rare:true, wear:"hat"},
+ {id:"acc6", cat:"Accesorios", em:"🍕", nm:"Pizza en la cabeza", pr:55, wear:"hat"},
+ {id:"acc7", cat:"Accesorios", em:"🐙", nm:"Pulpo loco", pr:50, wear:"hat"},
+ {id:"acc8", cat:"Accesorios", em:"🌈", nm:"Arcoíris en la cabeza", pr:70, wear:"hat"},
+ {id:"acc9", cat:"Accesorios", em:"🚀", nm:"Cohete en la cabeza", pr:65, wear:"hat"},
+ {id:"acc10", cat:"Accesorios", em:"🌵", nm:"Cacto en la cabeza", pr:45, wear:"hat"},
+ {id:"acc11", cat:"Accesorios", em:"🐟", nm:"Pececito en la boca", pr:20, wear:"mouth"},
+ {id:"acc12", cat:"Accesorios", em:"🍭", nm:"Piruleta en la boca", pr:25, wear:"mouth"},
+ {id:"acc13", cat:"Accesorios", em:"🦴", nm:"Huesito en la boca", pr:20, wear:"mouth"},
+ {id:"acc14", cat:"Accesorios", em:"🍩", nm:"Donut en la boca", pr:30, wear:"mouth"},
 ];
-const CATS=["Todos","Juegos","Pegatinas","Ropa"];
+const CATS=["Todos","Juegos","Pegatinas","Ropa","Accesorios"];
+/* slot de avatar de un accesorio (hat/eyes/mouth); los `hat:true` viejos son sombreros */
+const wearOf=it=>it.wear||(it.hat?"hat":null);
 let curCat="Todos";
 
 /* ============== GATITO: frases + boca animada ============== */
@@ -537,6 +685,14 @@ function speak(line){
 
 /* ============== UI ============== */
 const $=id=>document.getElementById(id);
+/* ============== ABAS DE NAVEGACIÓN ============== */
+function setTab(id){
+  document.body.dataset.tab=id;
+  [...document.querySelectorAll("#nav button")].forEach(b=>b.classList.toggle("on",b.dataset.tab===id));
+  if(id==="chat") initChat();
+  window.scrollTo({top:0});
+}
+[...document.querySelectorAll("#nav button")].forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
 function renderWallet(){
   $("coins").textContent=fmt(state.coins);
   const lvl=1+Math.floor(state.totalEarned/100);
@@ -590,7 +746,8 @@ function paintExercise(ex,after,timer){
       b.className="opt "+(ok?"ok":"no");
       if(!ok){[...box.children].forEach(x=>{if(x.textContent===ex.a)x.className="opt ok";});}
       const fb=$("exFb"); fb.textContent=ok?("¡Bien! +10 🪙"):("¡Ups! ¡Inténtalo otra vez!"); fb.className="feedback "+(ok?"good":"bad");
-      registerResult(ok);
+      /* el gato lee la opción elegida y después anima */
+      registerResult(ok, o+(ok?". ¡Muy bien!":"… ¡Casi, prueba otra!"));
       if(after) after(ok);
     };
     box.appendChild(b);
@@ -605,6 +762,7 @@ function paintOrdenar(ex,box,after){
     const b=document.createElement("button"); b.className="opt"; b.textContent=it.t;
     b.onclick=()=>{
       if(done) return;
+      speak(it.t);
       if(it.i===pos){ b.className="opt ok"; b.disabled=true; pos++;
         if(pos===ex.pasos.length){ done=true; stopExTimer(); const ok=errs===0;
           fb.textContent=ok?"¡Bien! +10 🪙":"Listo ✓ (con algunos errores)"; fb.className="feedback "+(ok?"good":"bad");
@@ -627,7 +785,7 @@ function paintParejas(ex,box,after){
     b.onclick=()=>{
       if(done||busy||b.classList.contains("ok")) return;
       if(sel&&sel.b===b) return;
-      b.textContent=c.t;
+      b.textContent=c.t; speak(c.t);
       if(!sel){ sel={b,c}; b.classList.add("sel"); return; }
       if(sel.c.id===c.id){ sel.b.className="opt ok"; b.className="opt ok"; matched++; sel=null;
         fb.textContent="✓ Pareja "+matched+" de "+ex.pares.length; fb.className="feedback good";
@@ -651,6 +809,7 @@ function startDeck(list,label,bonus,timer){
   deckQ=list.slice(); deckN=list.length; deckLabel=label; deckBonus=bonus; deckTimer=timer||0;
   $("subjects").style.display="none"; $("exercise").style.display="";
   $("btnNew").style.display="none";
+  setTab("ex"); $("exercise").scrollIntoView({behavior:"smooth",block:"start"});
   nextInDeck();
 }
 function nextInDeck(){
@@ -679,11 +838,11 @@ function buildPractice(){
 }
 /* regla de recompensa: 1er intento acertar = 10 (nunca la respuesta directa) */
 let attempts=0;
-function registerResult(ok){
+function registerResult(ok,say){
   attempts=0; // nuevo ejercicio (showEx)
   state.exDone++;
-  if(ok){ state.exRight++; earn(10,"ejercicio correcto"); speak(pick(LINES.good)); }
-  else { speak(LINES.bad); }
+  if(ok){ state.exRight++; earn(10,"ejercicio correcto"); speak(say||pick(LINES.good)); }
+  else { speak(say||LINES.bad); }
   streakTouch(ok);
   save(); renderReport();
 }
@@ -705,20 +864,28 @@ function renderShop(){
     const b=document.createElement("button"); b.className="buy"; b.textContent=owned?"Usar":("Comprar · "+fmt(item.pr)+" 🪙");
     b.disabled=!owned&&!can;
     b.onclick=()=>{
-      if(owned){ if(item.hat){ state.wornHat=state.wornHat===item.id?null:item.id; save(); renderAvatar(); toast(item.hat?"¡Visual actualizado!":"¡Ya desbloqueado! ✨"); } else if(item.act){ item.act(); } return; }
+      const w=wearOf(item);
+      if(owned){
+        if(w){ const cur=(state.worn[w]||null); state.worn[w]=cur===item.id?null:item.id; save(); renderAvatar();
+          toast(cur===item.id?"¡Quitado!":"¡Visual actualizado! ✨"); speak(cur===item.id?"Ya no lo llevo":"¡Me encanta!"); }
+        else if(item.act){ item.act(); }
+        return;
+      }
       if(!tryBuy(item.id,item.pr)){ toast("¡Monedas insuficientes — haz más ejercicios!"); return; }
       toast("Desbloqueado: "+item.nm+" 🎉"); confetti(); vibrate(60); speak(LINES.buy);
-      if(item.hat){ state.wornHat=item.id; save(); renderAvatar(); }
+      if(w){ state.worn[w]=item.id; save(); renderAvatar(); }
       if(item.act) item.act();
-      renderShop();
+      renderShop(); renderBoardBar();
     };
     d.appendChild(b); box.appendChild(d);
   });
 }
 function renderAvatar(){
-  const h=$("hatEmoji");
-  if(state.wornHat){ const it=SHOP.find(x=>x.id===state.wornHat); if(it){ h.textContent=it.em; h.style.display=""; return; } }
-  h.style.display="none";
+  [["hat","hatEmoji","hat"],["eyes","eyeEmoji","ove"],["mouth","mouthEmoji","ovm"]].forEach(([w,el,cls])=>{
+    const h=$(el); const id=state.worn&&state.worn[w]; const it=id&&SHOP.find(x=>x.id===id);
+    if(it){ h.textContent=it.em; h.className=cls+(it.cl?" "+it.cl:""); h.style.display=""; }
+    else h.style.display="none";
+  });
 }
 
 /* página de dibujo (cuadrícula 8×8) */
@@ -759,6 +926,253 @@ function showMem(){
   });
   $("memStat").textContent="¡Encuentra las parejas!";
 }
+
+/* minijuego: lluvia de frutas (tocarlas antes de caer) */
+function showLluvia(){ setTab("ex"); $("card-lluvia").style.display=""; $("card-lluvia").scrollIntoView({behavior:"smooth"}); }
+let lluviaOn=false;
+$("btnLluvia").onclick=()=>{
+  if(lluviaOn) return;
+  lluviaOn=true; $("btnLluvia").disabled=true;
+  const box=$("fallbox"); box.querySelectorAll(".fall").forEach(f=>f.remove());
+  const ems=["🍎","🍓","🍌","🍇","🍊"]; let pts=0, left=30;
+  $("lluviaStat").textContent="¡Atrapa las frutas! 30 s…";
+  const sp=setInterval(()=>{
+    const f=document.createElement("div"); f.className="fall";
+    f.textContent=pick(ems); f.style.left=(Math.random()*84)+"%";
+    f.onclick=()=>{ pts++; vibrate(25); f.textContent="✨"; f.style.pointerEvents="none";
+      setTimeout(()=>f.remove(),250); $("lluviaStat").textContent="Frutas: "+pts; };
+    box.appendChild(f);
+  },600);
+  const tm=setInterval(()=>{ left--;
+    if(left<=0){ clearInterval(tm); clearInterval(sp); lluviaOn=false; $("btnLluvia").disabled=false;
+      $("btnLluvia").textContent="Jugar · 30 s"; box.querySelectorAll(".fall").forEach(f=>f.remove());
+      const ganado=Math.min(pts,30);
+      if(ganado>0){ earn(ganado,"lluvia de frutas"); confetti(); speak("¡"+pts+" frutas atrapadas!"); }
+      $("lluviaStat").textContent= pts>0 ? ("¡"+pts+" frutas! +"+ganado+" 🪙 — Jugar otra vez") : "¡Sin frutas esta vez! Toca Jugar."; }
+    else $("btnLluvia").textContent="Jugar · "+left+" s";
+  },1000);
+};
+
+/* minijuego: Simón Gatuno (secuencia) */
+let simonOn=false, simonSeq=[], simonPos=0, simonOk=0, simonTimer=0;
+function buildSimon(){
+  const pads=[["#ffb75c","🐱"],["#7c5cff","🐸"],["#22b573","🦋"],["#ff70a6","🐝"]];
+  const box=$("simon"); box.innerHTML="";
+  pads.forEach(([c,e],i)=>{ const b=document.createElement("button"); b.style.background=c; b.textContent=e; b.dataset.i=i; box.appendChild(b); });
+}
+function startSimon(){
+  simonOn=true; $("btnSimon").disabled=true; buildSimon();
+  const pads=[...$("simon").children];
+  simonSeq=[Math.floor(Math.random()*4)]; simonPos=0; simonOk=0;
+  $("simonStat").textContent="Mira…";
+  function play(){
+    $("simonStat").textContent="Mira la secuencia…"; let k=0;
+    clearInterval(simonTimer);
+    simonTimer=setInterval(()=>{
+      if(k>=simonSeq.length){ clearInterval(simonTimer); setTimeout(()=>{ $("simonStat").textContent="¡Tu turno! Repite "+simonSeq.length; simonPos=0; },420); return; }
+      const b=pads[simonSeq[k]]; b.classList.add("on"); setTimeout(()=>b.classList.remove("on"),330); k++;
+    },640);
+  }
+  pads.forEach(b=>{ b.onclick=()=>{
+    if(!simonOn||simonPos>=simonSeq.length) return;
+    b.classList.add("on"); setTimeout(()=>b.classList.remove("on"),250);
+    if(+b.dataset.i===simonSeq[simonPos]){ simonPos++;
+      if(simonPos===simonSeq.length){ simonOk++; vibrate(40); $("simonStat").textContent="¡Bien! Ronda "+(simonOk+1)+"…";
+        simonSeq.push(Math.floor(Math.random()*4)); setTimeout(play,700); } }
+    else { simonOn=false; $("btnSimon").disabled=false;
+      const premio=Math.min(simonOk*3,21);
+      if(premio>0){ earn(premio,"Simón"); confetti(); speak("¡"+simonOk+" rondas!"); }
+      $("simonStat").textContent= simonOk>0 ? ("¡"+simonOk+" rondas! +"+premio+" 🪙 — Jugar otra vez") : "Casi — toca Jugar otra vez."; }
+  };});
+  setTimeout(play,600);
+}
+function showSimon(){ setTab("ex"); $("card-simon").style.display=""; $("card-simon").scrollIntoView({behavior:"smooth"}); }
+$("btnSimon").onclick=()=>{ if(simonOn) return; startSimon(); };
+
+/* minijuego: suma veloz */
+let sumasN=0;
+function showSumas(){ setTab("ex"); $("card-sumas").style.display=""; $("card-sumas").scrollIntoView({behavior:"smooth"}); sumasN=0; $("sumasStat").textContent="0/10 — ¡empieza!"; newSuma(); }
+function newSuma(){
+  const a=2+Math.floor(Math.random()*11), b=2+Math.floor(Math.random()*11);
+  $("sumasQ").textContent=a+" + "+b+" = ?";
+  const wrong=[]; while(wrong.length<3){ const w=a+b+(Math.floor(Math.random()*9)-4); if(w>0&&w!==a+b&&!wrong.includes(w)) wrong.push(w); }
+  const box=$("sumasOpts"); box.innerHTML="";
+  [a+b,...wrong].sort(()=>Math.random()-0.5).forEach(o=>{
+    const b=document.createElement("button"); b.className="opt"; b.style.textAlign="center"; b.textContent=o;
+    b.onclick=()=>{
+      if(o===a+b){
+        earn(2,"suma veloz"); vibrate(40); sumasN++;
+        if(sumasN>=10){ $("sumasStat").textContent="🏆 ¡Terminaste las 10!"; confetti(); speak("¡Sumas completadas!"); return; }
+        $("sumasStat").textContent=sumasN+"/10 — ¡sigue!";
+        newSuma();
+      } else { b.classList.add("no"); b.disabled=true; $("sumasStat").textContent="¡Casi! Prueba otra opción."; }
+    };
+    box.appendChild(b);
+  });
+}
+
+/* ===== minijuego: colorear (responde bien y pinta el gato) ===== */
+const CO_COLORS=[
+ {t:"rojo",c:"#ff5b5b"},{t:"azul",c:"#4a7cff"},{t:"verde",c:"#22b573"},{t:"amarillo",c:"#f5c518"},
+ {t:"rosa",c:"#ff70a6"},{t:"morado",c:"#8e6ff0"},{t:"naranja",c:"#ff9d3b"},{t:"celeste",c:"#33c4c4"}
+];
+const CO_PARTS=[["co-earL|co-earR","las orejas"],["co-head","la cabeza"],["co-eyeL|co-eyeR","los ojos"],["co-nose","la nariz"],["co-body","el cuerpo"]];
+const CO_Q=[
+ {q:"¿Qué gas toman las plantas del aire para vivir?",a:"Dióxido de carbono",opts:["Dióxido de carbono","Oxígeno","Humo","Vapor"]},
+ {q:"¿Dónde elaboran las plantas su alimento?",a:"En las hojas",opts:["En las hojas","En las raíces","En las piedras","En el tallo"]},
+ {q:"¿Qué hace todo ser vivo?",a:"Se alimenta y crece",opts:["Se alimenta y crece","No cambia nunca","Es de plástico","No respira"]},
+ {q:"¿Qué parte de la planta absorbe el agua?",a:"La raíz",opts:["La raíz","La flor","El pétalo","La semilla"]},
+ {q:"¿Cómo se llama fabricar alimento con la luz del sol?",a:"Fotosíntesis",opts:["Fotosíntesis","Digestión","Evaporación","Natación"]}
+];
+let coStep=0;
+function showColorear(){
+  setTab("ex"); $("card-color").style.display=""; $("card-color").scrollIntoView({behavior:"smooth"});
+  $("exercise").style.display="none"; $("subjects").style.display=""; $("btnNew").style.display="";
+  coStep=0;
+  CO_PARTS.forEach(p=>p[0].split("|").forEach(id=>$(id).setAttribute("fill","#eceff5")));
+  $("coStat").textContent="Responde bien para pintar cada parte 🎨";
+  coPaintStep();
+}
+function coPaintStep(){
+  const part=CO_PARTS[coStep], Q=CO_Q[coStep];
+  $("coQ").textContent="Pinta "+part[1]+": "+Q.q;
+  const box=$("coOpts"); box.innerHTML="";
+  Q.opts.slice().sort(()=>Math.random()-0.5).forEach((o,i)=>{
+    const col=CO_COLORS[(coStep*4+i)%CO_COLORS.length];
+    const b=document.createElement("button"); b.className="co-btn"; b.style.background=col.c; b.textContent=o;
+    b.onclick=()=>{
+      if(o===Q.a){
+        vibrate(50); part[0].split("|").forEach(id=>$(id).setAttribute("fill",col.c));
+        $("coOpts").innerHTML=""; coStep++;
+        if(coStep>=CO_PARTS.length){
+          $("coStat").textContent="🐱 ¡Tu gato está pintado! +12 🪙"; $("coQ").textContent="";
+          earn(12,"colorear y aprender"); confetti();
+          state.exDone++; state.exRight++; streakTouch(true); save(); renderReport(); renderWallet();
+          speak("¡Qué bonito! Tu gato está pintado. ¡Bien hecho!");
+          return;
+        }
+        coPaintStep();
+      } else { b.classList.add("no"); b.disabled=true; $("coStat").textContent="¡Casi! Prueba otro color."; }
+    };
+    box.appendChild(b);
+  });
+}
+$("btnColor").onclick=showColorear;
+$("btnCoClose").onclick=()=>{ $("card-color").style.display="none"; };
+
+/* ============== QUADRO DE PEGATINAS ============== */
+let stkPick=null, stkSel=null;
+function ownedStickers(){ return SHOP.filter(i=>i.cat==="Pegatinas"&&state.owned.includes(i.id)); }
+function renderBoardBar(){
+  const bar=$("stkBar"); if(!bar) return; bar.innerHTML="";
+  const list=ownedStickers();
+  if(!list.length){ bar.innerHTML="<span class='mut' style='font-size:13px'>Compra pegatinas en la tienda y aparecerán aquí.</span>"; return; }
+  list.forEach(it=>{
+    const b=document.createElement("button"); b.className="ghost"; b.style.padding="10px 12px";
+    b.textContent=it.em; b.title=it.nm; b.setAttribute("aria-pressed",stkPick===it.id);
+    b.onclick=()=>{ stkPick=stkPick===it.id?null:it.id; stkSel=null; renderBoardBar(); };
+    bar.appendChild(b);
+  });
+}
+function renderBoard(){
+  const box=$("boardStk"); if(!box) return; box.innerHTML="";
+  (state.board||[]).forEach((p,idx)=>{
+    const it=SHOP.find(i=>i.id===p.id); if(!it) return;
+    const d=document.createElement("div"); d.className="stk"+(stkSel===idx?" sel":"");
+    d.textContent=it.em; d.style.left=p.x+"%"; d.style.top=p.y+"%";
+    d.addEventListener("pointerdown",ev=>{
+      ev.preventDefault();
+      stkSel=idx;
+      [...$("boardStk").children].forEach((c,i)=>c.classList.toggle("sel",i===idx));
+      $("btnStkDel").disabled=false;
+      const br=$("board").getBoundingClientRect();
+      const move=m=>{
+        p.x=Math.min(94,Math.max(0,(m.clientX-br.left)/br.width*100-3));
+        p.y=Math.min(92,Math.max(0,(m.clientY-br.top)/br.height*100-4));
+        d.style.left=p.x+"%"; d.style.top=p.y+"%";
+      };
+      const up=()=>{ d.removeEventListener("pointermove",move); save(); };
+      try{ d.setPointerCapture(ev.pointerId); }catch(e){}
+      d.addEventListener("pointermove",move);
+      d.addEventListener("pointerup",up,{once:true});
+      d.addEventListener("pointercancel",up,{once:true});
+    });
+    box.appendChild(d);
+  });
+  $("btnStkDel").disabled=stkSel==null;
+}
+$("board").addEventListener("click",ev=>{
+  if(!stkPick) return;
+  if(ev.target.classList&&ev.target.classList.contains("stk")) return;
+  const br=$("board").getBoundingClientRect();
+  state.board.push({id:stkPick, x:Math.min(92,Math.max(0,(ev.clientX-br.left)/br.width*100-3)),
+                    y:Math.min(88,Math.max(0,(ev.clientY-br.top)/br.height*100-4))});
+  save(); stkPick=null; renderBoardBar(); renderBoard();
+});
+$("btnStkDel").onclick=()=>{ if(stkSel==null) return; state.board.splice(stkSel,1); stkSel=null; save(); renderBoard(); };
+$("btnStkClear").onclick=()=>{ state.board=[]; stkSel=null; save(); renderBoard(); };
+
+/* ============== 💬 CHAT COM GATUNO (IA) ============== */
+let chatHist=[], chatBusy=false, chatStarted=false;
+function initChat(){
+  if(chatStarted) return; chatStarted=true;
+  $("nameRow").style.display=state.name?"none":"";
+  if(!chatHist.length){
+    addMsg("cat",(state.name?("¡Hola, "+state.name+"!"):"¡Hola!")+
+      " Soy Gatuno, tu gato tutor 🐱 ¿Quieres jugar, un chiste, o repasar la escuela?");
+  }
+}
+function addMsg(role,text){
+  const log=$("chatLog"); const d=document.createElement("div");
+  d.className="msg "+(role==="cat"?"cat":"kid"); d.textContent=text;
+  log.appendChild(d); log.scrollTop=log.scrollHeight; return d;
+}
+async function sendChat(text){
+  text=(text||"").trim(); if(!text||chatBusy) return;
+  if(!state.name){
+    state.name=text.slice(0,24); save(); $("nameRow").style.display="none";
+    addMsg("cat","¡Encantada de conocerte, "+state.name+"! 🐾 ¿Qué hacemos hoy?");
+    return;
+  }
+  addMsg("kid",text); $("chatIn").value="";
+  chatBusy=true; $("chatTyping").style.display=""; $("btnChatSend").disabled=true;
+  try{
+    const r=await fetch(BACKEND_URL+"/chat",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({text:text, name:state.name||"", messages:chatHist.slice(-12)})});
+    if(!r.ok) throw 0;
+    const d=await r.json();
+    const reply=((d&&d.text)||"").trim()||"Miau… no lo entendí, ¿me lo repites?";
+    chatHist.push({role:"user",content:text},{role:"assistant",content:reply});
+    if(chatHist.length>16) chatHist=chatHist.slice(-16);
+    addMsg("cat",reply); speak(reply);
+  }catch(e){ addMsg("cat","¡Miau! No llegué a internet… inténtalo otra vez 🐾"); }
+  chatBusy=false; $("chatTyping").style.display="none"; $("btnChatSend").disabled=false;
+}
+$("btnChatSend").onclick=()=>sendChat($("chatIn").value);
+$("chatIn").addEventListener("keydown",e=>{ if(e.key==="Enter") sendChat($("chatIn").value); });
+$("chatName").addEventListener("keydown",e=>{
+  if(e.key!=="Enter") return;
+  const v=$("chatName").value.trim(); if(!v) return;
+  state.name=v.slice(0,24); save(); $("nameRow").style.display="none"; $("chatName").value="";
+  addMsg("cat","¡Encantada de conocerte, "+state.name+"! 🐾 ¿Qué hacemos hoy? Juegos, chistes o escuela.");
+  speak("¡Hola "+state.name+"! Soy Gatuno");
+});
+/* micrófono: Web Speech API (Chrome/Edge); sem micro, fica o texto */
+(function(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ $("btnMic").style.display="none"; return; }
+  let rec=null, on=false;
+  const HINT="Tu gato tutor te escucha 🎤 — pídele juegos, chistes o ayuda con la escuela.";
+  $("btnMic").onclick=()=>{
+    if(on){ rec&&rec.stop(); return; }
+    rec=new SR(); rec.lang="es-ES"; rec.interimResults=false; rec.maxAlternatives=1;
+    rec.onstart=()=>{ on=true; $("btnMic").textContent="👂"; $("chatHint").textContent="Te escucho… habla ahora."; };
+    rec.onend=()=>{ on=false; $("btnMic").textContent="🎤"; $("chatHint").textContent=HINT; };
+    rec.onerror=()=>{ on=false; $("btnMic").textContent="🎤"; $("chatHint").textContent="No te oí bien — toca el 🎤 otra vez."; };
+    rec.onresult=e=>{ const t=e.results[0][0].transcript; sendChat(t); };
+    try{ rec.start(); }catch(e){}
+  };
+})();
 
 /* ============== INFORME ============== */
 function renderReport(){
@@ -861,11 +1275,18 @@ $("btnGenFoto").onclick=async()=>{
   toast("¡"+exs.length+" ejercicios nuevos en «Tareas foto»! 📷");
 };
 $("btnPractice").onclick=()=>startDeck(buildPractice(),"Práctica",20);
-$("btnRev1").onclick=()=>{ if(!REVIEW1.length){toast("Revisión 1: envía las fotos primero 📷");return;} startDeck(REVIEW1,"Revisión 1",30); };
+/* Repasos: usa los ejercicios generados del examen si existen; si no, los del libro */
+$("btnRev1").onclick=()=>{
+  const list=(state.examen1&&state.examen1.length)?state.examen1:REVIEW1;
+  if(!list.length){toast("Repaso 1: envía las fotos primero 📷");return;}
+  startDeck(list,"Repaso 1",30);
+};
 $("btnRev2").onclick=()=>{
-  if(new Date().getDay()!==0){toast("Revisión 2: disponible el domingo 📚");return;}
-  if(!REVIEW2.length){toast("Revisión 2: envía las fotos primero 📷");return;}
-  startDeck(REVIEW2,"Revisión 2",30);
+  const has2=state.examen2&&state.examen2.length;
+  if(new Date().getDay()!==0 && !has2){toast("Repaso 2: se abre el domingo 📚");return;}
+  const list=has2?state.examen2:REVIEW2;
+  if(!list.length){toast("Repaso 2: envía las fotos primero 📷");return;}
+  startDeck(list,"Repaso 2",30);
 };
 /* ======= ⚡ Quiz relámpago (12 preguntas sin repetir, 8 segundos cada una) ======= */
 $("btnBlitz").onclick=()=>{
@@ -895,6 +1316,9 @@ function updateExamUI(){
   $("btnExamenPracticar").style.display=n?"":"none";
   $("btnExamenRev1").style.display=(state.examen1&&state.examen1.length)?"":"none";
   $("btnExamenRev2").style.display=(state.examen2&&state.examen2.length)?"":"none";
+  const has2=state.examen2&&state.examen2.length;
+  const h=$("rev2Hint"); if(h) h.textContent=has2?"¡lista!":"domingo 🔒";
+  const rh=$("revHint"); if(rh) rh.textContent=(state.examen1&&state.examen1.length)?"Tus repasos generados del examen están listos ✓":"Repasos base del libro (el 2 se abre el domingo)";
 }
 $("btnGenExamen").onclick=async()=>{
   const ocr=$("txtExamenOCR").value||"", top=$("txtExamen").value||"";
@@ -917,6 +1341,7 @@ $("btnExamenRev1").onclick=()=>{ if(!state.examen1.length){toast("Genera primero
 $("btnExamenRev2").onclick=()=>{ if(!state.examen2.length){toast("Genera primero los ejercicios del examen 🎓");return;} startDeck(state.examen2,"Revisión 2 (examen)",30); };
 
 renderWallet(); renderSubjects(); renderShop(); renderReport(); renderAvatar(); updateExamUI();
+renderBoard(); renderBoardBar(); initChat(); setTab("ex");
 speak(LINES.greet);
 </script>
 </body>

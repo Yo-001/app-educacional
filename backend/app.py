@@ -2,6 +2,7 @@
 
 POST /generate {"text": "...", "topics": "..."} -> {"ejercicios": [...]}
 POST /ocr      {"images": ["data:image/jpeg;base64,..."]} -> {"text": "..."}
+POST /chat     {"text": "...", "name": "...", "messages": [...]} -> {"text": "..."}
 GET  /health -> {"ok": true}
 
 O que faz: /ocr transcribe as fotos do livro/cuaderno con un modelo de visión
@@ -24,12 +25,13 @@ import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-MODEL = "openai/gpt-4o-mini"           # geração de exercícios e OCR principal (fiel ao galego, sem traduzir)
+MODEL = "openai/gpt-4o-mini"           # geração de exercícios, OCR principal e chat (barato: ~$0.15/1M in, $0.6/1M out)
 OCR_MODEL = "google/gemini-2.5-flash"  # OCR de reserva: não recusa fotos com pessoas (o gpt-4o-mini recusa, mas traduz galego→português)
 API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 MAX_BODY = 200_000
 MAX_BODY_OCR = 8_000_000  # fotos comprimidas chegan a ~1 MB cada
-RATE_LIMIT = 30  # por hora por IP
+RATE_LIMIT = 30   # /generate e /ocr, por hora por IP
+CHAT_RATE = 120   # /chat, por hora por IP
 WINDOW = 3600
 _hits = {}
 
@@ -150,6 +152,45 @@ def call_ocr(data_url):
     return text
 
 
+CHAT_SYSTEM = """Eres Gatuno, un gato tutor divertido y cariñoso que conversa con una niña de 8 años en Galicia (España). Respondes SIEMPRE en el mismo idioma en que escribe la niña (español, gallego u otro).
+
+Reglas:
+- Respuestas MUY cortas (2-3 frases, máximo ~40 palabras), vocabulario sencillo de 8 años, 0-2 emojis.
+- Eres un gato: a veces dices "miau" o ronroneas "prrr", y te gustan los juegos de gatos.
+- Fomentas el aprendizaje: si pide ayuda con la escuela, la guías con preguntas paso a paso; NUNCA das la respuesta directa de un deber sin que ella lo piense primero.
+- Propones juegos (adivinanzas, "palabras que empiezan por X", sumas locas, adivina el animal), chistes cortos y cosas divertidas cuando está aburrida.
+- El nombre de la niña es: {name}. Llámala por su nombre con cariño.
+- Temas seguros solo: escuela, animales, juegos, chistes, familia, hobbies. Si pide algo inapropiado, o habla de miedo o tristeza fuerte, responde con calma y sugiere contárselo a sus padres.
+- Nunca hables de política, violencia, romance ni nada de adultos."""
+
+
+def call_chat(messages, name, text):
+    """Resposta curta do gato tutor; histórico saneado (≤14 msgs, ≤600 car)."""
+    msgs = [{"role": "system",
+             "content": CHAT_SYSTEM.replace("{name}", name or "pequeña")}]
+    for m in (messages or [])[-14:]:
+        if isinstance(m, dict) and m.get("role") in ("user", "assistant") \
+                and isinstance(m.get("content"), str):
+            msgs.append({"role": m["role"], "content": clean_str(m["content"], 600)})
+    msgs.append({"role": "user", "content": clean_str(text, 600)})
+    payload = json.dumps({
+        "model": MODEL,
+        "temperature": 0.9,
+        "max_tokens": 220,
+        "messages": msgs,
+    }).encode("utf-8")
+    req = urllib.request.Request(
+        "https://openrouter.ai/api/v1/chat/completions", data=payload,
+        headers={"Content-Type": "application/json",
+                 "Authorization": "Bearer " + API_KEY,
+                 "HTTP-Referer": "https://yo-001.github.io/estudo-moedas/",
+                 "X-Title": "estudo-exams"})
+    with urllib.request.urlopen(req, timeout=60) as r:
+        data = json.loads(r.read().decode("utf-8", "ignore"))
+    content = data["choices"][0]["message"]["content"]
+    return (content or "").strip()[:800]
+
+
 def call_model(text, topics):
     user = ("Materias/temas del examen:\n" + (topics or "sin especificar") +
             "\n\nTexto del libro/cuaderno (OCR, puede tener errores):\n" + text[:6000])
@@ -206,12 +247,14 @@ class H(BaseHTTPRequestHandler):
             self._json(404, {"error": "no encontrado"})
 
     def do_POST(self):
-        if self.path not in ("/generate", "/ocr"):
+        if self.path not in ("/generate", "/ocr", "/chat"):
             return self._json(404, {"error": "no encontrado"})
         ip = self.headers.get("X-Forwarded-For", "desconocido").split(",")[-1].strip()
         now = time.time()
-        hist = [t for t in _hits.get(ip, []) if now - t < WINDOW]
-        if len(hist) >= RATE_LIMIT:
+        key = ip + "|" + self.path
+        lim = CHAT_RATE if self.path == "/chat" else RATE_LIMIT
+        hist = [t for t in _hits.get(key, []) if now - t < WINDOW]
+        if len(hist) >= lim:
             return self._json(429, {"error": "demasiadas peticiones, prueba en unos minutos"})
         try:
             n = int(self.headers.get("Content-Length", "0"))
@@ -225,10 +268,31 @@ class H(BaseHTTPRequestHandler):
             reqj = json.loads(raw.decode("utf-8", "ignore"))
         except Exception:
             return self._json(400, {"error": "JSON inválido"})
-        _hits[ip] = hist + [now]
+        _hits[key] = hist + [now]
         if self.path == "/ocr":
             return self._do_ocr(reqj)
+        if self.path == "/chat":
+            return self._do_chat(reqj)
         self._do_generate(reqj)
+
+    def _do_chat(self, reqj):
+        text = clean_str(reqj.get("text", ""), 600)
+        if not text:
+            return self._json(400, {"error": "mensaje vacío"})
+        if not API_KEY:
+            return self._json(503, {"error": "chat no configurado"})
+        name = clean_str(reqj.get("name", ""), 30)
+        hist = reqj.get("messages") if isinstance(reqj.get("messages"), list) else []
+        try:
+            reply = call_chat(hist, name, text)
+        except urllib.error.HTTPError as e:
+            body = e.read().decode("utf-8", "ignore")[:300]
+            return self._json(502, {"error": "OpenRouter " + str(e.code), "detalle": body})
+        except Exception as e:
+            return self._json(502, {"error": "fallo del chat: " + type(e).__name__})
+        if not reply:
+            return self._json(502, {"error": "el gato se quedó sin palabras"})
+        self._json(200, {"text": reply})
 
     def _do_ocr(self, reqj):
         if not API_KEY:
