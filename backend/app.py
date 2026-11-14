@@ -4,7 +4,7 @@ POST /generate {"text": "...", "topics": "..."} -> {"ejercicios": [...]}
 GET  /health -> {"ok": true}
 
 O que faz: recebe o texto do livro/cuaderno (OCR das fotos feitas no app) e
-as matérias do exame (digitado pelos pais), chama um modelo free no
+as matérias do exame (digitado pelos pais), chama um modelo no
 OpenRouter com prompt de professora de 3.º Primaria (castellano) e devolve
 16 exercícios validados no formato exato do app (mc/vf/ordenar/parejas).
 
@@ -20,7 +20,7 @@ import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-MODEL = "google/gemma-4-26b-a4b-it:free"  # Feiticeira Escarlate (Vingadores free) — saída estruturada; fallback offline no front
+MODEL = "openai/gpt-4o-mini"
 API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 MAX_BODY = 200_000
 RATE_LIMIT = 30  # por hora por IP
