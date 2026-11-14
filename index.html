@@ -658,29 +658,47 @@ function esVoice(){
   return esVoiceCache;
 }
 try{ window.speechSynthesis.onvoiceschanged=()=>{esVoiceCache=null;}; }catch(e){}
-function speak(line){
+/* Voz do gato: MP3 neural do backend (/tts, edge-tts); fallback = sintetizador do navegador */
+let _aud=null, _spSeq=0, _spUrl=null;
+function stopAudio(){
+  if(_aud){try{_aud.pause();}catch(e){}} _aud=null;
+  if(_spUrl){try{URL.revokeObjectURL(_spUrl);}catch(e){}} _spUrl=null;
+  try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
+}
+async function speak(line){
   const b=$("speech"), svg=$("catSvg");
   if(!b||!line) return;
   b.textContent=line; b.style.display="";
   if(svg) svg.classList.add("talking");
   const stop=()=>{ if(svg) svg.classList.remove("talking"); b.style.display="none"; };
-  clearTimeout(speechTimer);
+  const seq=++_spSeq;
+  stopAudio(); clearTimeout(speechTimer);
+  speechTimer=setTimeout(stop,Math.max(2500,line.length*110)); // rede de segurança
   try{
-    if(window.speechSynthesis&&window.SpeechSynthesisUtterance){
-      window.speechSynthesis.cancel();
-      const u=new SpeechSynthesisUtterance(line);
-      const voice=esVoice(); if(voice) u.voice=voice;
-      u.lang="es-ES"; u.rate=0.95; u.pitch=1.45;
-      let started=false;
-      u.onstart=()=>{started=true;};
-      // solo parar antes de tiempo cuando la voz empezó de verdad;
-      // si el sintetizador falla al instante, el temporizador manda
-      u.onend=()=>{if(started)stop();};
-      u.onerror=()=>{if(started)stop();};
-      window.speechSynthesis.speak(u);
-    }
+    const r=await fetch(BACKEND_URL+"/tts?text="+encodeURIComponent(line.slice(0,400)));
+    if(!r.ok) throw 0;
+    const blob=await r.blob();
+    if(seq!==_spSeq) return;
+    _spUrl=URL.createObjectURL(blob);
+    _aud=new Audio(_spUrl);
+    _aud.onended=()=>{ if(seq===_spSeq) stop(); };
+    _aud.onerror=()=>{ if(seq===_spSeq) fallbackSpeak(line,stop,seq); };
+    _aud.play().catch(()=>{ if(seq===_spSeq) fallbackSpeak(line,stop,seq); });
+  }catch(e){ if(seq===_spSeq) fallbackSpeak(line,stop,seq); }
+}
+function fallbackSpeak(line,stop,seq){
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(line);
+    const voice=esVoice(); if(voice) u.voice=voice;
+    u.lang="es-ES"; u.rate=0.95; u.pitch=1.45;
+    let started=false;
+    u.onstart=()=>{started=true;};
+    u.onend=()=>{ if(seq===_spSeq&&started) stop(); };
+    u.onerror=()=>{ if(seq===_spSeq&&started) stop(); };
+    speechSynthesis.speak(u);
   }catch(e){/* sin voz: solo boca+globo */}
-  speechTimer=setTimeout(stop,Math.max(1800,line.length*95));
 }
 
 /* ============== UI ============== */

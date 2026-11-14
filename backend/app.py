@@ -17,11 +17,13 @@ Cloud Run). Rate limit por IP, corpo máximo 200 KB (/generate; 8 MB en /ocr),
 CORS restrito ao GitHub
 Pages do app. O front faz fallback offline (extractExercises) se isto cair.
 """
+import hashlib
 import json
 import os
 import re
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -32,6 +34,7 @@ MAX_BODY = 200_000
 MAX_BODY_OCR = 8_000_000  # fotos comprimidas chegan a ~1 MB cada
 RATE_LIMIT = 30   # /generate e /ocr, por hora por IP
 CHAT_RATE = 120   # /chat, por hora por IP
+TTS_RATE = 300    # /tts, por hora por IP
 WINDOW = 3600
 _hits = {}
 
@@ -191,6 +194,27 @@ def call_chat(messages, name, text):
     return (content or "").strip()[:800]
 
 
+TTS_VOICE = "es-ES-AlvaroNeural"  # voz neural natural do gato (masculina, espanha)
+_tts_cache = {}
+
+
+def _synth_tts(text):
+    """Sintetiza com edge-tts (vozes neurais da Microsoft, gratuito, sem chave)."""
+    import asyncio
+
+    import edge_tts
+
+    async def _go():
+        c = edge_tts.Communicate(text, TTS_VOICE)
+        buf = bytearray()
+        async for chunk in c.stream():
+            if chunk.get("type") == "audio":
+                buf.extend(chunk["data"])
+        return bytes(buf)
+
+    return asyncio.run(_go())
+
+
 def call_model(text, topics):
     user = ("Materias/temas del examen:\n" + (topics or "sin especificar") +
             "\n\nTexto del libro/cuaderno (OCR, puede tener errores):\n" + text[:6000])
@@ -243,8 +267,45 @@ class H(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/health":
             self._json(200, {"ok": True})
+        elif self.path.startswith("/tts?") or self.path == "/tts":
+            self._do_tts()
         else:
             self._json(404, {"error": "no encontrado"})
+
+    def _do_tts(self):
+        """Voz neural do gato (edge-tts, sem chave) com cache em memória."""
+        ip = self.headers.get("X-Forwarded-For", "desconocido").split(",")[-1].strip()
+        now = time.time()
+        key = ip + "|/tts"
+        hist = [t for t in _hits.get(key, []) if now - t < WINDOW]
+        if len(hist) >= TTS_RATE:
+            return self._json(429, {"error": "demasiadas peticiones"})
+        _hits[key] = hist + [now]
+        qs = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+        text = clean_str((qs.get("text") or [""])[0], 400)
+        if not text:
+            return self._json(400, {"error": "falta el texto"})
+        h = hashlib.sha1(text.encode("utf-8")).digest()
+        if h in _tts_cache:
+            return self._send_audio(_tts_cache[h])
+        try:
+            mp3 = _synth_tts(text)
+        except Exception as e:
+            return self._json(502, {"error": "voz indisponível: " + type(e).__name__})
+        if not mp3:
+            return self._json(502, {"error": "voz vacía"})
+        if len(_tts_cache) > 400:
+            _tts_cache.clear()
+        _tts_cache[h] = mp3
+        self._send_audio(mp3)
+
+    def _send_audio(self, mp3):
+        self.send_response(200)
+        self._cors()
+        self.send_header("Content-Type", "audio/mpeg")
+        self.send_header("Content-Length", str(len(mp3)))
+        self.end_headers()
+        self.wfile.write(mp3)
 
     def do_POST(self):
         if self.path not in ("/generate", "/ocr", "/chat"):
