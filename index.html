@@ -686,9 +686,17 @@ function speak(line){
 /* ============== UI ============== */
 const $=id=>document.getElementById(id);
 /* ============== ABAS DE NAVEGACIÓN ============== */
+const GAME_CARDS=["card-color","card-desenho","card-mem","card-lluvia","card-simon","card-sumas"];
 function setTab(id){
   document.body.dataset.tab=id;
   [...document.querySelectorAll("#nav button")].forEach(b=>b.classList.toggle("on",b.dataset.tab===id));
+  [...document.querySelectorAll(".card")].forEach(c=>{
+    if(GAME_CARDS.includes(c.id)){
+      if(id!=="ex") c.style.display="none"; /* sair de Ejercícios fecha os minijogos */
+      return; /* em Ejercícios, mostrar/esconder é trabalho das funções de cada jogo */
+    }
+    c.style.display=(c.dataset.tab===id)?"":"none";
+  });
   if(id==="chat") initChat();
   window.scrollTo({top:0});
 }
