@@ -71,6 +71,8 @@ h3{margin:0 0 6px;font-size:15px}
 .cat{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:10px}
 .cat button{padding:8px 12px;border-radius:999px;background:#eef2ff;font-weight:800;white-space:nowrap}
 .cat button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.pbar{height:12px;background:#e6eaff;border-radius:999px;margin-top:8px;overflow:hidden}
+.pbar>div{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#7c5cff);border-radius:999px;transition:width .35s ease}
 .items{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .item{border:2px solid #e8ecf9;border-radius:14px;padding:12px;text-align:center;background:#fff}
 .item .em{font-size:34px}
@@ -183,6 +185,7 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
     <input type="file" id="fileUp" accept="image/*" multiple style="display:none">
     <img id="fotoPrev" style="display:none;width:100%;border-radius:12px;margin-top:10px" alt="Foto de la tarea">
     <div class="mut" id="ocrStat" style="margin-top:6px"></div>
+    <div class="pbar" id="pbarFoto" style="display:none"><div></div></div>
     <textarea id="txtTarea" rows="4" placeholder="Texto de la tarea (se rellena con la foto o escríbelo aquí)…" style="width:100%;margin-top:8px;border:2px solid #dfe4f2;border-radius:12px;padding:10px;font:inherit;font-size:15px;resize:vertical"></textarea>
     <div class="row" style="margin-top:8px">
       <button class="ghost" id="btnGenFoto" style="flex:1">✨ Generar ejercicios</button>
@@ -232,6 +235,7 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
     <input type="file" id="fileExamen" accept="image/*" multiple style="display:none">
     <img id="fotoExamenPrev" style="display:none;width:100%;border-radius:12px;margin-top:10px" alt="Foto del examen">
     <div class="mut" id="examenStat" style="margin-top:6px"></div>
+    <div class="pbar" id="pbarExamen" style="display:none"><div></div></div>
     <textarea id="txtExamenOCR" rows="3" placeholder="Texto leído de las fotos…" style="width:100%;margin-top:8px;border:2px solid #dfe4f2;border-radius:12px;padding:10px;font:inherit;font-size:15px;resize:vertical"></textarea>
     <textarea id="txtExamen" rows="3" placeholder="Materias o temas del examen (escríbelos aquí, uno por línea)…" style="width:100%;margin-top:8px;border:2px solid #dfe4f2;border-radius:12px;padding:10px;font:inherit;font-size:15px;resize:vertical"></textarea>
     <div class="row" style="margin-top:8px">
@@ -787,10 +791,14 @@ function readFoto(file,prevId){
   rd.onload=()=>{const p=$(prevId||"fotoPrev"); if(p){ p.src=rd.result; p.style.display=""; }};
   rd.readAsDataURL(file);
 }
-async function ocrFoto(file){
+const PBar={ foto:"pbarFoto", examen:"pbarExamen" };
+function progSet(barId,label,pct){ const b=$(barId); if(!b)return; b.style.display=""; b.firstElementChild.style.width=Math.max(0,Math.min(100,Math.round(pct)))+"%"; b.setAttribute("aria-label",label||""); }
+function progEnd(barId){ progSet(barId,"",100); setTimeout(()=>{const b=$(barId); if(b)b.style.display="none";},900); }
+function progCreep(barId){ let p=5; const iv=setInterval(()=>{ p=Math.min(88,p+4); const b=$(barId); if(b) b.firstElementChild.style.width=p+"%"; },400); return ()=>clearInterval(iv); }
+async function ocrFoto(file,onProg){
   try{
     if(!window.Tesseract) await loadScript("https://cdn.jsdelivr.net/npm/tesseract.js@5.0.5/dist/tesseract.min.js");
-    const r=await Tesseract.recognize(file,"spa");
+    const r=await Tesseract.recognize(file,"spa",{logger:m=>{ if(onProg&&m&&m.progress!=null) onProg(m.progress); }});
     return (r.data.text||"").trim();
   }catch(e){ return null; }
 }
@@ -799,12 +807,15 @@ async function procesarFotos(list,txtId,statId,prevId){
   if(!files.length)return;
   readFoto(files[0],prevId);
   const txt=$(txtId||"txtTarea"), stat=$(statId||"ocrStat");
-  let all="", fail=0;
-  for(let i=0;i<files.length;i++){
-    stat.textContent="Leyendo foto "+(i+1)+" de "+files.length+"…";
-    const t=await ocrFoto(files[i]);
+  const bar=(statId==="examenStat")?PBar.examen:PBar.foto;
+  const N=files.length; let all="", fail=0;
+  for(let i=0;i<N;i++){
+    stat.textContent="Leyendo foto "+(i+1)+" de "+N+"… 📖";
+    progSet(bar,stat.textContent, i/N*100);
+    const t=await ocrFoto(files[i], p=>progSet(bar,stat.textContent,(i+p)/N*100));
     if(t===null) fail++; else if(t) all+=(all?"\n":"")+t;
   }
+  progEnd(bar);
   txt.value=all;
   stat.textContent=fail?("No pude leer "+fail+" foto(s): escribe el texto aquí o envía la foto por el chat."):("Texto listo. Revisa y pulsa «Generar ejercicios».");
 }
@@ -815,8 +826,10 @@ $("fileUp").onchange=e=>procesarFotos(e.target.files);
 $("btnGenFoto").onclick=async()=>{
   const btn=$("btnGenFoto"); btn.disabled=true;
   $("ocrStat").textContent="Generando ejercicios con IA… ✨";
+  progSet(PBar.foto,$("ocrStat").textContent,5); const stopCreep=progCreep(PBar.foto);
   let exs=await generarIA($("txtTarea").value,"");
   if(!exs) exs=extractExercises($("txtTarea").value);
+  stopCreep(); progEnd(PBar.foto);
   btn.disabled=false; $("ocrStat").textContent="";
   if(!exs.length){toast("No encontré frases suficientes. Prueba con otro texto.");return;}
   state.custom=state.custom.concat(exs).slice(-40); save();
@@ -862,8 +875,10 @@ $("btnGenExamen").onclick=async()=>{
   const ocr=$("txtExamenOCR").value||"", top=$("txtExamen").value||"";
   const btn=$("btnGenExamen"); btn.disabled=true;
   $("examenStat").textContent="Generando ejercicios con IA… (puede tardar unos segundos) ✨";
+  progSet(PBar.examen,$("examenStat").textContent,5); const stopCreep2=progCreep(PBar.examen);
   let exs=await generarIA(ocr,top);
   if(!exs) exs=extractExercises(ocr+"\n"+top);
+  stopCreep2(); progEnd(PBar.examen);
   btn.disabled=false; $("examenStat").textContent="";
   if(!exs.length){toast("No pude generar ejercicios: prueba con otras fotos o escribe más contenido 😿");return;}
   state.examen=exs;
