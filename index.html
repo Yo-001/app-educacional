@@ -485,12 +485,26 @@ let curCat="Todos";
 
 /* ============== GATITO: frases + boca animada ============== */
 const LINES={
-  greet:"¡Hola! Soy el gatito de las monedas. ¡Elige una materia y vamos a aprender juntos!",
+  greet:"¡Hola! ¡Miau! ¡Soy Miau, tu gatito de las monedas! ¡Elige una materia y a aprender juntos!",
   good:["¡Muy bien! +10 monedas!","¡Eso, genial!","¡Correcto! ¡Bien!"],
   bad:"¡Casi! Sin prisa — ¡inténtalo otra vez.",
   buy:"¡Qué bien! ¡Lo desbloqueaste! 🎉"
 };
 let speechTimer=null;
+let esVoiceCache=null;
+function esVoice(){
+  if(esVoiceCache) return esVoiceCache;
+  try{
+    const vs=window.speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.toLowerCase().replace("_","-").startsWith("es"));
+    if(!vs.length) return null;
+    const friendly=["carmen","elvira","helena","beatriz","luciana","teresa","raquel","irene","monica","maria","female","mujer"];
+    esVoiceCache=vs.find(v=>friendly.some(k=>v.name.toLowerCase().includes(k)))
+      || vs.find(v=>/es-es/i.test(v.lang.replace("_","-")))
+      || vs[0];
+  }catch(e){ return null; }
+  return esVoiceCache;
+}
+try{ window.speechSynthesis.onvoiceschanged=()=>{esVoiceCache=null;}; }catch(e){}
 function speak(line){
   const b=$("speech"), svg=$("catSvg");
   if(!b||!line) return;
@@ -502,7 +516,8 @@ function speak(line){
     if(window.speechSynthesis&&window.SpeechSynthesisUtterance){
       window.speechSynthesis.cancel();
       const u=new SpeechSynthesisUtterance(line);
-      u.lang="es-ES"; u.rate=1.05; u.pitch=1.15;
+      const voice=esVoice(); if(voice) u.voice=voice;
+      u.lang="es-ES"; u.rate=0.95; u.pitch=1.45;
       let started=false;
       u.onstart=()=>{started=true;};
       // solo parar antes de tiempo cuando la voz empezó de verdad;
