@@ -24,7 +24,8 @@ import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-MODEL = "openai/gpt-4o-mini"
+MODEL = "openai/gpt-4o-mini"           # geração de exercícios e OCR principal (fiel ao galego, sem traduzir)
+OCR_MODEL = "google/gemini-2.5-flash"  # OCR de reserva: não recusa fotos com pessoas (o gpt-4o-mini recusa, mas traduz galego→português)
 API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 MAX_BODY = 200_000
 MAX_BODY_OCR = 8_000_000  # fotos comprimidas chegan a ~1 MB cada
@@ -111,9 +112,9 @@ Reglas:
 - Responde SOLO con la transcripción, sin comentarios."""
 
 
-def call_ocr(data_url):
+def _ocr_once(model, data_url):
     payload = json.dumps({
-        "model": MODEL,
+        "model": model,
         "temperature": 0,
         "max_tokens": 3000,
         "messages": [{"role": "user", "content": [
@@ -131,6 +132,22 @@ def call_ocr(data_url):
         data = json.loads(r.read().decode("utf-8", "ignore"))
     content = data["choices"][0]["message"]["content"]
     return (content or "").strip()
+
+
+# o gpt-4o-mini às vezes se recusa a ler fotos com pessoas; nesses casos
+# repetimos com o Gemini, que transcribe sempre (mas pode traduzir o galego,
+# por isso ele só entra como reserva)
+_OCR_REJEITA = ("lo siento", "no puedo", "no podo", "i'm sorry", "i cannot", "i can't")
+
+
+def call_ocr(data_url):
+    text = _ocr_once(MODEL, data_url)
+    low = text.lower()
+    if not text or any(h in low for h in _OCR_REJEITA):
+        alt = _ocr_once(OCR_MODEL, data_url)
+        if alt:
+            return alt
+    return text
 
 
 def call_model(text, topics):
