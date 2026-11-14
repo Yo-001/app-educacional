@@ -1,15 +1,19 @@
 """Backend de geração de exercícios (Cloud Run, stdlib pura — zero dependências).
 
 POST /generate {"text": "...", "topics": "..."} -> {"ejercicios": [...]}
+POST /ocr      {"images": ["data:image/jpeg;base64,..."]} -> {"text": "..."}
 GET  /health -> {"ok": true}
 
-O que faz: recebe o texto do livro/cuaderno (OCR das fotos feitas no app) e
-as matérias do exame (digitado pelos pais), chama um modelo no
-OpenRouter com prompt de professora de 3.º Primaria (castellano) e devolve
-16 exercícios validados no formato exato do app (mc/vf/ordenar/parejas).
+O que faz: /ocr transcribe as fotos do livro/cuaderno con un modelo de visión
+no OpenRouter (fíase do Tesseract do navegador, que lía mal páxinas con
+ilustracións). /generate recibe ese texto e as materias do exame (digitadas
+polos pais), chama un modelo no OpenRouter con prompt de profesora de 3.º
+Primaria (castellano) e devolve 16 exercícios validados no formato exato do
+app (mc/vf/ordenar/parejas).
 
 Segurança: a chave do OpenRouter vive SÓ aqui (variável de ambiente da
-Cloud Run). Rate limit por IP, corpo máximo 200 KB, CORS restrito ao GitHub
+Cloud Run). Rate limit por IP, corpo máximo 200 KB (/generate; 8 MB en /ocr),
+CORS restrito ao GitHub
 Pages do app. O front faz fallback offline (extractExercises) se isto cair.
 """
 import json
@@ -23,6 +27,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 MODEL = "openai/gpt-4o-mini"
 API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 MAX_BODY = 200_000
+MAX_BODY_OCR = 8_000_000  # fotos comprimidas chegan a ~1 MB cada
 RATE_LIMIT = 30  # por hora por IP
 WINDOW = 3600
 _hits = {}
@@ -98,6 +103,36 @@ def parse_payload(body):
     return None
 
 
+OCR_PROMPT = """Transcribe TODO el texto visible de esta foto de página de libro o cuaderno escolar (puede estar en español o en gallego).
+Reglas:
+- Escribe el texto en el mismo orden en que aparece, línea por línea, incluyendo títulos y las palabras de los ejercicios.
+- No inventes ni corrijas nada: transcribe tal cual, aunque haya palabras mal escritas.
+- Ignora dibujos, decoraciones, sellos y números de página.
+- Responde SOLO con la transcripción, sin comentarios."""
+
+
+def call_ocr(data_url):
+    payload = json.dumps({
+        "model": MODEL,
+        "temperature": 0,
+        "max_tokens": 3000,
+        "messages": [{"role": "user", "content": [
+            {"type": "text", "text": OCR_PROMPT},
+            {"type": "image_url", "image_url": {"url": data_url}},
+        ]}],
+    }).encode("utf-8")
+    req = urllib.request.Request(
+        "https://openrouter.ai/api/v1/chat/completions", data=payload,
+        headers={"Content-Type": "application/json",
+                 "Authorization": "Bearer " + API_KEY,
+                 "HTTP-Referer": "https://yo-001.github.io/estudo-moedas/",
+                 "X-Title": "estudo-exams"})
+    with urllib.request.urlopen(req, timeout=120) as r:
+        data = json.loads(r.read().decode("utf-8", "ignore"))
+    content = data["choices"][0]["message"]["content"]
+    return (content or "").strip()
+
+
 def call_model(text, topics):
     user = ("Materias/temas del examen:\n" + (topics or "sin especificar") +
             "\n\nTexto del libro/cuaderno (OCR, puede tener errores):\n" + text[:6000])
@@ -154,7 +189,7 @@ class H(BaseHTTPRequestHandler):
             self._json(404, {"error": "no encontrado"})
 
     def do_POST(self):
-        if self.path != "/generate":
+        if self.path not in ("/generate", "/ocr"):
             return self._json(404, {"error": "no encontrado"})
         ip = self.headers.get("X-Forwarded-For", "desconocido").split(",")[-1].strip()
         now = time.time()
@@ -165,19 +200,46 @@ class H(BaseHTTPRequestHandler):
             n = int(self.headers.get("Content-Length", "0"))
         except Exception:
             n = 0
-        if n <= 0 or n > MAX_BODY:
+        limit = MAX_BODY_OCR if self.path == "/ocr" else MAX_BODY
+        if n <= 0 or n > limit:
             return self._json(400, {"error": "cuerpo inválido o demasiado grande"})
         raw = self.rfile.read(n)
         try:
             reqj = json.loads(raw.decode("utf-8", "ignore"))
         except Exception:
             return self._json(400, {"error": "JSON inválido"})
+        _hits[ip] = hist + [now]
+        if self.path == "/ocr":
+            return self._do_ocr(reqj)
+        self._do_generate(reqj)
+
+    def _do_ocr(self, reqj):
+        if not API_KEY:
+            return self._json(503, {"error": "generador no configurado"})
+        imgs = reqj.get("images") if isinstance(reqj.get("images"), list) else []
+        imgs = [u for u in imgs if isinstance(u, str)
+                and re.match(r"^data:image/(jpeg|jpg|png|webp);base64,", u)
+                and len(u) < MAX_BODY_OCR][:8]
+        if not imgs:
+            return self._json(400, {"error": "no hay fotos válidas"})
+        try:
+            pages = [call_ocr(u) for u in imgs]
+        except urllib.error.HTTPError as e:
+            body = e.read().decode("utf-8", "ignore")[:300]
+            return self._json(502, {"error": "OpenRouter " + str(e.code), "detalle": body})
+        except Exception as e:
+            return self._json(502, {"error": "fallo del lector: " + type(e).__name__})
+        text = "\n\n".join(p for p in pages if p).strip()
+        if not text:
+            return self._json(502, {"error": "no se vio texto en las fotos"})
+        self._json(200, {"text": text})
+
+    def _do_generate(self, reqj):
         text = clean_str(reqj.get("text", ""), 12000)
         if len(text) < 80:
             return self._json(400, {"error": "Texto muy corto: sube fotos del libro/cuaderno o escribe el contenido."})
         if not API_KEY:
             return self._json(503, {"error": "generador no configurado"})
-        _hits[ip] = hist + [now]
         try:
             items = call_model(text, clean_str(reqj.get("topics", ""), 2000))
         except urllib.error.HTTPError as e:

@@ -176,7 +176,7 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
   <!-- CÁMARA -->
   <div class="card" id="card-cam">
     <h2>📷 Cámara de la tarea</h2>
-    <div class="mut" style="font-size:13px;margin-bottom:8px">Saca una foto de la tarea y genera ejercicios de práctica. La foto se lee aquí mismo (con conexión) o pega el texto.</div>
+    <div class="mut" style="font-size:13px;margin-bottom:8px">Saca una foto de la tarea y genera ejercicios de práctica. La foto se lee con IA y puedes corregir el texto antes de generar.</div>
     <div class="row">
       <button class="ghost" id="btnCam" style="flex:1">📸 Tomar foto</button>
       <button class="ghost" id="btnUpload" style="flex:1">🖼️ Subir imágenes</button>
@@ -187,6 +187,7 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
     <div class="mut" id="ocrStat" style="margin-top:6px"></div>
     <div class="pbar" id="pbarFoto" style="display:none"><div></div></div>
     <textarea id="txtTarea" rows="4" placeholder="Texto de la tarea (se rellena con la foto o escríbelo aquí)…" style="width:100%;margin-top:8px;border:2px solid #dfe4f2;border-radius:12px;padding:10px;font:inherit;font-size:15px;resize:vertical"></textarea>
+    <input id="txtTemas" placeholder="Contenidos (opcional, ayuda si la foto sale mal): p. ej., fotosíntesis, nutrición de las plantas…" style="width:100%;margin-top:8px;border:2px solid #dfe4f2;border-radius:12px;padding:10px;font:inherit;font-size:15px">
     <div class="row" style="margin-top:8px">
       <button class="ghost" id="btnGenFoto" style="flex:1">✨ Generar ejercicios</button>
     </div>
@@ -798,9 +799,26 @@ function progCreep(barId){ let p=5; const iv=setInterval(()=>{ p=Math.min(88,p+4
 async function ocrFoto(file,onProg){
   try{
     if(!window.Tesseract) await loadScript("https://cdn.jsdelivr.net/npm/tesseract.js@5.0.5/dist/tesseract.min.js");
-    const r=await Tesseract.recognize(file,"spa",{logger:m=>{ if(onProg&&m&&m.progress!=null) onProg(m.progress); }});
+    const r=await Tesseract.recognize(file,"spa+glg",{logger:m=>{ if(onProg&&m&&m.progress!=null) onProg(m.progress); }});
     return (r.data.text||"").trim();
   }catch(e){ return null; }
+}
+/* Foto comprimida (máx. 1500px, JPEG) para enviar ao lector con IA */
+async function fotoComprimida(file,maxSide,q){
+  return new Promise((res,rej)=>{
+    const img=new Image();
+    img.onload=()=>{ const s=Math.min(1,maxSide/Math.max(img.width,img.height));
+      const c=document.createElement("canvas"); c.width=Math.round(img.width*s); c.height=Math.round(img.height*s);
+      c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+      res(c.toDataURL("image/jpeg",q)); };
+    img.onerror=rej; img.src=URL.createObjectURL(file);
+  });
+}
+async function ocrIA(dataURL){
+  const r=await fetch(BACKEND_URL+"/ocr",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({images:[dataURL]})});
+  if(!r.ok) return null;
+  const d=await r.json();
+  return (d&&d.text)?d.text.trim():null;
 }
 async function procesarFotos(list,txtId,statId,prevId){
   const files=[...list].filter(f=>f&&(!f.type||f.type.indexOf("image")===0));
@@ -810,14 +828,21 @@ async function procesarFotos(list,txtId,statId,prevId){
   const bar=(statId==="examenStat")?PBar.examen:PBar.foto;
   const N=files.length; let all="", fail=0;
   for(let i=0;i<N;i++){
-    stat.textContent="Leyendo foto "+(i+1)+" de "+N+"… 📖";
+    stat.textContent="Leyendo foto "+(i+1)+" de "+N+" con IA… 📖";
     progSet(bar,stat.textContent, i/N*100);
-    const t=await ocrFoto(files[i], p=>progSet(bar,stat.textContent,(i+p)/N*100));
+    const creep=progCreep(bar);
+    let t=null;
+    try{ t=await ocrIA(await fotoComprimida(files[i],1500,0.8)); }catch(e){}
+    creep();
+    if(!t){ /* sin conexión o sin backend: lector básico del navegador */
+      stat.textContent="Leyendo foto "+(i+1)+" de "+N+" (lectura básica)… 📖";
+      t=await ocrFoto(files[i], p=>progSet(bar,stat.textContent,(i+p)/N*100));
+    }
     if(t===null) fail++; else if(t) all+=(all?"\n":"")+t;
   }
   progEnd(bar);
   txt.value=all;
-  stat.textContent=fail?("No pude leer "+fail+" foto(s): escribe el texto aquí o envía la foto por el chat."):("Texto listo. Revisa y pulsa «Generar ejercicios».");
+  stat.textContent=fail?("No pude leer "+fail+" foto(s): escribe el texto aquí o envía la foto por el chat."):"Texto listo. Revisa y pulsa «Generar ejercicios».";
 }
 $("btnCam").onclick=()=>$("fileCam").click();
 $("btnUpload").onclick=()=>$("fileUp").click();
@@ -827,7 +852,7 @@ $("btnGenFoto").onclick=async()=>{
   const btn=$("btnGenFoto"); btn.disabled=true;
   $("ocrStat").textContent="Generando ejercicios con IA… ✨";
   progSet(PBar.foto,$("ocrStat").textContent,5); const stopCreep=progCreep(PBar.foto);
-  let exs=await generarIA($("txtTarea").value,"");
+  let exs=await generarIA($("txtTarea").value,$("txtTemas").value);
   if(!exs) exs=extractExercises($("txtTarea").value);
   stopCreep(); progEnd(PBar.foto);
   btn.disabled=false; $("ocrStat").textContent="";
