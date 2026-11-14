@@ -388,7 +388,7 @@ function vibrate(ms){try{navigator.vibrate&&navigator.vibrate(ms);}catch(e){}}
 /* moneda: nunca negativa, debitar solo si hay saldo, idempotente vía owned */
 function earn(n,why){
   if(!Number.isFinite(n)||n<=0) return;
-  state.coins+=n; state.totalEarned+=n; save(); renderWallet();
+  state.coins+=n; state.totalEarned+=n; save(); renderWallet(); renderShop(); // re-render: libera botões da loja sem recarregar
   toast("+ "+fmt(n)+" 🪙 "+(why?"· "+why:""));
   if(n>=5) confetti();
 }
