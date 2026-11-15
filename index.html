@@ -151,6 +151,8 @@ h3{margin:0 0 6px;font-size:15px}
 .tres button{aspect-ratio:1;font-size:32px;border-radius:14px;border:2px solid #dfe4f2;background:#f7f9ff;font-weight:800;cursor:pointer;font-family:inherit}
 .tres button.win{background:#e6f9ef;border-color:var(--good)}
 .aho-face{font-size:34px;text-align:center;line-height:1.1}
+.aho-again{display:none;margin:12px auto 0;padding:10px 18px;border-radius:12px;background:var(--accent);color:#fff;font-weight:800;font-size:15px}
+.aho-again.on{display:block}
 .aho{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin:8px 0}
 .aho .l{width:24px;height:32px;border-bottom:3px solid #2b2d42;display:flex;align-items:flex-end;justify-content:center;font-weight:800;font-size:19px}
 .keys{display:grid;grid-template-columns:repeat(9,1fr);gap:4px;margin-top:6px}
@@ -348,6 +350,7 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
     <div class="aho-face" id="ahoFace">😺</div>
     <div class="aho" id="ahoBox"></div>
     <div class="keys" id="ahoKeys"></div>
+    <button class="aho-again" id="ahoAgain" onclick="startAho()">🔁 Outra palabra</button>
   </div>
 
   <!-- MINIJUEGO: 2048 -->
@@ -1330,7 +1333,18 @@ const AHO_WORDS=[
 ];
 const AHO_FACES=["😺","😸","😼","🙀","😾","😿","😵"];
 const AHO_KEYS="ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split("");
-let ahoWord="", ahoHit={}, ahoMiss=0, ahoOn=false;
+let ahoWord="", ahoHit={}, ahoMiss=0, ahoOn=false, ahoBag=[];
+function ahoNextWord(){
+  /* bolsa barallada: cada partida dá palabra nova, e só se repite cando xa saíron todas */
+  if(!ahoBag.length){
+    ahoBag=AHO_WORDS.map((_,i)=>i);
+    for(let i=ahoBag.length-1;i>0;i--){ const j=rnd(0,i); [ahoBag[i],ahoBag[j]]=[ahoBag[j],ahoBag[i]]; }
+    if(AHO_WORDS[ahoBag[ahoBag.length-1]][0]===ahoWord && ahoBag.length>1){
+      [ahoBag[ahoBag.length-1],ahoBag[0]]=[ahoBag[0],ahoBag[ahoBag.length-1]];
+    }
+  }
+  return AHO_WORDS[ahoBag.pop()];
+}
 function ahoPaint(){
   const box=$("ahoBox"); box.innerHTML="";
   ahoWord.split("").forEach(ch=>{
@@ -1350,12 +1364,14 @@ function ahoWin(){
   const premio=10+3*(6-ahoMiss);
   earn(premio,"ahorcado"); confetti(); speak("¡Palabra completada! ¡Bien!");
   $("ahoStat").textContent="🏆 ¡Era "+ahoWord+"! +"+premio+" 🪙";
+  $("ahoAgain").classList.add("on");
 }
 function ahoLose(){
   ahoOn=false;
   ahoWord.split("").forEach(ch=>{ ahoHit[ch]=true; });
   ahoPaint();
   $("ahoStat").textContent="Era "+ahoWord+". La próxima sale 😉";
+  $("ahoAgain").classList.add("on");
 }
 function ahoTry(ch){
   if(!ahoOn||ahoHit[ch]) return;
@@ -1366,8 +1382,8 @@ function ahoTry(ch){
   if(ahoWord.split("").every(c=>ahoHit[c])) ahoWin();
 }
 function startAho(){
-  const w=pick(AHO_WORDS); ahoWord=w[0]; ahoHit={}; ahoMiss=0; ahoOn=true;
-  $("ahoStat").textContent="Pista: "+w[1];
+  const w=ahoNextWord(); ahoWord=w[0]; ahoHit={}; ahoMiss=0; ahoOn=true;
+  $("ahoStat").textContent="Pista: "+w[1]; $("ahoAgain").classList.remove("on");
   const kb=$("ahoKeys"); kb.innerHTML="";
   AHO_KEYS.forEach(ch=>{
     const b=document.createElement("button"); b.dataset.ch=ch; b.textContent=ch;
