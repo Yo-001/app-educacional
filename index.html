@@ -639,7 +639,7 @@ let curCat="Todos";
 
 /* ============== GATITO: frases + boca animada ============== */
 const LINES={
-  greet:"¡Hola! ¡Miau! ¡Soy Miau, tu gatito de las monedas! ¡Elige una materia y a aprender juntos!",
+  greet:"¡Miau! Soy Gatuno, tu gato tutor. ¡Elige una materia y a aprender juntos!",
   good:["¡Muy bien! +10 monedas!","¡Eso, genial!","¡Correcto! ¡Bien!"],
   bad:"¡Casi! Sin prisa — ¡inténtalo otra vez.",
   buy:"¡Qué bien! ¡Lo desbloqueaste! 🎉"
@@ -685,6 +685,7 @@ const EMOJI_RE=/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\
 function stripEmoji(s){ return String(s||"").replace(EMOJI_RE,"").replace(/[ \t]{2,}/g," ").trim(); }
 /* devuelve Promise que resuelve cuando el audio termina (o es interrumpido por otra fala) */
 let speechPlaying=0; /* >0 mientras suena la voz del gato (evita que el micro se escuche a sí mismo) */
+let catQuietUntil=0; /* ms absolutas: hasta cuándo se descarta lo que oye el micro (cola de eco tras hablar el gato) */
 function speak(line){
   return new Promise(resolve=>{
   const b=$("speech"), svg=$("catSvg");
@@ -695,7 +696,7 @@ function speak(line){
   if(svg) svg.classList.add("talking");
   const sayLine=stripEmoji(line);
   let stopped=false;
-  const stop=()=>{ if(stopped) return; stopped=true; speechPlaying=Math.max(0,speechPlaying-1); if(_spStop===stop) _spStop=null; if(svg) svg.classList.remove("talking"); b.style.display="none"; if(_spResolve===resolve) _spResolve=null; resolve(); };
+  const stop=()=>{ if(stopped) return; stopped=true; speechPlaying=Math.max(0,speechPlaying-1); catQuietUntil=Date.now()+1500; /* cola de eco: el altavoz tarda un instante en callarse */ if(_spStop===stop) _spStop=null; if(svg) svg.classList.remove("talking"); b.style.display="none"; if(_spResolve===resolve) _spResolve=null; resolve(); };
   _spStop=stop;
   const seq=++_spSeq;
   speechPlaying++;
@@ -1289,8 +1290,10 @@ function initChat(){
   if(chatStarted) return; chatStarted=true;
   $("nameRow").style.display=state.name?"none":"";
   if(!chatHist.length){
-    addMsg("cat",(state.name?("¡Hola, "+state.name+"!"):"¡Hola!")+
-      " Soy Gatuno, tu gato tutor 🐱 ¿Quieres jugar, un chiste, o repasar la escuela?");
+    const g=(state.name?("¡Hola, "+state.name+"!"):"¡Hola!")+
+      " Soy Gatuno, tu gato tutor 🐱 ¿Quieres jugar, un chiste, o repasar la escuela?";
+    chatHist.push({role:"assistant",content:g}); /* sembrado: el modelo no se re-presenta ni inventa otro saludo */
+    addMsg("cat",g);
   }
 }
 function addMsg(role,text){
@@ -1344,8 +1347,11 @@ $("chatName").addEventListener("keydown",e=>{
     btn.style.background=on?"#ff5252":""; btn.style.color=on?"#fff":"";
     if(hint) $("chatHint").textContent=hint;
   };
+  const quiet=()=>Date.now()<catQuietUntil; /* cola de eco tras la voz del gato */
   const flush=()=>{
     clearTimeout(silenceT);
+    const waitQ=catQuietUntil-Date.now();
+    if(waitQ>0){ silenceT=setTimeout(flush, waitQ+80); return; } /* la cola de eco aún audible: reintenta tras ella, sin perder lo oído */
     const t=(pending+" "+lastInterim).trim();
     pending=""; lastInterim="";
     if(t){ setUI(true,"El gato está pensando… 🐾"); sendChat(t); }
@@ -1369,7 +1375,7 @@ $("chatName").addEventListener("keydown",e=>{
     rec.lang="es-ES"; rec.interimResults=true; rec.maxAlternatives=1; rec.continuous=true;
     rec.onstart=()=>setUI(true,"Te escucho… tómate tu tiempo 🐱 (toca 👂 para apagar)");
     rec.onresult=e=>{
-      if(chatBusy||speechPlaying>0) return; /* ignora la voz del gato (y el propio eco) */
+      if(chatBusy||speechPlaying>0||quiet()) return; /* ignora la voz del gato (y el propio eco) */
       let fin="", inter="";
       for(let i=e.resultIndex;i<e.results.length;i++){
         const r=e.results[i];
@@ -1395,10 +1401,9 @@ $("chatName").addEventListener("keydown",e=>{
     };
     rec.onend=()=>{
       clearTimeout(silenceT);
-      const t=(pending+" "+lastInterim).trim();
-      if(t){ pending=""; lastInterim=""; sendChat(t); }
-      if(!micOn){ setUI(false,HINT); return; }
-      whenCalm(()=>{ if(micOn) listen(); }); /* espera a que termine de hablar el gato */
+      if(!micOn){ pending=""; lastInterim=""; setUI(false,HINT); return; }
+      flush(); /* respeta la cola de eco: si aún se oye al gato, espera y reintenta */
+      whenCalm(()=>{ if(micOn) listen(); });
     };
     try{ rec.start(); }catch(e){ whenCalm(()=>{ if(micOn) listen(); }); }
   }
@@ -1577,7 +1582,7 @@ $("btnExamenRev2").onclick=()=>{ if(!state.examen2.length){toast("Genera primero
 
 renderWallet(); renderSubjects(); renderShop(); renderReport(); renderAvatar(); updateExamUI();
 renderBoard(); renderBoardBar(); initChat(); setTab("ex");
-speak(LINES.greet);
+speak("¡Hola, "+(state.name||"Maitê")+"! "+LINES.greet);
 </script>
 </body>
 </html>
