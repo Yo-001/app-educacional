@@ -764,7 +764,10 @@ function paintExercise(ex,after,timer){
   const box=$("exOpts"); box.innerHTML=""; box.className="opts";
   if(ex.tipo==="ordenar") return paintOrdenar(ex,box,after);
   if(ex.tipo==="parejas") return paintParejas(ex,box,after);
-  ex.opts.forEach(o=>{
+  /* embaralha as opções (exceto Verdadero/Falso): o modelo tende a pôr a certa em 1º */
+  const opts=ex.opts.slice();
+  if(ex.tipo!=="vf"){ for(let i=opts.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=opts[i]; opts[i]=opts[j]; opts[j]=t; } }
+  opts.forEach(o=>{
     const b=document.createElement("button"); b.className="opt"; b.textContent=o;
     b.onclick=()=>{
       if(exAnswered) return; exAnswered=true; stopExTimer();
