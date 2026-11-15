@@ -54,9 +54,12 @@ body{padding-bottom:78px}
 .co-btn{border-radius:12px;padding:10px 8px;font-size:14px;color:#fff;font-weight:700;border:none;cursor:pointer;background:var(--accent);font-family:inherit}
 .co-btn.no{opacity:.35;text-decoration:line-through}
 /* colorear: a arte trae os seus grupos pintables (data-g/data-c); o motor só enche */
-.co-art{max-width:340px;margin:6px auto 2px;position:relative}
-.co-tiles{position:absolute;inset:0;display:grid;grid-auto-rows:1fr;gap:3px}
-.co-tile{background:#e3e8f7;border:1px solid #c8cfe3;border-radius:6px;transition:opacity .3s ease}
+.co-art{max-width:340px;margin:6px auto 2px;position:relative;border-radius:22px;padding:6px 4px;
+  background:radial-gradient(120% 110% at 50% 0%,#fff 0%,#f3f6ff 70%,#eaeffb 100%);
+  box-shadow:inset 0 0 0 1px rgba(120,135,180,.16),0 6px 18px rgba(40,55,110,.07)}
+/* sen ocos entre pezas: calquera fenda deixaría ver as cores do debuxo escondido */
+.co-tiles{position:absolute;inset:0;border-radius:18px;overflow:hidden;pointer-events:none}
+.co-tile{position:absolute;background:#e3e8f7;box-shadow:inset 0 0 0 1px #d5dbea;transition:opacity .35s ease}
 .co-album{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin:8px 0 4px}
 .co-slot{width:32px;height:32px;border-radius:10px;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:17px;border:2px solid transparent}
 .co-slot.got{background:#fff;border-color:var(--accent)}
@@ -65,9 +68,11 @@ body{padding-bottom:78px}
 .co-mode{flex:0 0 auto;border:2px solid transparent;background:#eef2ff;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;color:inherit}
 .co-mode.on{border-color:var(--accent);background:#fff}
 .co-art svg{width:100%;height:auto;display:block}
-.co-art [data-g]{fill:#eef1f6;stroke:#c3c9d9;stroke-width:2;stroke-linejoin:round;transition:fill .35s ease}
-.co-art .painted{animation:coPop .45s ease}
-@keyframes coPop{0%{transform:scale(.94)}55%{transform:scale(1.04)}100%{transform:scale(1)}}
+.co-art [data-g]{fill:#eef1f6;stroke:#a4adc7;stroke-width:2;stroke-linejoin:round;stroke-linecap:round;transition:fill .35s ease,stroke .35s ease}
+/* O pop vai en opacidade/brillo, non en transform: moitas pezas usan o atributo
+   transform (ás, estrelas, orellas), e un transform de CSS sobrescríbeo e salta ao origen. */
+.co-art .painted{animation:coPop .5s ease}
+@keyframes coPop{0%{opacity:.45;filter:brightness(1.35)}100%{opacity:1;filter:none}}
 .co-pick{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;-webkit-overflow-scrolling:touch}
 .co-chip{flex:0 0 auto;border:2px solid transparent;background:#eef2ff;border-radius:14px;padding:6px 10px;font-weight:800;font-size:13px;cursor:pointer}
 .co-chip.on{border-color:var(--accent);background:#fff}
@@ -1619,113 +1624,161 @@ function newSuma(){
    El motor no sabe qué animal pinta: por cada respuesta correcta rellena el
    siguiente grupo. Añadir arte = añadir un objeto a ART. */
 const ART=[
-{id:"gato",em:"🐱",nome:"el gato",svg:`<ellipse data-g="corpo" data-n="el cuerpo" data-c="#f7b267" cx="100" cy="150" rx="46" ry="28"/>
-<path data-g="rabo" data-n="la cola" data-c="#f7b267" d="M144 150 q30 0 26 -26 q-2 -13 -13 -10 q7 11 -3 17 q-9 6 -15 4 z"/>
-<rect data-g="patas" data-n="las patas" data-c="#f9c784" x="70" y="168" width="15" height="20" rx="7"/>
-<rect data-g="patas" data-c="#f9c784" x="115" y="168" width="15" height="20" rx="7"/>
-<polygon data-g="orellas" data-n="las orejas" data-c="#f7b267" points="62,56 46,18 86,40"/>
-<polygon data-g="orellas" data-c="#f7b267" points="138,56 154,18 114,40"/>
-<ellipse data-g="cabeza" data-n="la cabeza" data-c="#f9c784" cx="100" cy="80" rx="50" ry="42"/>
-<path data-g="listas" data-n="las rayas" data-c="#e08b3f" d="M100 40 v14 M86 42 v12 M114 42 v12" fill="none" stroke="#e08b3f" stroke-width="5" stroke-linecap="round"/>
-<circle data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="82" cy="76" r="8"/>
-<circle data-g="ollos" data-c="#2b2d42" cx="118" cy="76" r="8"/>
-<path data-g="nariz" data-n="la nariz" data-c="#e56b6f" d="M94 92 q6 8 12 0 q-6 10 -12 0 z"/>`},
+{id:"gato",em:"🐱",nome:"el gato",svg:`<ellipse cx="100" cy="188" rx="52" ry="7" fill="#0b1030" opacity=".07"/>
+<path data-g="rabo" data-n="la cola" data-c="#e8933f" d="M144 158 q32 -6 29 -32 q-2 -13 -15 -10 q9 11 -1 20 q-9 8 -17 9 z"/>
+<ellipse data-g="corpo" data-n="el cuerpo" data-c="#f7b267" cx="100" cy="152" rx="46" ry="29"/>
+<ellipse data-g="peito" data-n="la barriga" data-c="#ffe3c2" cx="100" cy="158" rx="23" ry="20"/>
+<rect data-g="patas" data-n="las patas" data-c="#f2a85f" x="72" y="168" width="19" height="22" rx="9"/>
+<rect data-g="patas" data-c="#f2a85f" x="109" y="168" width="19" height="22" rx="9"/>
+<polygon data-g="orellas" data-n="las orejas" data-c="#f7b267" points="62,50 47,12 89,34"/>
+<polygon data-g="orellas" data-c="#f7b267" points="138,50 153,12 111,34"/>
+<polygon data-g="orellas" data-c="#ffb3c1" points="66,46 57,24 81,37"/>
+<polygon data-g="orellas" data-c="#ffb3c1" points="134,46 143,24 119,37"/>
+<ellipse data-g="cabeza" data-n="la cabeza" data-c="#f9c784" cx="100" cy="82" rx="50" ry="43"/>
+<path data-g="listas" data-n="las rayas" data-c="#e08b3f" d="M100 42 v13 M88 45 l-3 12 M112 45 l3 12" fill="none" stroke="#e08b3f" stroke-width="5" stroke-linecap="round"/>
+<ellipse data-g="meixelas" data-n="las mejillas" data-c="#ffb3c1" cx="66" cy="96" rx="10" ry="6.5"/>
+<ellipse data-g="meixelas" data-c="#ffb3c1" cx="134" cy="96" rx="10" ry="6.5"/>
+<ellipse data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="82" cy="78" rx="8" ry="9"/>
+<ellipse data-g="ollos" data-c="#2b2d42" cx="118" cy="78" rx="8" ry="9"/>
+<circle data-g="ollos" data-c="#ffffff" cx="79.5" cy="74" r="2.8"/>
+<circle data-g="ollos" data-c="#ffffff" cx="115.5" cy="74" r="2.8"/>
+<path data-g="nariz" data-n="la nariz" data-c="#ef7a85" d="M94 92 h12 q-6 8 -12 0 z"/>
+<path data-g="boca" data-n="la boca" data-c="#8a5a44" d="M100 100 q-4 7 -10 3 M100 100 q4 7 10 3" fill="none" stroke="#8a5a44" stroke-width="3" stroke-linecap="round"/>`},
 
-{id:"can",em:"🐶",nome:"el perro",svg:`<ellipse data-g="corpo" data-n="el cuerpo" data-c="#d9a066" cx="100" cy="150" rx="46" ry="26"/>
-<path data-g="rabo" data-n="la cola" data-c="#d9a066" d="M146 146 q26 -8 22 -28 q-2 -10 -11 -8 q6 10 -3 15 q-8 4 -13 2 z"/>
-<rect data-g="patas" data-n="las patas" data-c="#c98e4b" x="70" y="166" width="15" height="22" rx="7"/>
-<rect data-g="patas" data-c="#c98e4b" x="115" y="166" width="15" height="22" rx="7"/>
-<ellipse data-g="cabeza" data-n="la cabeza" data-c="#e0b07a" cx="100" cy="82" rx="42" ry="38"/>
-<ellipse data-g="orellas" data-n="las orejas" data-c="#c98e4b" cx="66" cy="96" rx="11" ry="23"/>
-<ellipse data-g="orellas" data-c="#c98e4b" cx="134" cy="96" rx="11" ry="23"/>
-<ellipse data-g="focino" data-n="el hocico" data-c="#f2d0a9" cx="100" cy="96" rx="19" ry="13"/>
-<path data-g="lingua" data-n="la lengua" data-c="#ff6b6b" d="M96 114 q4 12 8 0 z"/>
-<circle data-g="nariz" data-n="la nariz" data-c="#3d3d3d" cx="100" cy="91" r="5"/>
-<circle data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="84" cy="74" r="6"/>
-<circle data-g="ollos" data-c="#2b2d42" cx="116" cy="74" r="6"/>`},
+{id:"can",em:"🐶",nome:"el perro",svg:`<ellipse cx="100" cy="188" rx="52" ry="7" fill="#0b1030" opacity=".07"/>
+<path data-g="rabo" data-n="la cola" data-c="#c98e4b" d="M142 148 q30 -8 26 -32 q-2 -12 -14 -9 q9 11 -1 19 q-9 6 -16 6 z"/>
+<ellipse data-g="corpo" data-n="el cuerpo" data-c="#d9a066" cx="100" cy="150" rx="44" ry="27"/>
+<ellipse data-g="peito" data-n="la barriga" data-c="#f3d4ad" cx="100" cy="156" rx="22" ry="18"/>
+<rect data-g="patas" data-n="las patas" data-c="#c98e4b" x="72" y="166" width="19" height="24" rx="9"/>
+<rect data-g="patas" data-c="#c98e4b" x="109" y="166" width="19" height="24" rx="9"/>
+<ellipse data-g="cabeza" data-n="la cabeza" data-c="#e0b07a" cx="100" cy="84" rx="41" ry="37"/>
+<ellipse data-g="orellas" data-n="las orejas" data-c="#c98e4b" cx="62" cy="92" rx="12" ry="26" transform="rotate(-12 62 92)"/>
+<ellipse data-g="orellas" data-c="#c98e4b" cx="138" cy="92" rx="12" ry="26" transform="rotate(12 138 92)"/>
+<ellipse data-g="focino" data-n="el hocico" data-c="#f2d0a9" cx="100" cy="99" rx="21" ry="15"/>
+<circle data-g="nariz" data-n="la nariz" data-c="#3d3d3d" cx="100" cy="93" r="6"/>
+<path data-g="boca" data-n="la boca" data-c="#7a5c46" d="M100 99 v5 M100 104 q-6 5 -10 0 M100 104 q6 5 10 0" fill="none" stroke="#7a5c46" stroke-width="2.6" stroke-linecap="round"/>
+<path data-g="lingua" data-n="la lengua" data-c="#ff6b6b" d="M95 110 q5 13 11 1 q-6 4 -11 -1 z"/>
+<circle data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="84" cy="73" r="6.5"/>
+<circle data-g="ollos" data-c="#2b2d42" cx="116" cy="73" r="6.5"/>
+<circle data-g="ollos" data-c="#ffffff" cx="82" cy="70.5" r="2.2"/>
+<circle data-g="ollos" data-c="#ffffff" cx="114" cy="70.5" r="2.2"/>`},
 
-{id:"capivara",em:"🦫",nome:"la capibara",svg:`<ellipse data-g="corpo" data-n="el cuerpo" data-c="#a47148" cx="100" cy="144" rx="56" ry="30"/>
-<rect data-g="patas" data-n="las patas" data-c="#8c5e3c" x="66" y="160" width="16" height="26" rx="7"/>
-<rect data-g="patas" data-c="#8c5e3c" x="118" y="160" width="16" height="26" rx="7"/>
-<rect data-g="cabeza" data-n="la cabeza" data-c="#b9835a" x="64" y="56" width="72" height="54" rx="24"/>
-<circle data-g="orellas" data-n="las orejas" data-c="#8c5e3c" cx="70" cy="56" r="8"/>
-<circle data-g="orellas" data-c="#8c5e3c" cx="130" cy="56" r="8"/>
-<rect data-g="focino" data-n="el hocico" data-c="#c99a72" x="80" y="90" width="40" height="27" rx="13"/>
-<path data-g="nariz" data-n="la nariz" data-c="#5b3a29" d="M92 98 q4 -5 8 0 q4 -5 8 0 v4 q-8 5 -16 0 z"/>
-<circle data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="86" cy="76" r="5"/>
-<circle data-g="ollos" data-c="#2b2d42" cx="114" cy="76" r="5"/>`},
+{id:"capivara",em:"🦫",nome:"la capibara",svg:`<ellipse cx="100" cy="188" rx="52" ry="7" fill="#0b1030" opacity=".07"/>
+<ellipse data-g="corpo" data-n="el cuerpo" data-c="#a47148" cx="100" cy="142" rx="56" ry="30"/>
+<rect data-g="patas" data-n="las patas" data-c="#8c5e3c" x="66" y="160" width="18" height="26" rx="9"/>
+<rect data-g="patas" data-c="#8c5e3c" x="116" y="160" width="18" height="26" rx="9"/>
+<circle data-g="orellas" data-n="las orejas" data-c="#8c5e3c" cx="68" cy="60" r="9"/>
+<circle data-g="orellas" data-c="#8c5e3c" cx="132" cy="60" r="9"/>
+<rect data-g="cabeza" data-n="la cabeza" data-c="#b9835a" x="62" y="54" width="76" height="56" rx="26"/>
+<rect data-g="focino" data-n="el hocico" data-c="#cfa27a" x="78" y="88" width="44" height="30" rx="15"/>
+<ellipse data-g="meixelas" data-n="las mejillas" data-c="#d9b28c" cx="72" cy="86" rx="9" ry="6"/>
+<ellipse data-g="meixelas" data-c="#d9b28c" cx="128" cy="86" rx="9" ry="6"/>
+<path data-g="nariz" data-n="la nariz" data-c="#5b3a29" d="M92 96 q4 -5 8 0 q4 -5 8 0 v4 q-8 6 -16 0 z"/>
+<circle data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="86" cy="74" r="5.5"/>
+<circle data-g="ollos" data-c="#2b2d42" cx="114" cy="74" r="5.5"/>
+<circle data-g="ollos" data-c="#ffffff" cx="84.5" cy="72" r="1.9"/>
+<circle data-g="ollos" data-c="#ffffff" cx="112.5" cy="72" r="1.9"/>
+<path data-g="boca" data-n="la boca" data-c="#6b4630" d="M96 106 q4 4 8 0" fill="none" stroke="#6b4630" stroke-width="2.4" stroke-linecap="round"/>`},
 
-{id:"coello",em:"🐰",nome:"el conejo",svg:`<ellipse data-g="corpo" data-n="el cuerpo" data-c="#f7f7fa" cx="100" cy="146" rx="38" ry="30"/>
+{id:"coello",em:"🐰",nome:"el conejo",svg:`<ellipse cx="100" cy="188" rx="52" ry="7" fill="#0b1030" opacity=".07"/>
+<ellipse data-g="corpo" data-n="el cuerpo" data-c="#f7f7fa" cx="100" cy="146" rx="38" ry="30"/>
 <ellipse data-g="patas" data-n="las patas" data-c="#e6e6ee" cx="78" cy="168" rx="16" ry="9"/>
 <ellipse data-g="patas" data-c="#e6e6ee" cx="122" cy="168" rx="16" ry="9"/>
-<circle data-g="rabo" data-n="el rabo" data-c="#ffffff" cx="58" cy="144" r="10"/>
-<ellipse data-g="orellas" data-n="las orejas" data-c="#f7f7fa" cx="84" cy="42" rx="10" ry="31"/>
-<ellipse data-g="orellas" data-c="#f7f7fa" cx="116" cy="42" rx="10" ry="31"/>
-<ellipse data-g="orellas-int" data-n="el interior de las orejas" data-c="#ffc2d1" cx="84" cy="42" rx="5" ry="22"/>
-<ellipse data-g="orellas-int" data-c="#ffc2d1" cx="116" cy="42" rx="5" ry="22"/>
-<circle data-g="cabeza" data-n="la cabeza" data-c="#f7f7fa" cx="100" cy="86" r="35"/>
-<circle data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="88" cy="80" r="5"/>
-<circle data-g="ollos" data-c="#2b2d42" cx="112" cy="80" r="5"/>
-<path data-g="nariz" data-n="la nariz" data-c="#ff8fa3" d="M94 94 q6 6 12 0 q-6 8 -12 0 z"/>
-<path data-g="cenoria" data-n="la zanahoria" data-c="#ff9f1c" d="M44 150 q14 -8 26 4 q-12 12 -26 -4 z"/>
-<path data-g="follas" data-n="las hojas" data-c="#43aa8b" d="M44 150 q-2 -12 8 -14 q2 10 -8 14 z"/>`},
-{id:"unicornio",em:"🦄",nome:"el unicornio",svg:`<ellipse data-g="corpo" data-n="el cuerpo" data-c="#f3e8ff" cx="100" cy="142" rx="46" ry="28"/>
-<path data-g="rabo" data-n="la cola" data-c="#ff8fab" d="M144 138 q30 -4 26 -30 q-2 -10 -12 -7 q6 10 -3 16 q-8 5 -13 3 z"/>
-<rect data-g="patas" data-n="las patas" data-c="#e5d4f7" x="68" y="156" width="13" height="32" rx="6"/>
-<rect data-g="patas" data-c="#e5d4f7" x="86" y="158" width="13" height="30" rx="6"/>
-<rect data-g="patas" data-c="#e5d4f7" x="112" y="158" width="13" height="30" rx="6"/>
-<rect data-g="patas" data-c="#e5d4f7" x="130" y="156" width="13" height="32" rx="6"/>
-<ellipse data-g="cabeza" data-n="la cabeza" data-c="#f7eeff" cx="100" cy="80" rx="37" ry="33"/>
-<path data-g="crina" data-n="la crin" data-c="#ff8fab" d="M118 56 q22 8 16 34 q-4 18 -16 24 q10 -24 2 -38 q-6 -12 -2 -20 z"/>
-<polygon data-g="corno" data-n="el cuerno" data-c="#ffd166" points="92,48 100,8 108,48"/>
-<circle data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="88" cy="76" r="5"/>
-<circle data-g="ollos" data-c="#2b2d42" cx="112" cy="76" r="5"/>
-<path data-g="estrelas" data-n="las estrellas" data-c="#ffd166" transform="translate(34,44)" d="M0 -7 L2 -2 L7 0 L2 2 L0 7 L-2 2 L-7 0 L-2 -2 Z"/>
-<path data-g="estrelas" data-c="#ffd166" transform="translate(166,64) scale(.8)" d="M0 -7 L2 -2 L7 0 L2 2 L0 7 L-2 2 L-7 0 L-2 -2 Z"/>
-<path data-g="estrelas" data-c="#ffd166" transform="translate(150,24) scale(.6)" d="M0 -7 L2 -2 L7 0 L2 2 L0 7 L-2 2 L-7 0 L-2 -2 Z"/>`},
+<circle data-g="rabo" data-n="el rabo" data-c="#ffffff" cx="58" cy="144" r="11"/>
+<ellipse data-g="orellas" data-n="las orejas" data-c="#f7f7fa" cx="84" cy="44" rx="11" ry="34"/>
+<ellipse data-g="orellas" data-c="#f7f7fa" cx="116" cy="44" rx="11" ry="34"/>
+<ellipse data-g="orellas" data-c="#ffc2d1" cx="84" cy="46" rx="5.5" ry="25"/>
+<ellipse data-g="orellas" data-c="#ffc2d1" cx="116" cy="46" rx="5.5" ry="25"/>
+<circle data-g="cabeza" data-n="la cabeza" data-c="#f7f7fa" cx="100" cy="88" r="36"/>
+<ellipse data-g="meixelas" data-n="las mejillas" data-c="#ffc2d1" cx="78" cy="94" rx="8" ry="5.5"/>
+<ellipse data-g="meixelas" data-c="#ffc2d1" cx="122" cy="94" rx="8" ry="5.5"/>
+<circle data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="88" cy="82" r="5.5"/>
+<circle data-g="ollos" data-c="#2b2d42" cx="112" cy="82" r="5.5"/>
+<circle data-g="ollos" data-c="#ffffff" cx="86.5" cy="80" r="1.9"/>
+<circle data-g="ollos" data-c="#ffffff" cx="110.5" cy="80" r="1.9"/>
+<path data-g="nariz" data-n="la nariz" data-c="#ff8fa3" d="M94 92 q6 7 12 0 q-6 8 -12 0 z"/>
+<path data-g="cenoria" data-n="la zanahoria" data-c="#ff9f1c" d="M36 154 q16 -10 30 -2 q-2 14 -14 14 q-12 0 -16 -12 z"/>
+<path data-g="follas" data-n="las hojas" data-c="#43aa8b" d="M64 152 q-2 -14 10 -16 q4 12 -10 16 z"/>`},
 
-{id:"princesa",em:"👸",nome:"la princesa",svg:`<path data-g="vestido" data-n="el vestido" data-c="#ff8fab" d="M100 116 L74 184 Q100 194 126 184 Z"/>
-<rect data-g="blusa" data-n="la blusa" data-c="#ffd1dc" x="86" y="100" width="28" height="22" rx="8"/>
-<ellipse data-g="brazos" data-n="los brazos" data-c="#ffe0bd" cx="78" cy="112" rx="9" ry="5" transform="rotate(-28 78 112)"/>
-<ellipse data-g="brazos" data-c="#ffe0bd" cx="122" cy="112" rx="9" ry="5" transform="rotate(28 122 112)"/>
-<path data-g="pelo" data-n="el pelo" data-c="#8b5e3c" d="M68 78 q0 -36 32 -36 q32 0 32 36 q-6 -18 -32 -18 q-26 0 -32 18 z"/>
-<circle data-g="cara" data-n="la cara" data-c="#ffe0bd" cx="100" cy="78" r="30"/>
-<polygon data-g="coroa" data-n="la corona" data-c="#ffd166" points="78,50 84,28 92,42 100,22 108,42 116,28 122,50"/>
-<circle data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="90" cy="76" r="4.5"/>
-<circle data-g="ollos" data-c="#2b2d42" cx="110" cy="76" r="4.5"/>
-<path data-g="boca" data-n="la boca" data-c="#e63946" d="M94 90 q6 8 12 0 q-6 4 -12 0 z"/>`},
+{id:"unicornio",em:"🦄",nome:"el unicornio",svg:`<ellipse cx="100" cy="188" rx="52" ry="7" fill="#0b1030" opacity=".07"/>
+<path data-g="rabo" data-n="la cola" data-c="#ff8fab" d="M142 142 q32 -6 27 -32 q-2 -12 -14 -9 q9 11 -2 19 q-9 7 -15 8 z"/>
+<ellipse data-g="corpo" data-n="el cuerpo" data-c="#f3e8ff" cx="100" cy="144" rx="46" ry="27"/>
+<rect data-g="patas" data-n="las patas" data-c="#e5d4f7" x="70" y="156" width="14" height="32" rx="7"/>
+<rect data-g="patas" data-c="#e5d4f7" x="88" y="158" width="14" height="30" rx="7"/>
+<rect data-g="patas" data-c="#e5d4f7" x="112" y="158" width="14" height="30" rx="7"/>
+<rect data-g="patas" data-c="#e5d4f7" x="128" y="156" width="14" height="32" rx="7"/>
+<polygon data-g="orellas" data-n="las orejas" data-c="#f7eeff" points="64,66 58,44 78,56"/>
+<polygon data-g="orellas" data-c="#f7eeff" points="136,66 142,44 122,56"/>
+<ellipse data-g="cabeza" data-n="la cabeza" data-c="#f7eeff" cx="100" cy="82" rx="37" ry="33"/>
+<path data-g="crina" data-n="la crin" data-c="#ff8fab" d="M116 54 q24 10 18 38 q-5 20 -18 26 q11 -26 2 -40 q-7 -13 -2 -24 z"/>
+<polygon data-g="corno" data-n="el cuerno" data-c="#ffd166" points="93,50 100,12 107,50"/>
+<ellipse data-g="meixelas" data-n="las mejillas" data-c="#ffc2e0" cx="76" cy="94" rx="8" ry="5.5"/>
+<ellipse data-g="meixelas" data-c="#ffc2e0" cx="124" cy="94" rx="8" ry="5.5"/>
+<ellipse data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="88" cy="80" rx="5.5" ry="6"/>
+<ellipse data-g="ollos" data-c="#2b2d42" cx="112" cy="80" rx="5.5" ry="6"/>
+<circle data-g="ollos" data-c="#ffffff" cx="86.4" cy="77.8" r="1.9"/>
+<circle data-g="ollos" data-c="#ffffff" cx="110.4" cy="77.8" r="1.9"/>
+<path data-g="nariz" data-n="la nariz" data-c="#c98ec4" d="M95 96 q5 6 10 0 q-5 7 -10 0 z"/>
+<path data-g="estrelas" data-n="las estrellas" data-c="#ffd166" transform="translate(36,52)" d="M0 -8 L2.4 -2.4 L8 0 L2.4 2.4 L0 8 L-2.4 2.4 L-8 0 L-2.4 -2.4 Z"/>
+<path data-g="estrelas" data-c="#ffd166" transform="translate(164,72) scale(.8)" d="M0 -8 L2.4 -2.4 L8 0 L2.4 2.4 L0 8 L-2.4 2.4 L-8 0 L-2.4 -2.4 Z"/>
+<path data-g="estrelas" data-c="#ffd166" transform="translate(150,30) scale(.6)" d="M0 -8 L2.4 -2.4 L8 0 L2.4 2.4 L0 8 L-2.4 2.4 L-8 0 L-2.4 -2.4 Z"/>`},
 
-{id:"fada",em:"🧚",nome:"el hada",svg:`<ellipse data-g="as" data-n="las alas" data-c="#cde7ff" cx="60" cy="118" rx="15" ry="32" transform="rotate(-24 60 118)"/>
-<ellipse data-g="as" data-c="#cde7ff" cx="140" cy="118" rx="15" ry="32" transform="rotate(24 140 118)"/>
-<path data-g="vestido" data-n="el vestido" data-c="#b388eb" d="M100 108 L82 172 Q100 180 118 172 Z"/>
-<path data-g="pelo" data-n="el pelo" data-c="#f4a261" d="M70 82 q0 -38 30 -38 q30 0 30 38 q-8 -20 -30 -20 q-22 0 -30 20 z"/>
-<circle data-g="cara" data-n="la cara" data-c="#ffe0bd" cx="100" cy="80" r="28"/>
-<circle data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="91" cy="78" r="4.5"/>
-<circle data-g="ollos" data-c="#2b2d42" cx="109" cy="78" r="4.5"/>
-<path data-g="varita" data-n="la varita" data-c="#c9a227" d="M132 164 l24 -34" fill="none" stroke="#c9a227" stroke-width="4" stroke-linecap="round"/>
-<path data-g="estrela-varita" data-n="la estrella de la varita" data-c="#ffd166" transform="translate(158,126)" d="M0 -8 L2.4 -2.4 L8 0 L2.4 2.4 L0 8 L-2.4 2.4 L-8 0 L-2.4 -2.4 Z"/>
-<path data-g="estrelas" data-n="las estrellas" data-c="#ffd166" transform="translate(34,50) scale(.8)" d="M0 -8 L2.4 -2.4 L8 0 L2.4 2.4 L0 8 L-2.4 2.4 L-8 0 L-2.4 -2.4 Z"/>
-<path data-g="estrelas" data-c="#ffd166" transform="translate(168,60) scale(.6)" d="M0 -8 L2.4 -2.4 L8 0 L2.4 2.4 L0 8 L-2.4 2.4 L-8 0 L-2.4 -2.4 Z"/>`},
+{id:"princesa",em:"👸",nome:"la princesa",svg:`<ellipse cx="100" cy="188" rx="52" ry="7" fill="#0b1030" opacity=".07"/>
+<path data-g="pelo" data-n="el pelo" data-c="#6b4226" d="M66 84 q0 -40 34 -40 q34 0 34 40 q-2 22 -8 30 q2 -30 -26 -30 q-28 0 -26 30 q-6 -8 -8 -30 z"/>
+<path data-g="vestido" data-n="el vestido" data-c="#ff8fab" d="M100 112 L68 176 Q84 190 100 190 Q116 190 132 176 Z"/>
+<rect data-g="blusa" data-n="la blusa" data-c="#ffd1dc" x="85" y="96" width="30" height="24" rx="9"/>
+<ellipse data-g="brazos" data-n="los brazos" data-c="#ffe0bd" cx="78" cy="110" rx="10" ry="5.5" transform="rotate(-28 78 110)"/>
+<ellipse data-g="brazos" data-c="#ffe0bd" cx="122" cy="110" rx="10" ry="5.5" transform="rotate(28 122 110)"/>
+<circle data-g="cara" data-n="la cara" data-c="#ffe0bd" cx="100" cy="80" r="31"/>
+<polygon data-g="coroa" data-n="la corona" data-c="#ffd166" points="78,52 84,28 92,44 100,22 108,44 116,28 122,52"/>
+<ellipse data-g="meixelas" data-n="las mejillas" data-c="#ffb3c1" cx="84" cy="90" rx="7" ry="5"/>
+<ellipse data-g="meixelas" data-c="#ffb3c1" cx="116" cy="90" rx="7" ry="5"/>
+<ellipse data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="90" cy="80" rx="4.5" ry="5"/>
+<ellipse data-g="ollos" data-c="#2b2d42" cx="110" cy="80" rx="4.5" ry="5"/>
+<circle data-g="ollos" data-c="#ffffff" cx="88.7" cy="78.3" r="1.6"/>
+<circle data-g="ollos" data-c="#ffffff" cx="108.7" cy="78.3" r="1.6"/>
+<path data-g="boca" data-n="la boca" data-c="#d64550" d="M94 93 q6 8 12 0 q-6 5 -12 0 z"/>`},
 
-{id:"mundo",em:"🏰",nome:"el mundo encantado",svg:`<polygon data-g="montana" data-n="la montaña" data-c="#9ad0a8" points="0,164 62,92 124,164"/>
-<polygon data-g="montana2" data-n="la otra montaña" data-c="#7fbf8f" points="78,164 140,98 200,164"/>
-<rect data-g="castelo" data-n="el castillo" data-c="#cfd8f5" x="78" y="98" width="46" height="62"/>
-<rect data-g="torres" data-n="las torres" data-c="#dfe6fb" x="62" y="82" width="18" height="78"/>
-<rect data-g="torres" data-c="#dfe6fb" x="122" y="82" width="18" height="78"/>
-<polygon data-g="tellados" data-n="los tejados" data-c="#8e6ff0" points="60,82 71,58 82,82"/>
-<polygon data-g="tellados" data-c="#8e6ff0" points="120,82 131,58 142,82"/>
-<polygon data-g="tellados" data-c="#8e6ff0" points="80,98 100,74 120,98"/>
-<rect data-g="ventas" data-n="las ventanas" data-c="#ffd166" x="70" y="100" width="8" height="12" rx="3"/>
-<rect data-g="ventas" data-c="#ffd166" x="124" y="100" width="8" height="12" rx="3"/>
-<path data-g="porta" data-n="la puerta" data-c="#8b5e3c" d="M92 160 v-22 a9 9 0 0 1 18 0 v22 z"/>
-<circle data-g="lua" data-n="la luna" data-c="#ffd166" cx="168" cy="34" r="14"/>
-<ellipse data-g="nubes" data-n="las nubes" data-c="#ffffff" cx="38" cy="46" rx="18" ry="9"/>
-<ellipse data-g="nubes" data-c="#ffffff" cx="52" cy="42" rx="12" ry="7"/>
-<path data-g="estrelas" data-n="las estrellas" data-c="#ffd166" transform="translate(110,32) scale(.7)" d="M0 -8 L2.4 -2.4 L8 0 L2.4 2.4 L0 8 L-2.4 2.4 L-8 0 L-2.4 -2.4 Z"/>
-<path data-g="estrelas" data-c="#ffd166" transform="translate(150,86) scale(.55)" d="M0 -8 L2.4 -2.4 L8 0 L2.4 2.4 L0 8 L-2.4 2.4 L-8 0 L-2.4 -2.4 Z"/>
-<path data-g="camiño" data-n="el camino" data-c="#e0c9a6" d="M92 164 q8 -12 16 0 z"/>
-<circle data-g="arbore" data-n="el árbol" data-c="#4caf50" cx="34" cy="132" r="13"/>
-<rect data-g="tronco" data-n="el tronco" data-c="#8b5e3c" x="31" y="140" width="6" height="20" rx="2"/>`},
+{id:"fada",em:"🧚",nome:"el hada",svg:`<ellipse cx="100" cy="188" rx="52" ry="7" fill="#0b1030" opacity=".07"/>
+<ellipse data-g="as" data-n="las alas" data-c="#cfe7ff" cx="56" cy="116" rx="16" ry="34" transform="rotate(-22 56 116)"/>
+<ellipse data-g="as" data-c="#cfe7ff" cx="144" cy="116" rx="16" ry="34" transform="rotate(22 144 116)"/>
+<ellipse data-g="as" data-c="#eef7ff" cx="62" cy="112" rx="8" ry="22" transform="rotate(-22 62 112)"/>
+<ellipse data-g="as" data-c="#eef7ff" cx="138" cy="112" rx="8" ry="22" transform="rotate(22 138 112)"/>
+<path data-g="vestido" data-n="el vestido" data-c="#b388eb" d="M100 108 L78 172 Q100 184 122 172 Z"/>
+<path data-g="pelo" data-n="el pelo" data-c="#f4a261" d="M70 84 q0 -40 30 -40 q30 0 30 40 q-8 -22 -30 -22 q-22 0 -30 22 z"/>
+<circle data-g="cara" data-n="la cara" data-c="#ffe0bd" cx="100" cy="82" r="28"/>
+<ellipse data-g="meixelas" data-n="las mejillas" data-c="#ffb3c1" cx="86" cy="92" rx="6.5" ry="4.5"/>
+<ellipse data-g="meixelas" data-c="#ffb3c1" cx="114" cy="92" rx="6.5" ry="4.5"/>
+<circle data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="91" cy="82" r="4.5"/>
+<circle data-g="ollos" data-c="#2b2d42" cx="109" cy="82" r="4.5"/>
+<circle data-g="ollos" data-c="#ffffff" cx="89.7" cy="80.3" r="1.6"/>
+<circle data-g="ollos" data-c="#ffffff" cx="107.7" cy="80.3" r="1.6"/>
+<path data-g="boca" data-n="la boca" data-c="#d64550" d="M95 94 q5 7 10 0 q-5 4 -10 0 z"/>
+<path data-g="varita" data-n="la varita" data-c="#c9a227" d="M130 166 l26 -36" fill="none" stroke="#c9a227" stroke-width="4" stroke-linecap="round"/>
+<path data-g="estrela-varita" data-n="la estrella de la varita" data-c="#ffd166" transform="translate(158,126)" d="M0 -9 L2.7 -2.7 L9 0 L2.7 2.7 L0 9 L-2.7 2.7 L-9 0 L-2.7 -2.7 Z"/>
+<path data-g="estrelas" data-n="las estrellas" data-c="#ffd166" transform="translate(34,54) scale(.8)" d="M0 -8 L2.4 -2.4 L8 0 L2.4 2.4 L0 8 L-2.4 2.4 L-8 0 L-2.4 -2.4 Z"/>
+<path data-g="estrelas" data-c="#ffd166" transform="translate(170,64) scale(.6)" d="M0 -8 L2.4 -2.4 L8 0 L2.4 2.4 L0 8 L-2.4 2.4 L-8 0 L-2.4 -2.4 Z"/>`},
+
+{id:"mundo",em:"🏰",nome:"el mundo encantado",svg:`<ellipse cx="100" cy="188" rx="52" ry="7" fill="#0b1030" opacity=".07"/>
+<rect data-g="ceo" data-n="el cielo" data-c="#cfe0ff" x="0" y="0" width="200" height="200" rx="0"/>
+<polygon data-g="montana" data-n="la montaña" data-c="#9ad0a8" points="-4,176 62,92 128,176"/>
+<polygon data-g="montana" data-c="#7fbf8f" points="74,176 140,100 204,176"/>
+<rect data-g="castelo" data-n="el castillo" data-c="#cfd8f5" x="76" y="96" width="48" height="66"/>
+<rect data-g="torres" data-n="las torres" data-c="#dfe6fb" x="62" y="80" width="20" height="82"/>
+<rect data-g="torres" data-c="#dfe6fb" x="118" y="80" width="20" height="82"/>
+<polygon data-g="tellados" data-n="los tejados" data-c="#8e6ff0" points="59,80 72,54 85,80"/>
+<polygon data-g="tellados" data-c="#8e6ff0" points="115,80 128,54 141,80"/>
+<polygon data-g="tellados" data-c="#8e6ff0" points="76,96 100,68 124,96"/>
+<rect data-g="ventas" data-n="las ventanas" data-c="#ffd166" x="68" y="98" width="9" height="13" rx="4"/>
+<rect data-g="ventas" data-c="#ffd166" x="123" y="98" width="9" height="13" rx="4"/>
+<path data-g="porta" data-n="la puerta" data-c="#8b5e3c" d="M92 162 v-24 a8 8 0 0 1 16 0 v24 z"/>
+<circle data-g="lua" data-n="la luna" data-c="#ffd166" cx="170" cy="32" r="14"/>
+<ellipse data-g="nubes" data-n="las nubes" data-c="#ffffff" cx="38" cy="44" rx="19" ry="10"/>
+<ellipse data-g="nubes" data-c="#ffffff" cx="54" cy="39" rx="13" ry="8"/>
+<path data-g="estrelas" data-n="las estrellas" data-c="#ffd166" transform="translate(112,30) scale(.7)" d="M0 -8 L2.4 -2.4 L8 0 L2.4 2.4 L0 8 L-2.4 2.4 L-8 0 L-2.4 -2.4 Z"/>
+<path data-g="estrelas" data-c="#ffd166" transform="translate(152,84) scale(.55)" d="M0 -8 L2.4 -2.4 L8 0 L2.4 2.4 L0 8 L-2.4 2.4 L-8 0 L-2.4 -2.4 Z"/>
+<rect data-g="arbore" data-n="el árbol" data-c="#8b5e3c" x="28" y="140" width="7" height="22" rx="3"/>
+<circle data-g="arbore" data-c="#4caf50" cx="32" cy="130" r="14"/>`},
 /*ART-END*/
 ];
 let coCur=null, coGroups=[], coDone=0, coPool=[], coAt=0, coMode="pintar", coTiles=[];
@@ -1747,9 +1800,20 @@ function coQuestions(){
   if(pool.length<8) pool=pool.concat(FOTO_EX.filter(ok));
   return coShuffle(pool);
 }
+/* A cor é por elemento (data-c propio, ou a do grupo): así un grupo píntase dunha vez
+   pero conserva detalles interiores (lucen nos ollos, interior das orellas).
+   O trazo escurecido da mesma cor mantén definidas as partes ao pintar. */
+function coShade(hex,f){
+  const n=parseInt(String(hex).replace("#",""),16);
+  const r=Math.round(((n>>16)&255)*f), g=Math.round(((n>>8)&255)*f), b=Math.round((n&255)*f);
+  return "rgb("+r+","+g+","+b+")";
+}
 function coFill(g){
-  const c=g.els[0].getAttribute("data-c")||"#f5c518";
-  g.els.forEach(function(el){ el.style.fill=c; el.style.stroke=""; el.style.opacity="1"; el.classList.add("painted"); });
+  const base=g.els[0].getAttribute("data-c")||"#f5c518";
+  g.els.forEach(function(el){
+    const c=el.getAttribute("data-c")||base;
+    el.style.fill=c; el.style.stroke=coShade(c,.62); el.style.opacity="1"; el.classList.add("painted");
+  });
 }
 function coApplyMode(){
   const els=coEls();
@@ -1758,21 +1822,39 @@ function coApplyMode(){
     el.classList.remove("painted");
     if(coMode==="pintar"){ el.style.fill=""; el.style.stroke=""; }
     else if(coMode==="revelar"||coMode==="sombra"){ el.style.fill="#2f3446"; el.style.stroke="#2f3446"; }
-    else { el.style.fill=el.getAttribute("data-c"); el.style.stroke=""; el.classList.add("painted"); }
   });
-  if(coMode==="descubrir") coCover();
+  if(coMode==="descubrir"){ coGroups.forEach(coFill); coCover(); }
 }
 /* en «descubrir» o debuxo xa está pintado pero tapado: cada acerto destapa unha peza */
 function coCover(){
+  /* Cobre exacta: reparte as pezas en filas que suman o 100% do ancho, así non queda
+     ningunha fenda por onde se vexa o debuxo escondido. */
   const n=coGroups.length, box=document.createElement("div");
   box.className="co-tiles";
-  box.style.gridTemplateColumns="repeat(4,1fr)";
-  coTiles=coShuffle(coGroups.map(function(g,i){ return i; })).map(function(i){
-    const t=document.createElement("div"); t.className="co-tile"; box.appendChild(t); return t;
-  });
+  const cols=n<=4?2:(n<=9?3:4), rows=Math.ceil(n/cols);
+  const idx=coShuffle(coGroups.map(function(g,i){ return i; }));
+  coTiles=[];
+  let placed=0;
+  for(let r=0;r<rows;r++){
+    const cnt=Math.ceil((n-placed)/(rows-r));
+    for(let c=0;c<cnt;c++){
+      const t=document.createElement("div"); t.className="co-tile";
+      t.style.top=(r*100/rows)+"%"; t.style.height=(100/rows)+"%";
+      t.style.left=(c*100/cnt)+"%"; t.style.width="calc("+(100/cnt)+"% + 1px)";
+      box.appendChild(t); coTiles.push(t);
+    }
+    placed+=cnt;
+  }
+  coTiles=coShuffle(coTiles);
   $("coArt").appendChild(box);
 }
-function coNextArt(){ const i=ART.indexOf(coCur); return ART[(i+1)%ART.length]; }
+/* Nos modos de adiviñar o debuxo é sorpresa: escóllese ao azar e non se marca o chip.
+   A identidade revélase ao rematar (coFinish), non antes. */
+let coSorpresa=false;
+function coSurprise(){
+  const outros=ART.filter(function(a){ return a!==coCur; });
+  return outros[Math.floor(Math.random()*outros.length)]||coCur;
+}
 function coFinish(){
   $("coQ").textContent=""; $("coOpts").innerHTML="";
   $("coStat").textContent=coCur.em+" ¡"+coCur.nome+" está terminado! +12 🪙";
@@ -1788,7 +1870,7 @@ function coAsk(){
   const Q=coPool[coAt%coPool.length], g=coGroups[coDone];
   const pre = coMode==="descubrir" ? "Descubre una pieza: " : (g.n?"Pinta "+g.n+": ":"");
   $("coQ").textContent=pre+Q.q;
-  $("coStat").textContent="Llevas "+coDone+" de "+coGroups.length+" "+(coMode==="descubrir"?"piezas":"partes")+" "+coCur.em;
+  $("coStat").textContent="Llevas "+coDone+" de "+coGroups.length+" "+(coMode==="descubrir"?"piezas":"partes")+" "+(coSorpresa?"🎁":coCur.em);
   const box=$("coOpts"); box.innerHTML="";
   coShuffle(Q.opts).forEach(function(o){
     const b=document.createElement("button"); b.className="co-btn"; b.textContent=o;
@@ -1820,7 +1902,7 @@ function coAskSombra(){
       $("coStat").textContent="+6 🪙";
       earn(6,"adivinar la silueta"); state.exDone++; state.exRight++; streakTouch(true); save(); renderReport(); renderWallet();
       box.innerHTML="";
-      setTimeout(function(){ if(coMode==="sombra") coRender(coNextArt().id,"sombra"); },1600);
+      setTimeout(function(){ if(coMode==="sombra") coRender(null,"sombra"); },1600);
     };
     box.appendChild(b);
   });
@@ -1839,15 +1921,17 @@ function coAlbum(){
 function coRender(id,modo){
   if(modo) coMode=modo;
   coCur=ART.filter(function(a){ return a.id===id; })[0]||coCur||ART[0];
+  coSorpresa=(coMode==="descubrir"||coMode==="sombra");
+  if(coSorpresa) coCur=coSurprise();
   $("coArt").innerHTML='<svg viewBox="0 0 200 200" role="img" aria-label="Dibujo para colorear">'+coCur.svg+"</svg>";
   coGroups=coGroupList($("coArt").querySelector("svg"));
   coDone=0; coPool=coQuestions(); coAt=0;
-  $("coPick").querySelectorAll(".co-chip").forEach(function(c){ c.classList.toggle("on",c.dataset.id===coCur.id); });
+  $("coPick").querySelectorAll(".co-chip").forEach(function(c){ c.classList.toggle("on",!coSorpresa&&c.dataset.id===coCur.id); });
   $("coModes").querySelectorAll(".co-mode").forEach(function(m){ m.classList.toggle("on",m.dataset.modo===coMode); });
   coApplyMode();
   coAlbum();
   if(coMode==="sombra"){ $("coStat").textContent="Adivina el dibujo escondido 🌑"; coAsk(); return; }
-  $("coStat").textContent=(coMode==="descubrir"?"Responde y destapa ":"Responde bien para pintar ")+coCur.nome+" 🎨";
+  $("coStat").textContent=coSorpresa?"Responde y destapa un dibujo sorpresa 🎁":"Responde bien para pintar "+coCur.nome+" 🎨";
   coAsk();
 }
 function showColorear(id,modo){
