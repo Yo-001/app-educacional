@@ -194,7 +194,8 @@ def call_chat(messages, name, text):
     return (content or "").strip()[:800]
 
 
-TTS_VOICE = "es-ES-AlvaroNeural"  # voz neural natural do gato (masculina, espanha)
+TTS_VOICE = "es-MX-DaliaNeural"   # voz feminina jovem (MX); pitch alto soa infantil
+TTS_PITCH = "+30Hz"
 _tts_cache = {}
 
 
@@ -205,7 +206,7 @@ def _synth_tts(text):
     import edge_tts
 
     async def _go():
-        c = edge_tts.Communicate(text, TTS_VOICE)
+        c = edge_tts.Communicate(text, TTS_VOICE, pitch=TTS_PITCH)
         buf = bytearray()
         async for chunk in c.stream():
             if chunk.get("type") == "audio":
