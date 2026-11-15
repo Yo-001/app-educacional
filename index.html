@@ -659,7 +659,7 @@ function esVoice(){
 }
 try{ window.speechSynthesis.onvoiceschanged=()=>{esVoiceCache=null;}; }catch(e){}
 /* Voz do gato: MP3 neural do backend (/tts, edge-tts); fallback = sintetizador do navegador */
-let _aud=null, _spSeq=0, _spResolve=null;
+let _aud=null, _spSeq=0, _spResolve=null, _spStop=null;
 function stopAudio(){
   if(_aud){try{_aud.pause();}catch(e){}} _aud=null;
   try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
@@ -679,32 +679,40 @@ function ttsURL(line){
   return p;
 }
 function prefetchTTS(line){ ttsURL(line).catch(()=>{}); }
+const EMOJI_RE=/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{20E3}\u{200D}\u{1F1E6}-\u{1F1FF}]/gu;
+/* quita emojis del texto que va al TTS (si no, los "describe": "cara de gato"...) */
+function stripEmoji(s){ return String(s||"").replace(EMOJI_RE,"").replace(/[ \t]{2,}/g," ").trim(); }
 /* devuelve Promise que resuelve cuando el audio termina (o es interrumpido por otra fala) */
+let speechPlaying=0; /* >0 mientras suena la voz del gato (evita que el micro se escuche a sí mismo) */
 function speak(line){
   return new Promise(resolve=>{
   const b=$("speech"), svg=$("catSvg");
   if(!b||!line){ resolve(); return; }
-  if(_spResolve){ const r=_spResolve; _spResolve=null; r(); } // resolve a fala anterior interrompida
+  if(_spStop){ const s=_spStop; _spStop=null; try{ s(); }catch(e){} } // interrompe a fala anterior (via stop dela)
   _spResolve=resolve;
   b.textContent=line; b.style.display="";
   if(svg) svg.classList.add("talking");
-  const stop=()=>{ if(svg) svg.classList.remove("talking"); b.style.display="none"; if(_spResolve===resolve) _spResolve=null; resolve(); };
+  const sayLine=stripEmoji(line);
+  let stopped=false;
+  const stop=()=>{ if(stopped) return; stopped=true; speechPlaying=Math.max(0,speechPlaying-1); if(_spStop===stop) _spStop=null; if(svg) svg.classList.remove("talking"); b.style.display="none"; if(_spResolve===resolve) _spResolve=null; resolve(); };
+  _spStop=stop;
   const seq=++_spSeq;
+  speechPlaying++;
   stopAudio(); clearTimeout(speechTimer);
-  speechTimer=setTimeout(stop,Math.max(2500,line.length*110)); // rede de segurança
-  ttsURL(line).then(url=>{
+  speechTimer=setTimeout(stop,Math.max(2500,sayLine.length*110)); // rede de segurança
+  ttsURL(sayLine).then(url=>{
     if(seq!==_spSeq) return; // si hay otra habla, gana la nueva
     const audio=new Audio(url);
     _aud=audio;
     audio.onended=()=>{ if(seq===_spSeq) stop(); };
-    audio.onerror=()=>{ if(seq===_spSeq) fallbackSpeak(line,stop,seq); };
-    audio.play().catch(()=>{ if(seq===_spSeq) fallbackSpeak(line,stop,seq); });
-  }).catch(()=>{ if(seq===_spSeq) fallbackSpeak(line,stop,seq); });
+    audio.onerror=()=>{ if(seq===_spSeq) fallbackSpeak(sayLine,stop,seq); };
+    audio.play().catch(()=>{ if(seq===_spSeq) fallbackSpeak(sayLine,stop,seq); });
+  }).catch(()=>{ if(seq===_spSeq) fallbackSpeak(sayLine,stop,seq); });
   });
 }
 function fallbackSpeak(line,stop,seq){
   try{
-    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){ if(seq===_spSeq) stop(); return; }
     speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(line);
     const voice=esVoice(); if(voice) u.voice=voice;
@@ -1319,20 +1327,59 @@ $("chatName").addEventListener("keydown",e=>{
   addMsg("cat","¡Encantada de conocerte, "+state.name+"! 🐾 ¿Qué hacemos hoy? Juegos, chistes o escuela.");
   speak("¡Hola "+state.name+"! Soy Gatuno");
 });
-/* micrófono: Web Speech API (Chrome/Edge); sem micro, fica o texto */
+/* micrófono continuo: toca 🎤 una vez y la niña habla con el gato; el micro sigue encendido hasta
+   volver a tocar el botón. El gato nunca se escucha a sí mismo: tras cada respuesta (o habla suya)
+   el micro espera a que termine de hablar antes de volver a escuchar. */
 (function(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){ $("btnMic").style.display="none"; return; }
-  let rec=null, on=false;
-  const HINT="Tu gato tutor te escucha 🎤 — pídele juegos, chistes o ayuda con la escuela.";
-  $("btnMic").onclick=()=>{
-    if(on){ rec&&rec.stop(); return; }
-    rec=new SR(); rec.lang="es-ES"; rec.interimResults=false; rec.maxAlternatives=1;
-    rec.onstart=()=>{ on=true; $("btnMic").textContent="👂"; $("chatHint").textContent="Te escucho… habla ahora."; };
-    rec.onend=()=>{ on=false; $("btnMic").textContent="🎤"; $("chatHint").textContent=HINT; };
-    rec.onerror=()=>{ on=false; $("btnMic").textContent="🎤"; $("chatHint").textContent="No te oí bien — toca el 🎤 otra vez."; };
-    rec.onresult=e=>{ const t=e.results[0][0].transcript; sendChat(t); };
-    try{ rec.start(); }catch(e){}
+  const HINT="Tu gato tutor te escucha 🎤 — toca el micro y habla; púlsalo otra vez para apagarlo.";
+  const btn=$("btnMic");
+  let micOn=false, rec=null, calmPoll=0;
+  const setUI=(on,hint)=>{
+    btn.textContent=on?"👂":"🎤";
+    btn.style.background=on?"#ff5252":""; btn.style.color=on?"#fff":"";
+    if(hint) $("chatHint").textContent=hint;
+  };
+  const stopMic=()=>{
+    micOn=false; clearInterval(calmPoll);
+    try{ if(rec) rec.stop(); }catch(e){}
+    setUI(false,HINT);
+  };
+  const calmNow=()=>!chatBusy && speechPlaying===0;
+  const whenCalm=cb=>{
+    clearInterval(calmPoll);
+    calmPoll=setInterval(()=>{ if(!micOn){ clearInterval(calmPoll); return; } if(calmNow()){ clearInterval(calmPoll); cb(); } },300);
+  };
+  function listen(){
+    if(!micOn) return;
+    try{ rec=new SR(); }catch(e){ setUI(false,"No pude abrir el micrófono."); micOn=false; return; }
+    rec.lang="es-ES"; rec.interimResults=false; rec.maxAlternatives=1; rec.continuous=false;
+    rec.onstart=()=>setUI(true,"Te escucho… habla con el gato 🐱 (toca 👂 para apagar)");
+    rec.onresult=e=>{
+      const last=e.results[e.results.length-1];
+      const t=((last&&last[0]&&last[0].transcript)||"").trim();
+      if(t) sendChat(t);
+    };
+    rec.onerror=e=>{
+      const err=(e&&e.error)||"";
+      if(err==="not-allowed"||err==="service-not-allowed"){
+        micOn=false; clearInterval(calmPoll);
+        setUI(false,"El micro está bloqueado — permite el micrófono en el navegador y vuelve a tocar 🎤.");
+      }
+      /* no-speech / audio-capture / aborted: se reintenta solo vía onend */
+    };
+    rec.onend=()=>{
+      if(!micOn){ setUI(false,HINT); return; }
+      setUI(true,"El gato está pensando… 🐾");
+      whenCalm(()=>{ if(micOn) listen(); }); /* espera a que termine de hablar el gato */
+    };
+    try{ rec.start(); }catch(e){ whenCalm(()=>{ if(micOn) listen(); }); }
+  }
+  btn.onclick=()=>{
+    if(micOn){ stopMic(); return; }
+    micOn=true; setUI(true,"Te escucho…");
+    whenCalm(()=>{ if(micOn) listen(); }); /* si el gato está hablando, espera a que termine */
   };
 })();
 
