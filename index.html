@@ -316,7 +316,7 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
 
   <!-- CHAT DO GATO (IA) -->
   <div class="card" id="card-chat" data-tab="chat">
-    <h2>💬 Habla con Gatuno</h2>
+    <h2>💬 Habla con Gatuno <button id="btnEditName" title="Cambiar el nombre" style="background:none;border:none;cursor:pointer;font-size:15px;vertical-align:1px;opacity:.75">✏️</button></h2>
     <div class="mut" style="font-size:13px;margin-bottom:8px" id="chatHint">Tu gato tutor te escucha 🎤 — toca el micro y habla con calma, a tu ritmo.</div>
     <div class="row" id="nameRow" style="margin-bottom:8px">
       <input id="chatName" placeholder="¿Cómo te llamas? Escribe aquí…" style="flex:1">
@@ -485,7 +485,7 @@ function load(){
   try{const s=JSON.parse(localStorage.getItem(LS_KEY)||"null");
     if(!s||s.v!==LS_VER) return withFoto(defaultState());
     const st=Object.assign(defaultState(),s);
-    if(!st.name) st.name="Maitê"; /* la app es de Maitê (8 años); no volver a pedir el nombre */
+    if(!st.name || /gatit|gatun|\bgato\b|^(hola|ol[aá]|hi|hey|buenas)\b/i.test(st.name)) st.name="Maitê"; /* repara nombres basura capturados del primer mensaje (p.ej. "hola gatito") */
     if(!st.worn||typeof st.worn!=="object") st.worn= st.wornHat?{hat:st.wornHat}:{};
     if(!Array.isArray(st.board)) st.board=[];
     return withFoto(st);}
@@ -1303,11 +1303,8 @@ function addMsg(role,text){
 }
 async function sendChat(text){
   text=(text||"").trim(); if(!text||chatBusy) return;
-  if(!state.name){
-    state.name=text.slice(0,24); save(); $("nameRow").style.display="none";
-    addMsg("cat","¡Encantada de conocerte, "+state.name+"! 🐾 ¿Qué hacemos hoy?");
-    return;
-  }
+  /* el nombre se fija SOLO en el campo dedicado (#chatName); cualquier mensaje libre va al gato —
+     antes el primer mensaje "hola gatito" quedaba grabado como nombre para siempre */
   addMsg("kid",text); $("chatIn").value="";
   chatBusy=true; $("chatTyping").style.display=""; $("btnChatSend").disabled=true;
   try{
@@ -1331,6 +1328,7 @@ $("chatName").addEventListener("keydown",e=>{
   addMsg("cat","¡Encantada de conocerte, "+state.name+"! 🐾 ¿Qué hacemos hoy? Juegos, chistes o escuela.");
   speak("¡Hola "+state.name+"! Soy Gatuno");
 });
+$("btnEditName").onclick=()=>{ const r=$("nameRow"); const show=r.style.display==="none"; r.style.display=show?"":"none"; if(show){ $("chatName").value=state.name||""; $("chatName").focus(); } };
 /* micrófono continuo: toca 🎤 una vez y la niña habla con el gato; el micro sigue encendido hasta
    volver a tocar el botón. El gato NUNCA se apresura: espera SILENCE_MS en completo silencio tras la
    última sílaba antes de responder (la Maitê, de 8 años, habla con pausas largas).
