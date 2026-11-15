@@ -659,18 +659,22 @@ function esVoice(){
 }
 try{ window.speechSynthesis.onvoiceschanged=()=>{esVoiceCache=null;}; }catch(e){}
 /* Voz do gato: MP3 neural do backend (/tts, edge-tts); fallback = sintetizador do navegador */
-let _aud=null, _spSeq=0, _spUrl=null;
+let _aud=null, _spSeq=0, _spUrl=null, _spResolve=null;
 function stopAudio(){
   if(_aud){try{_aud.pause();}catch(e){}} _aud=null;
   if(_spUrl){try{URL.revokeObjectURL(_spUrl);}catch(e){}} _spUrl=null;
   try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
 }
-async function speak(line){
+/* devuelve Promise que resuelve cuando el audio termina (o es interrumpido por otra fala) */
+function speak(line){
+  return new Promise(async resolve=>{  // executor assíncrono: os awaits do fetch estão dentro de try/catch
   const b=$("speech"), svg=$("catSvg");
-  if(!b||!line) return;
+  if(!b||!line){ resolve(); return; }
+  if(_spResolve){ const r=_spResolve; _spResolve=null; r(); } // resolve a fala anterior interrompida
+  _spResolve=resolve;
   b.textContent=line; b.style.display="";
   if(svg) svg.classList.add("talking");
-  const stop=()=>{ if(svg) svg.classList.remove("talking"); b.style.display="none"; };
+  const stop=()=>{ if(svg) svg.classList.remove("talking"); b.style.display="none"; if(_spResolve===resolve) _spResolve=null; resolve(); };
   const seq=++_spSeq;
   stopAudio(); clearTimeout(speechTimer);
   speechTimer=setTimeout(stop,Math.max(2500,line.length*110)); // rede de segurança
@@ -685,6 +689,7 @@ async function speak(line){
     _aud.onerror=()=>{ if(seq===_spSeq) fallbackSpeak(line,stop,seq); };
     _aud.play().catch(()=>{ if(seq===_spSeq) fallbackSpeak(line,stop,seq); });
   }catch(e){ if(seq===_spSeq) fallbackSpeak(line,stop,seq); }
+  });
 }
 function fallbackSpeak(line,stop,seq){
   try{
@@ -753,7 +758,7 @@ function startExTimer(sec,box,after){
     if(t<=0){ stopExTimer(); if(!exAnswered){ exAnswered=true;
       [...box.children].forEach(x=>{ if(x.textContent===curEx.a) x.className="opt ok"; });
       const fb=$("exFb"); fb.textContent="¡Se acabó el tiempo! 😱 La respuesta era: "+curEx.a; fb.className="feedback bad";
-      registerResult(false); if(after) after(false);
+      const p=registerResult(false,"¡Se acabó el tiempo! La respuesta correcta es: "+curEx.a); if(after) after(false,p);
     } }
   },1000);
 }
@@ -764,6 +769,7 @@ function paintExercise(ex,after,timer){
   const box=$("exOpts"); box.innerHTML=""; box.className="opts";
   if(ex.tipo==="ordenar") return paintOrdenar(ex,box,after);
   if(ex.tipo==="parejas") return paintParejas(ex,box,after);
+  if(ex.tipo==="dis"){ paintDis(ex,box,after); if(timer) startExTimer(timer,box,after); return; }
   /* embaralha as opções (exceto Verdadero/Falso): o modelo tende a pôr a certa em 1º */
   const opts=ex.opts.slice();
   if(ex.tipo!=="vf"){ for(let i=opts.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=opts[i]; opts[i]=opts[j]; opts[j]=t; } }
@@ -775,9 +781,10 @@ function paintExercise(ex,after,timer){
       b.className="opt "+(ok?"ok":"no");
       if(!ok){[...box.children].forEach(x=>{if(x.textContent===ex.a)x.className="opt ok";});}
       const fb=$("exFb"); fb.textContent=ok?("¡Bien! +10 🪙"):("¡Ups! ¡Inténtalo otra vez!"); fb.className="feedback "+(ok?"good":"bad");
-      /* el gato lee la opción elegida y después anima */
-      registerResult(ok, o+(ok?". ¡Muy bien!":"… ¡Casi, prueba otra!"));
-      if(after) after(ok);
+      /* el gato lee la opción elegida; si está mal, dice la correcta — el avance espera a que termine de hablar */
+      const say=o+(ok?". ¡Muy bien!":". La respuesta correcta es: "+ex.a);
+      const p=registerResult(ok,say);
+      if(after) after(ok,p);
     };
     box.appendChild(b);
   });
@@ -795,7 +802,7 @@ function paintOrdenar(ex,box,after){
       if(it.i===pos){ b.className="opt ok"; b.disabled=true; pos++;
         if(pos===ex.pasos.length){ done=true; stopExTimer(); const ok=errs===0;
           fb.textContent=ok?"¡Bien! +10 🪙":"Listo ✓ (con algunos errores)"; fb.className="feedback "+(ok?"good":"bad");
-          registerResult(ok); if(after) after(ok);
+          const p=registerResult(ok); if(after) after(ok,p);
         } else { fb.textContent="✓ Paso "+pos+" de "+ex.pasos.length; fb.className="feedback good"; }
       } else { errs++; b.className="opt no"; setTimeout(()=>{ if(!done) b.className="opt"; },350);
         fb.textContent="✗ Revisa el orden…"; fb.className="feedback bad"; }
@@ -820,7 +827,7 @@ function paintParejas(ex,box,after){
         fb.textContent="✓ Pareja "+matched+" de "+ex.pares.length; fb.className="feedback good";
         if(matched===ex.pares.length){ done=true; stopExTimer(); const ok=errs===0;
           fb.textContent=ok?"¡Bien! +10 🪙":"Listo ✓ (con algunos errores)"; fb.className="feedback "+(ok?"good":"bad");
-          registerResult(ok); if(after) after(ok);
+          const p=registerResult(ok); if(after) after(ok,p);
         }
       } else { errs++; busy=true; const prev=sel.b; sel=null;
         setTimeout(()=>{ prev.textContent="❓"; prev.className="opt"; b.textContent="❓"; b.className="opt"; busy=false; },900);
@@ -829,13 +836,50 @@ function paintParejas(ex,box,after){
     box.appendChild(b);
   });
 }
+/* discursiva: pregunta abierta; la niña responde en voz alta y se autoevalúa */
+function paintDis(ex,box,after){
+  box.className="opts";
+  const fb=$("exFb");
+  fb.textContent="Piénsalo y responde en voz alta 🎤"; fb.className="feedback";
+  speak(ex.q);
+  const b=document.createElement("button"); b.className="opt"; b.textContent="👀 Ver la respuesta";
+  b.onclick=()=>{
+    if(exAnswered) return;
+    box.innerHTML="";
+    const card=document.createElement("div"); card.className="opt"; card.style.cursor="default"; card.textContent=ex.a;
+    const row=document.createElement("div"); row.className="row";
+    const yes=document.createElement("button"); yes.className="opt ok"; yes.textContent="✅ Sí, la sabía";
+    const no=document.createElement("button"); no.className="opt no"; no.textContent="❌ No la sabía";
+    const done=(ok)=>{
+      if(exAnswered) return; exAnswered=true; stopExTimer();
+      fb.textContent=ok?"¡Bien! +10 🪙":"La respuesta era: "+ex.a; fb.className="feedback "+(ok?"good":"bad");
+      const p=registerResult(ok, ok?"¡Muy bien!":"La respuesta correcta es: "+ex.a);
+      if(after) after(ok,p);
+    };
+    yes.onclick=()=>done(true); no.onclick=()=>done(false);
+    row.appendChild(yes); row.appendChild(no); box.appendChild(card); box.appendChild(row);
+    fb.textContent="¿Te has acordado?";
+  };
+  box.appendChild(b);
+}
 function showEx(){
   paintExercise(SUBJECTS[curSubj].gen(),null);
 }
 /* ======= Mazo: práctica (24) y revisión del examen ======= */
 let deckQ=[],deckN=0,deckLabel="",deckBonus=0,deckTimer=0;
+/* 1 de cada 3 exercícios (com resposta) vira discursiva; decks com timer ficam só na velocidade */
+function interleaveDis(list){
+  let n=0;
+  return list.map(ex=>{
+    n++;
+    if(n%3!==0) return ex;
+    if(!ex||!ex.q||typeof ex.a!=="string") return ex;
+    if(ex.tipo==="ordenar"||ex.tipo==="parejas"||ex.tipo==="dis") return ex;
+    return {q:ex.q,a:ex.a,tipo:"dis",tema:ex.tema};
+  });
+}
 function startDeck(list,label,bonus,timer){
-  deckQ=list.slice(); deckN=list.length; deckLabel=label; deckBonus=bonus; deckTimer=timer||0;
+  deckQ=timer?list.slice():interleaveDis(list); deckN=deckQ.length; deckLabel=label; deckBonus=bonus; deckTimer=timer||0;
   $("subjects").style.display="none"; $("exercise").style.display="";
   $("btnNew").style.display="none";
   setTab("ex"); $("exercise").scrollIntoView({behavior:"smooth",block:"start"});
@@ -851,7 +895,7 @@ function nextInDeck(){
   }
   const ex=deckQ.shift(); const done=deckN-deckQ.length;
   $("exSubj").textContent=deckLabel+" · "+done+"/"+deckN;
-  paintExercise(ex,()=>{ setTimeout(nextInDeck,800); },deckTimer||0);
+  paintExercise(ex,(ok,p)=>{ Promise.resolve(p).then(()=>setTimeout(nextInDeck,300)); },deckTimer||0);
 }
 function buildPractice(){
   const fotos=(state.custom||[]).filter(e=>e.tema==="de la foto 📷");
@@ -870,10 +914,12 @@ let attempts=0;
 function registerResult(ok,say){
   attempts=0; // nuevo ejercicio (showEx)
   state.exDone++;
-  if(ok){ state.exRight++; earn(10,"ejercicio correcto"); speak(say||pick(LINES.good)); }
-  else { speak(say||LINES.bad); }
+  let p;
+  if(ok){ state.exRight++; earn(10,"ejercicio correcto"); p=speak(say||pick(LINES.good)); }
+  else { p=speak(say||LINES.bad); }
   streakTouch(ok);
   save(); renderReport();
+  return p;
 }
 function streakTouch(){ const today=new Date().toISOString().slice(0,10);
   if(state.lastDay!==today){ if(state.lastDay===minusDays(today,1)) state.streak++; else state.streak=1;
