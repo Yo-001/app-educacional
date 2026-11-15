@@ -659,15 +659,29 @@ function esVoice(){
 }
 try{ window.speechSynthesis.onvoiceschanged=()=>{esVoiceCache=null;}; }catch(e){}
 /* Voz do gato: MP3 neural do backend (/tts, edge-tts); fallback = sintetizador do navegador */
-let _aud=null, _spSeq=0, _spUrl=null, _spResolve=null;
+let _aud=null, _spSeq=0, _spResolve=null;
 function stopAudio(){
   if(_aud){try{_aud.pause();}catch(e){}} _aud=null;
-  if(_spUrl){try{URL.revokeObjectURL(_spUrl);}catch(e){}} _spUrl=null;
   try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
 }
+/* cache de TTS: as falas previsíveis são pré-carregadas ao pintar a questão,
+   assim o feedback sai na hora do toque, sem esperar o backend gerar o MP3 */
+const _ttsCache=new Map(); const TTS_CACHE_MAX=80;
+function ttsURL(line){
+  const hit=_ttsCache.get(line); if(hit) return hit;
+  const p=fetch(BACKEND_URL+"/tts?text="+encodeURIComponent(line.slice(0,400)))
+    .then(r=>{ if(!r.ok) throw new Error("tts "+r.status); return r.blob(); })
+    .then(b=>{ const u=URL.createObjectURL(b); _ttsCache.set(line,u);
+      if(_ttsCache.size>TTS_CACHE_MAX){ const k=_ttsCache.keys().next().value; try{URL.revokeObjectURL(_ttsCache.get(k));}catch(e){} _ttsCache.delete(k); }
+      return u; })
+    .catch(e=>{ _ttsCache.delete(line); throw e; });
+  _ttsCache.set(line,p);
+  return p;
+}
+function prefetchTTS(line){ ttsURL(line).catch(()=>{}); }
 /* devuelve Promise que resuelve cuando el audio termina (o es interrumpido por otra fala) */
 function speak(line){
-  return new Promise(async resolve=>{  // executor assíncrono: os awaits do fetch estão dentro de try/catch
+  return new Promise(resolve=>{
   const b=$("speech"), svg=$("catSvg");
   if(!b||!line){ resolve(); return; }
   if(_spResolve){ const r=_spResolve; _spResolve=null; r(); } // resolve a fala anterior interrompida
@@ -678,17 +692,14 @@ function speak(line){
   const seq=++_spSeq;
   stopAudio(); clearTimeout(speechTimer);
   speechTimer=setTimeout(stop,Math.max(2500,line.length*110)); // rede de segurança
-  try{
-    const r=await fetch(BACKEND_URL+"/tts?text="+encodeURIComponent(line.slice(0,400)));
-    if(!r.ok) throw 0;
-    const blob=await r.blob();
-    if(seq!==_spSeq) return;
-    _spUrl=URL.createObjectURL(blob);
-    _aud=new Audio(_spUrl);
-    _aud.onended=()=>{ if(seq===_spSeq) stop(); };
-    _aud.onerror=()=>{ if(seq===_spSeq) fallbackSpeak(line,stop,seq); };
-    _aud.play().catch(()=>{ if(seq===_spSeq) fallbackSpeak(line,stop,seq); });
-  }catch(e){ if(seq===_spSeq) fallbackSpeak(line,stop,seq); }
+  ttsURL(line).then(url=>{
+    if(seq!==_spSeq) return; // si hay otra habla, gana la nueva
+    const audio=new Audio(url);
+    _aud=audio;
+    audio.onended=()=>{ if(seq===_spSeq) stop(); };
+    audio.onerror=()=>{ if(seq===_spSeq) fallbackSpeak(line,stop,seq); };
+    audio.play().catch(()=>{ if(seq===_spSeq) fallbackSpeak(line,stop,seq); });
+  }).catch(()=>{ if(seq===_spSeq) fallbackSpeak(line,stop,seq); });
   });
 }
 function fallbackSpeak(line,stop,seq){
@@ -770,9 +781,11 @@ function paintExercise(ex,after,timer){
   if(ex.tipo==="ordenar") return paintOrdenar(ex,box,after);
   if(ex.tipo==="parejas") return paintParejas(ex,box,after);
   if(ex.tipo==="dis"){ paintDis(ex,box,after); if(timer) startExTimer(timer,box,after); return; }
+  if(ex.tipo==="escri"){ paintEscri(ex,box,after); if(timer) startExTimer(timer,box,after); return; }
   /* embaralha as opções (exceto Verdadero/Falso): o modelo tende a pôr a certa em 1º */
   const opts=ex.opts.slice();
   if(ex.tipo!=="vf"){ for(let i=opts.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=opts[i]; opts[i]=opts[j]; opts[j]=t; } }
+  opts.forEach(o=>{ prefetchTTS(o+". ¡Muy bien!"); prefetchTTS(o+". La respuesta correcta es: "+ex.a); });
   opts.forEach(o=>{
     const b=document.createElement("button"); b.className="opt"; b.textContent=o;
     b.onclick=()=>{
@@ -836,46 +849,120 @@ function paintParejas(ex,box,after){
     box.appendChild(b);
   });
 }
-/* discursiva: pregunta abierta; la niña responde en voz alta y se autoevalúa */
+/* ===== Discursivas: voz (microfone) e escrita ===== */
+const ES_NUM={cero:0,uno:1,un:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,once:11,doce:12,trece:13,catorce:14,quince:15,dieciseis:16,diecisiete:17,dieciocho:18,diecinueve:19,veinte:20,veintiun:21,veintiuno:21,veintidos:22,veintitres:23,veinticuatro:24,veinticinco:25,veintiseis:26,veintisiete:27,veintiocho:28,veintinueve:29,treinta:30,cuarenta:40,cincuenta:50,sesenta:60,setenta:70,ochenta:80,noventa:90,cien:100,ciento:100};
+const ES_STOP=new Set("el la los las un una unos unas de del y o u es son al a en que se su sus lo le les".split(" "));
+function normTxt(s){ return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim(); }
+/* tokens normalizados: minúsculas, sem acento/pontuação, números por extenso → dígitos, sem stopwords */
+function toks(s){ return normTxt(s).split(" ").filter(Boolean).map(w=>ES_NUM[w]!==undefined?String(ES_NUM[w]):w).filter(w=>!ES_STOP.has(w)); }
+/* tolerante: acerta se todos os tokens da certa estiverem na resposta da criança (ou vice-versa) */
+function answersMatch(expected,heard){
+  const e=toks(expected), h=toks(heard); if(!e.length||!h.length) return false;
+  const hS=new Set(h), eS=new Set(e);
+  return e.every(t=>hS.has(t)) || h.every(t=>eS.has(t));
+}
+function showAnswerCard(box,a){
+  box.innerHTML="";
+  const card=document.createElement("div"); card.className="opt"; card.style.cursor="default"; card.textContent=a;
+  box.appendChild(card);
+}
+function discFinish(box,ex,after,ok,prefix,showCard){
+  if(exAnswered) return; exAnswered=true; stopExTimer();
+  const fb=$("exFb");
+  if(ok){ fb.textContent=(prefix||"")+"¡Muy bien! +10 🪙"; fb.className="feedback good"; }
+  else {
+    if(showCard!==false) showAnswerCard(box,ex.a);
+    fb.textContent=(prefix||"")+"La respuesta era: "+ex.a; fb.className="feedback bad";
+  }
+  const p=registerResult(ok, ok?"¡Muy bien!":"La respuesta correcta es: "+ex.a);
+  if(after) after(ok,p);
+}
+/* discursiva por voz: botão do microfone escuta a resposta (Web Speech API) e compara com a certa */
 function paintDis(ex,box,after){
   box.className="opts";
   const fb=$("exFb");
-  fb.textContent="Piénsalo y responde en voz alta 🎤"; fb.className="feedback";
-  speak(ex.q);
-  const b=document.createElement("button"); b.className="opt"; b.textContent="👀 Ver la respuesta";
-  b.onclick=()=>{
+  fb.textContent="Pulsa 🎤 y responde en voz alta"; fb.className="feedback";
+  speak(ex.q); prefetchTTS("¡Muy bien!"); prefetchTTS("La respuesta correcta es: "+ex.a);
+  const mic=document.createElement("button"); mic.className="opt"; mic.style.cssText="text-align:center;font-size:20px"; mic.textContent="🎤 Hablar";
+  const reveal=document.createElement("button"); reveal.className="opt"; reveal.style.textAlign="center"; reveal.textContent="👀 No lo sabía";
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  mic.onclick=()=>{
     if(exAnswered) return;
-    box.innerHTML="";
-    const card=document.createElement("div"); card.className="opt"; card.style.cursor="default"; card.textContent=ex.a;
-    const row=document.createElement("div"); row.className="row";
-    const yes=document.createElement("button"); yes.className="opt ok"; yes.textContent="✅ Sí, la sabía";
-    const no=document.createElement("button"); no.className="opt no"; no.textContent="❌ No la sabía";
-    const done=(ok)=>{
-      if(exAnswered) return; exAnswered=true; stopExTimer();
-      fb.textContent=ok?"¡Bien! +10 🪙":"La respuesta era: "+ex.a; fb.className="feedback "+(ok?"good":"bad");
-      const p=registerResult(ok, ok?"¡Muy bien!":"La respuesta correcta es: "+ex.a);
-      if(after) after(ok,p);
+    if(!SR){ fb.textContent="Este dispositivo no reconoce la voz aquí. Toca «No lo sabía»."; mic.style.display="none"; return; }
+    let heard=false;
+    let rec;
+    try{ rec=new SR(); }catch(e){ fb.textContent="No pude abrir el micrófono. Toca «No lo sabía»."; mic.style.display="none"; return; }
+    rec.lang="es-ES"; rec.interimResults=false; rec.maxAlternatives=3; rec.continuous=false;
+    mic.disabled=true; mic.textContent="🎙️ Escuchando…"; fb.textContent="Te escucho…"; fb.className="feedback";
+    rec.onresult=e=>{
+      heard=true;
+      const alts=[]; for(const r of e.results){ for(const a of r) alts.push(a.transcript); }
+      const hit=alts.find(t=>answersMatch(ex.a,t));
+      const said=alts[0]||"";
+      discFinish(box,ex,after,!!hit,said?("Oí «"+said+"». "):"");
     };
-    yes.onclick=()=>done(true); no.onclick=()=>done(false);
-    row.appendChild(yes); row.appendChild(no); box.appendChild(card); box.appendChild(row);
-    fb.textContent="¿Te has acordado?";
+    rec.onerror=e=>{
+      if(exAnswered) return;
+      mic.disabled=false; mic.textContent="🎤 Hablar";
+      fb.textContent=(e.error==="not-allowed"||e.error==="service-not-allowed")
+        ? "El micrófono está bloqueado. Permite el micro o toca «No lo sabía»."
+        : "No te he oído. Prueba otra vez 🎤";
+    };
+    rec.onend=()=>{ if(!heard && !exAnswered){ mic.disabled=false; mic.textContent="🎤 Hablar"; } };
+    try{ rec.start(); }catch(e){ mic.disabled=false; mic.textContent="🎤 Hablar"; fb.textContent="No pude abrir el micrófono."; }
   };
-  box.appendChild(b);
+  reveal.onclick=()=>{
+    if(exAnswered) return;
+    showAnswerCard(box,ex.a); // limpa o box e mostra a resposta
+    const row=document.createElement("div"); row.className="row";
+    const yes=document.createElement("button"); yes.className="opt ok"; yes.style.textAlign="center"; yes.textContent="✅ Sí, la sabía";
+    const no=document.createElement("button"); no.className="opt no"; no.style.textAlign="center"; no.textContent="❌ No la sabía";
+    yes.onclick=()=>discFinish(box,ex,after,true,null,false);
+    no.onclick=()=>discFinish(box,ex,after,false,null,false);
+    row.appendChild(yes); row.appendChild(no); box.appendChild(row);
+    fb.textContent="¿Te acordabas?"; fb.className="feedback";
+  };
+  box.appendChild(mic); box.appendChild(reveal);
+}
+/* discursiva escrita: la niña escribe la respuesta y se corrige */
+function paintEscri(ex,box,after){
+  box.className="opts";
+  const fb=$("exFb");
+  fb.textContent="Escribe la respuesta ✏️"; fb.className="feedback";
+  speak(ex.q); prefetchTTS("¡Muy bien!"); prefetchTTS("La respuesta correcta es: "+ex.a);
+  const form=document.createElement("form"); form.style.cssText="display:flex;gap:8px;width:100%";
+  const input=document.createElement("input"); input.type="text"; input.placeholder="Escribe aquí…";
+  input.autocomplete="off"; input.autocapitalize="off"; input.spellcheck=false;
+  input.style.cssText="flex:1;min-width:0;border:2px solid #dfe4f2;border-radius:12px;padding:12px;font:inherit;font-size:16px";
+  const send=document.createElement("button"); send.type="submit"; send.className="opt";
+  send.style.cssText="background:var(--accent,#6c5ce7);color:#fff;border-color:transparent;text-align:center"; send.textContent="✅ Enviar";
+  form.appendChild(input); form.appendChild(send);
+  form.onsubmit=e=>{
+    e.preventDefault(); if(exAnswered) return;
+    const v=(input.value||"").trim(); if(!v){ input.focus(); return; }
+    const ok=answersMatch(ex.a,v);
+    discFinish(box,ex,after,ok,"Escribiste «"+v+"». ");
+  };
+  const reveal=document.createElement("button"); reveal.className="opt"; reveal.textContent="👀 No la sé";
+  reveal.onclick=()=>{ if(exAnswered) return; discFinish(box,ex,after,false,"No pasa nada. "); };
+  box.appendChild(form); box.appendChild(reveal);
+  try{ input.focus({preventScroll:true}); }catch(e){ try{ input.focus(); }catch(_){} }
 }
 function showEx(){
   paintExercise(SUBJECTS[curSubj].gen(),null);
 }
 /* ======= Mazo: práctica (24) y revisión del examen ======= */
 let deckQ=[],deckN=0,deckLabel="",deckBonus=0,deckTimer=0;
-/* 1 de cada 3 exercícios (com resposta) vira discursiva; decks com timer ficam só na velocidade */
+/* 1 de cada 3 exercícios (com resposta) vira discursiva, alternando voz e escrita; decks com timer ficam só na velocidade */
 function interleaveDis(list){
-  let n=0;
+  let n=0,d=0;
   return list.map(ex=>{
     n++;
     if(n%3!==0) return ex;
     if(!ex||!ex.q||typeof ex.a!=="string") return ex;
-    if(ex.tipo==="ordenar"||ex.tipo==="parejas"||ex.tipo==="dis") return ex;
-    return {q:ex.q,a:ex.a,tipo:"dis",tema:ex.tema};
+    if(ex.tipo==="ordenar"||ex.tipo==="parejas"||ex.tipo==="dis"||ex.tipo==="escri") return ex;
+    d++;
+    return {q:ex.q,a:ex.a,tipo:d%2===1?"dis":"escri",tema:ex.tema};
   });
 }
 function startDeck(list,label,bonus,timer){
