@@ -660,7 +660,25 @@ function esVoice(){
 }
 try{ window.speechSynthesis.onvoiceschanged=()=>{esVoiceCache=null;}; }catch(e){}
 /* Voz do gato: MP3 neural do backend (/tts, edge-tts); fallback = sintetizador do navegador */
-let _aud=null, _spSeq=0, _spResolve=null, _spStop=null;
+let _aud=null, _spSeq=0, _spResolve=null, _spStop=null, _audioOK=false;
+/* desbloqueia a reprodução de áudio no tablet: o play() chamado após o
+   fetch do MP3 costuma cair na política de autoplay (NotAllowedError) e o
+   gato fica mudo; um play() mudo no 1º toque libera o canal */
+function unlockAudio(){
+  if(_audioOK) return;
+  try{
+    const n=2205, sr=22050, dv=new DataView(new ArrayBuffer(44+n*2));
+    const w=(o,s)=>{ for(let i=0;i<s.length;i++) dv.setUint8(o+i,s.charCodeAt(i)); };
+    w(0,"RIFF"); dv.setUint32(4,36+n*2,true); w(8,"WAVEfmt "); dv.setUint32(16,16,true);
+    dv.setUint16(20,1,true); dv.setUint16(22,1,true); dv.setUint32(24,sr,true);
+    dv.setUint32(28,sr*2,true); dv.setUint16(32,2,true); dv.setUint16(34,16,true);
+    w(36,"data"); dv.setUint32(40,n*2,true);
+    const a=new Audio(URL.createObjectURL(new Blob([dv.buffer],{type:"audio/wav"})));
+    a.volume=0; const p=a.play(); if(p&&p.then) p.then(()=>{_audioOK=true;}).catch(()=>{});
+  }catch(e){}
+}
+document.addEventListener("pointerdown",unlockAudio);
+document.addEventListener("keydown",unlockAudio);
 function stopAudio(){
   if(_aud){try{_aud.pause();}catch(e){}} _aud=null;
   try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
@@ -669,7 +687,8 @@ function stopAudio(){
    assim o feedback sai na hora do toque, sem esperar o backend gerar o MP3 */
 const _ttsCache=new Map(); const TTS_CACHE_MAX=80;
 function ttsURL(line){
-  const hit=_ttsCache.get(line); if(hit) return hit;
+  const hit=_ttsCache.get(line);
+  if(hit) return Promise.resolve(hit); /* hit é Promise (fetch em curso) ou string (blob já pronto) — speak() sempre recebe uma Promise */
   const p=fetch(BACKEND_URL+"/tts?text="+encodeURIComponent(line.slice(0,400)))
     .then(r=>{ if(!r.ok) throw new Error("tts "+r.status); return r.blob(); })
     .then(b=>{ const u=URL.createObjectURL(b); _ttsCache.set(line,u);
@@ -698,10 +717,11 @@ function speak(line){
   let stopped=false;
   const stop=()=>{ if(stopped) return; stopped=true; speechPlaying=Math.max(0,speechPlaying-1); catQuietUntil=Date.now()+1500; /* cola de eco: el altavoz tarda un instante en callarse */ if(_spStop===stop) _spStop=null; if(svg) svg.classList.remove("talking"); b.style.display="none"; if(_spResolve===resolve) _spResolve=null; resolve(); };
   _spStop=stop;
+  if(!sayLine){ stop(); return; } /* nada para falar (p.ex. opção só de emoji): não trava o avanço */
   const seq=++_spSeq;
   speechPlaying++;
   stopAudio(); clearTimeout(speechTimer);
-  speechTimer=setTimeout(stop,Math.max(2500,sayLine.length*110)); // rede de segurança
+  speechTimer=setTimeout(stop, Math.min(Math.max(2500,sayLine.length*110),8000)); // rede de segurança (com teto: voz travada não prende o exercício)
   ttsURL(sayLine).then(url=>{
     if(seq!==_spSeq) return; // si hay otra habla, gana la nueva
     const audio=new Audio(url);
@@ -758,7 +778,7 @@ function renderSubjects(){
     b.onclick=()=>{ if(id==="foto"&&!state.custom.length){ toast("Primero toma una foto en la sección Cámara 📷"); return; } startExercise(id); }; g.appendChild(b);
   });
 }
-let curSubj=null, curEx=null, exId=0, exAnswered=false;
+let curSubj=null, curEx=null, exId=0, exAnswered=false, exToken=0; /* exToken: incrementa a cada exercício pintado; avanços adiados só disparam se ainda for o exercício atual */
 function startExercise(id){
   curSubj=id; exId++; exAnswered=false;
   $("subjects").parentElement.querySelector("#subjects").style.display="none";
@@ -785,6 +805,7 @@ function startExTimer(sec,box,after){
 }
 function paintExercise(ex,after,timer){
   stopExTimer();
+  exToken++; /* invalida qualquer avanço adiado do exercício anterior */
   curEx=ex; exAnswered=false;
   $("exQ").textContent=ex.q; $("exFb").textContent=""; $("exFb").className="feedback";
   const box=$("exOpts"); box.innerHTML=""; box.className="opts";
@@ -959,7 +980,14 @@ function paintEscri(ex,box,after){
   try{ input.focus({preventScroll:true}); }catch(e){ try{ input.focus(); }catch(_){} }
 }
 function showEx(){
-  paintExercise(SUBJECTS[curSubj].gen(),null);
+  /* como no mazo: ao responder, o gato fala a resposta e então passa ao próximo;
+     se a voz travar, avança mesmo assim em até 5s (a fala nunca prende o exercício) */
+  paintExercise(SUBJECTS[curSubj].gen(),(ok,p)=>{
+    const tk=exToken; /* token do exercício respondido; se um novo pintar antes, o avanço é cancelado */
+    const wait=Promise.race([Promise.resolve(p),new Promise(r=>setTimeout(r,5000))]);
+    const adv=()=>setTimeout(()=>{ if(tk===exToken&&$("exercise").style.display!=="none") showEx(); },300);
+    wait.then(adv,adv); /* avança mesmo se a fala falhar: a voz nunca prende o exercício */
+  });
 }
 /* ======= Mazo: práctica (24) y revisión del examen ======= */
 let deckQ=[],deckN=0,deckLabel="",deckBonus=0,deckTimer=0;
@@ -992,7 +1020,11 @@ function nextInDeck(){
   }
   const ex=deckQ.shift(); const done=deckN-deckQ.length;
   $("exSubj").textContent=deckLabel+" · "+done+"/"+deckN;
-  paintExercise(ex,(ok,p)=>{ Promise.resolve(p).then(()=>setTimeout(nextInDeck,300)); },deckTimer||0);
+  paintExercise(ex,(ok,p)=>{
+    const wait=Promise.race([Promise.resolve(p),new Promise(r=>setTimeout(r,5000))]);
+    const adv=()=>setTimeout(nextInDeck,300);
+    wait.then(adv,adv); /* avança mesmo se a fala falhar: a voz nunca prende o exercício */
+  },deckTimer||0);
 }
 function buildPractice(){
   const fotos=(state.custom||[]).filter(e=>e.tema==="de la foto 📷");
