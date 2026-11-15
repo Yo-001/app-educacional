@@ -51,8 +51,27 @@ body{padding-bottom:78px}
 #chatTyping{display:none;font-size:12.5px;color:#5a6080;font-style:italic;margin-top:6px}
 /* ===== colorear ===== */
 #coSvg{width:100%;max-width:280px;display:block;margin:8px auto}
-.co-btn{border-radius:12px;padding:10px 8px;font-size:14px;color:#fff;font-weight:700;border:none;cursor:pointer}
+.co-btn{border-radius:12px;padding:10px 8px;font-size:14px;color:#fff;font-weight:700;border:none;cursor:pointer;background:var(--accent);font-family:inherit}
 .co-btn.no{opacity:.35;text-decoration:line-through}
+/* colorear: a arte trae os seus grupos pintables (data-g/data-c); o motor só enche */
+.co-art{max-width:340px;margin:6px auto 2px;position:relative}
+.co-tiles{position:absolute;inset:0;display:grid;grid-auto-rows:1fr;gap:3px}
+.co-tile{background:#e3e8f7;border:1px solid #c8cfe3;border-radius:6px;transition:opacity .3s ease}
+.co-album{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin:8px 0 4px}
+.co-slot{width:32px;height:32px;border-radius:10px;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:17px;border:2px solid transparent}
+.co-slot.got{background:#fff;border-color:var(--accent)}
+.co-slot .q{color:#b9c0d4;font-weight:800;font-size:14px}
+.co-modes{display:flex;gap:6px;overflow-x:auto;padding:2px 0 4px}
+.co-mode{flex:0 0 auto;border:2px solid transparent;background:#eef2ff;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;color:inherit}
+.co-mode.on{border-color:var(--accent);background:#fff}
+.co-art svg{width:100%;height:auto;display:block}
+.co-art [data-g]{fill:#eef1f6;stroke:#c3c9d9;stroke-width:2;stroke-linejoin:round;transition:fill .35s ease}
+.co-art .painted{animation:coPop .45s ease}
+@keyframes coPop{0%{transform:scale(.94)}55%{transform:scale(1.04)}100%{transform:scale(1)}}
+.co-pick{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;-webkit-overflow-scrolling:touch}
+.co-chip{flex:0 0 auto;border:2px solid transparent;background:#eef2ff;border-radius:14px;padding:6px 10px;font-weight:800;font-size:13px;cursor:pointer}
+.co-chip.on{border-color:var(--accent);background:#fff}
+.co-chip .em{font-size:18px;display:block;text-align:center}
 #catSvg{width:70px;height:64px;animation:bob 3.2s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 .eye{transform-box:fill-box;transform-origin:center;animation:blink 3.8s infinite}
@@ -122,13 +141,22 @@ h3{margin:0 0 6px;font-size:15px}
 .confetti{position:fixed;top:-10px;width:9px;height:14px;border-radius:2px;z-index:40;pointer-events:none;
   animation:fall 1.25s ease-in forwards}
 @keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:0}}
-/* dibujo / minijuego */
-.paint{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;margin:10px 0}
-.px{aspect-ratio:1;border-radius:4px;background:#eef2ff;border:1px solid #dfe4f2}
-.px.on{background:var(--pc,#4a7cff)}
-.palette{display:flex;gap:6px;flex-wrap:wrap}
-.sw{width:34px;height:34px;border-radius:50%;border:3px solid transparent}
-.sw[aria-pressed="true"]{border-color:var(--ink)}
+/* minijuegos */
+.tres{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:250px;margin:10px auto}
+.tres button{aspect-ratio:1;font-size:32px;border-radius:14px;border:2px solid #dfe4f2;background:#f7f9ff;font-weight:800;cursor:pointer;font-family:inherit}
+.tres button.win{background:#e6f9ef;border-color:var(--good)}
+.aho-face{font-size:34px;text-align:center;line-height:1.1}
+.aho{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin:8px 0}
+.aho .l{width:24px;height:32px;border-bottom:3px solid #2b2d42;display:flex;align-items:flex-end;justify-content:center;font-weight:800;font-size:19px}
+.keys{display:grid;grid-template-columns:repeat(9,1fr);gap:4px;margin-top:6px}
+.keys button{padding:7px 0;border-radius:8px;border:1px solid #dfe4f2;background:#fff;font-weight:800;cursor:pointer;font-family:inherit;font-size:13px}
+.keys button.no{opacity:.28;text-decoration:line-through}
+.g2048{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:270px;margin:10px auto;background:#eef2ff;padding:6px;border-radius:14px}
+.g2048 .t{aspect-ratio:1;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:19px;background:#fff;color:#2b2d42}
+.mines{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;max-width:290px;margin:10px auto}
+.mines button{aspect-ratio:1;border-radius:8px;border:1px solid #dfe4f2;background:#eef2ff;font-weight:800;font-size:14px;cursor:pointer;padding:0;font-family:inherit}
+.mines button.op{background:#fff}
+.mines button.boom{background:#ffe3e3;border-color:#ffb4b4}
 .mem{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0}
 .mem button{aspect-ratio:1;border-radius:12px;background:#eef2ff;font-size:26px;font-weight:800}
 .mem button.open{background:#fff;border:2px solid var(--accent)}
@@ -220,19 +248,13 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
   <!-- COLOREAR -->
   <div class="card" id="card-color" style="display:none" data-tab="ex">
     <h2>🎨 Colorear y aprender</h2>
-    <div class="mut" id="coStat">Responde y pinta tu gato…</div>
-    <svg id="coSvg" viewBox="0 0 200 200" aria-label="Dibujo para colorear">
-      <ellipse id="co-body" cx="100" cy="163" rx="48" ry="30" fill="#eceff5" stroke="#c9cede" stroke-width="2"/>
-      <polygon id="co-earL" points="58,62 42,22 82,46" fill="#eceff5" stroke="#c9cede" stroke-width="2"/>
-      <polygon id="co-earR" points="142,62 158,22 118,46" fill="#eceff5" stroke="#c9cede" stroke-width="2"/>
-      <ellipse id="co-head" cx="100" cy="92" rx="55" ry="50" fill="#eceff5" stroke="#c9cede" stroke-width="2"/>
-      <circle id="co-eyeL" cx="80" cy="86" r="9" fill="#fff" stroke="#c9cede" stroke-width="2"/>
-      <circle id="co-eyeR" cx="120" cy="86" r="9" fill="#fff" stroke="#c9cede" stroke-width="2"/>
-      <path id="co-nose" d="M92 106 Q100 116 108 106 Q100 124 92 106 Z" fill="#eceff5" stroke="#c9cede" stroke-width="2"/>
-      <path d="M70 110 Q76 118 82 112 M118 112 Q124 118 130 110" fill="none" stroke="#9aa2b8" stroke-width="2.5" stroke-linecap="round"/>
-    </svg>
+    <div class="co-modes" id="coModes"></div>
+    <div class="co-pick" id="coPick"></div>
+    <div class="mut" id="coStat" style="font-weight:700">Responde y pinta el dibujo…</div>
+    <div class="co-art" id="coArt"></div>
     <div class="q" id="coQ" style="font-weight:800"></div>
     <div class="opts" id="coOpts"></div>
+    <div class="co-album" id="coAlbum" aria-label="Álbum de dibujos"></div>
     <div class="row"><button class="ghost" id="btnCoClose" style="flex:1">Volver a los ejercicios</button></div>
   </div>
 
@@ -275,14 +297,6 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
     <div class="items" id="items"></div>
   </div>
 
-  <!-- DIBUJO -->
-  <div class="card" id="card-desenho" style="display:none" data-tab="ex">
-    <h2>🎨 Dibujo</h2>
-    <div class="palette" id="palette"></div>
-    <div class="paint" id="paint"></div>
-    <div class="row"><button class="ghost" id="btnClear" style="flex:1">Borrar</button></div>
-  </div>
-
   <!-- MINIJUEGO DE MEMORIA -->
   <div class="card" id="card-mem" style="display:none" data-tab="ex">
     <h2>🧠 Juego de Memoria</h2>
@@ -312,6 +326,48 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
     <div class="mut" id="sumasStat">Resuelve 10 sumas — cada acierto +2 🪙.</div>
     <div class="q" id="sumasQ"></div>
     <div class="opts" id="sumasOpts"></div>
+  </div>
+
+  <!-- MINIJUEGO: TRES EN RAYA -->
+  <div class="card" id="card-tres" style="display:none" data-tab="ex">
+    <h2>⭕ Tres en raya</h2>
+    <div class="mut" id="tresStat">Tú eres ❌ y Gatuno ⭕.</div>
+    <div class="tres" id="tres"></div>
+    <div class="row"><button class="ghost" id="btnTres" style="flex:1">Jugar otra vez</button></div>
+  </div>
+
+  <!-- MINIJUEGO: AHORCADO -->
+  <div class="card" id="card-aho" style="display:none" data-tab="ex">
+    <h2>🔤 Ahorcado galego</h2>
+    <div class="mut" id="ahoStat"></div>
+    <div class="aho-face" id="ahoFace">😺</div>
+    <div class="aho" id="ahoBox"></div>
+    <div class="keys" id="ahoKeys"></div>
+  </div>
+
+  <!-- MINIJUEGO: 2048 -->
+  <div class="card" id="card-2048" style="display:none" data-tab="ex">
+    <h2>🔢 2048</h2>
+    <div class="mut" id="p2048Stat"></div>
+    <div class="g2048" id="g2048"></div>
+    <div class="row"><button class="ghost" id="mUp" style="flex:1">⬆️</button></div>
+    <div class="row">
+      <button class="ghost" id="mLeft" style="flex:1">⬅️</button>
+      <button class="ghost" id="mDown" style="flex:1">⬇️</button>
+      <button class="ghost" id="mRight" style="flex:1">➡️</button>
+    </div>
+    <div class="row"><button class="ghost" id="btn2048New" style="flex:1">Jugar otra vez</button></div>
+  </div>
+
+  <!-- MINIJUEGO: BUSCAMINAS -->
+  <div class="card" id="card-minas" style="display:none" data-tab="ex">
+    <h2>💣 Buscaminas</h2>
+    <div class="mut" id="minasStat"></div>
+    <div class="mines" id="minas"></div>
+    <div class="row">
+      <button class="ghost" id="btnMinasFlag" style="flex:1">🚩 Modo bandera</button>
+      <button class="ghost" id="btnMinasNew" style="flex:1">Jugar otra vez</button>
+    </div>
   </div>
 
   <!-- CHAT DO GATO (IA) -->
@@ -392,95 +448,98 @@ function defaultState(){
 /* Exercises generated by the assistant from the homework photos (Ciencias
    Naturales, 2026-11-13). Reinforcement based on the material, not copies
    of the textbook. FOTO_EX seeds state.custom so "Tareas foto" always works. */
+/* ====== CONTIDO DOS EXERCICIOS (EN GALEGO) ====== */
+/* «tema» é a clave interna que usa buildPractice(); non se amosa na interface. */
 const FOTO_EX=[
- {q:"¿Qué seres están formados por células?",a:"Los seres vivos",opts:["Los seres vivos","Los seres inertes","Solo las piedras","Solo el aire"],tema:"de la foto 📷"},
- {q:"¿Cuál de estos es un ser inerte?",a:"Una piedra",opts:["Una piedra","Un perro","Una flor","Un pájaro"],tema:"de la foto 📷"},
- {q:"Un ser unicelular tiene…",a:"Una sola célula",opts:["Una sola célula","Muchas células","Células y huesos","Huesos en vez de células"],tema:"de la foto 📷"},
- {q:"Los seres pluricelulares tienen…",a:"Un gran número de células",opts:["Un gran número de células","Una sola célula","Solo células en las hojas","Solo huesos"],tema:"de la foto 📷"},
- {q:"¿Cuál es una función vital?",a:"La nutrición",opts:["La nutrición","Bailar","Tocar la guitarra","Jugar al fútbol"],tema:"de la foto 📷"},
- {q:"Con la función de nutrición, los seres vivos…",a:"Obtienen nutrientes para crecer",opts:["Obtienen nutrientes para crecer","Perciben los cambios del entorno","Tienen descendencia","Recitan poemas"],tema:"de la foto 📷"},
- {q:"La función de relación hace que los seres vivos…",a:"Perciban los cambios de su entorno",opts:["Perciban los cambios de su entorno","Coman alimentos","Fabriquen semillas","Pongan huevos"],tema:"de la foto 📷"},
- {q:"Con la función de reproducción los seres vivos…",a:"Tienen descendencia",opts:["Tienen descendencia","Recitan el abecedario","Duermen una siesta","Crecen las uñas"],tema:"de la foto 📷"},
- {q:"El componente vivo de un ecosistema está formado por…",a:"Animales, plantas y bacterias",opts:["Animales, plantas y bacterias","Agua, suelo y aire","Piedras y arena","Sol y nubes"],tema:"de la foto 📷"},
- {q:"El componente inerte de un ecosistema es…",a:"El medio físico: agua, suelo y aire",opts:["El medio físico: agua, suelo y aire","Los animales","Las plantas","Los hongos"],tema:"de la foto 📷"},
- {q:"¿Cuántos reinos forman la clasificación de los seres vivos?",a:"Cinco reinos",opts:["Cinco reinos","Dos reinos","Diez reinos","Siete reinos"],tema:"de la foto 📷"},
- {q:"Las bacterias pertenecen al reino…",a:"Moneras",opts:["Moneras","Plantas","Animales","Hongos"],tema:"de la foto 📷"},
- {q:"¿Qué animales son vertebrados?",a:"La tortuga y la gaviota",opts:["La tortuga y la gaviota","La araña y el pulpo","La medusa y la lombriz","El caracol y la abeja"],tema:"de la foto 📷"},
- {q:"Las plantas con flores se reproducen mediante…",a:"Semillas",opts:["Semillas","Huevos","Crías","Hojas"],tema:"de la foto 📷"},
- {q:"Los animales ovíparos…",a:"Nacen de huevos",opts:["Nacen de huevos","Nacen del vientre de su madre","Nacen de semillas","Brotan del suelo"],tema:"de la foto 📷"},
- {q:"¿Qué tres partes distinguimos en muchas plantas?",a:"Hoja, tallo y raíz",opts:["Hoja, tallo y raíz","Flor, fruto y semilla","Cabeza, tronco y cola","Huesos, piel y carne"],tema:"de la foto 📷"},
- {q:"La hoja se une al tallo mediante…",a:"El pecíolo",opts:["El pecíolo","La raíz","El bulbo","El germen"],tema:"de la foto 📷"},
- {q:"¿Qué parte de la planta absorbe el agua del suelo?",a:"La raíz",opts:["La raíz","La flor","El fruto","La semilla"],tema:"de la foto 📷"},
- {q:"¿Qué parte sostiene la planta y transporta las sustancias?",a:"El tallo",opts:["El tallo","La hoja","La semilla","El pétalo"],tema:"de la foto 📷"},
- {q:"¿Dónde se elabora el alimento de la planta?",a:"En las hojas",opts:["En las hojas","En las piedras","En el aire","En la sombra"],tema:"de la foto 📷"},
- {q:"Los musgos y los helechos son plantas…",a:"Sin flores",opts:["Sin flores","Con flores muy grandes","Insectívoras","De hojas de colores"],tema:"de la foto 📷"},
- {q:"Las plantas con flores se reproducen a partir de…",a:"Semillas",opts:["Semillas","Huevos","Esporas","Hojas"],tema:"de la foto 📷"},
- {q:"Las gimnospermas tienen las semillas…",a:"Sin protección de ningún fruto",opts:["Sin protección de ningún fruto","Dentro de un fruto jugoso","En flores de colores","En huevos como los pájaros"],tema:"de la foto 📷"},
- {q:"Las angiospermas tienen las semillas…",a:"Protegidas por un fruto",opts:["Protegidas por un fruto","Sueltas en el aire","Escondidas bajo tierra","En los pétalos"],tema:"de la foto 📷"},
- {q:"¿Cómo se llama el proceso por el que las plantas fabrican su alimento?",a:"Fotosíntesis",opts:["Fotosíntesis","Respiración","Evaporación","Digestión"],tema:"de la foto 📷"},
- {q:"Las plantas toman del aire el…",a:"Dióxido de carbono",opts:["Dióxido de carbono","Oxígeno","Polvo","Calor"],tema:"de la foto 📷"},
- {q:"¿Qué gas producen las plantas con la fotosíntesis?",a:"Oxígeno",opts:["Oxígeno","Dióxido de carbono","Humo","Nitrógeno"],tema:"de la foto 📷"},
- {q:"El alimento de la planta se llama…",a:"Zumo elaborado",opts:["Zumo elaborado","Zumo de naranja","Zumo de frutas","Zumo de hierbas"],tema:"de la foto 📷"},
- {q:"¿Cómo se llama el transporte del polen de una flor a otra?",a:"Polinización",opts:["Polinización","Regado","Trasplante","Poda"],tema:"de la foto 📷"},
- {q:"¿Qué parte masculina de la flor produce los granos de polen?",a:"Los estambres",opts:["Los estambres","El pistilo","Los pétalos","El tallo"],tema:"de la foto 📷"},
- {q:"¿Dónde se forman los óvulos de la planta?",a:"En el pistilo",opts:["En el pistilo","En la raíz","En la hoja","En el suelo"],tema:"de la foto 📷"},
- {q:"¿Cuál es el orden correcto de la reproducción sexual de las plantas?",a:"Polinización → fruto → germinación",opts:["Polinización → fruto → germinación","Fruto → germinación → polinización","Germinación → polinización → fruto","Polinización → germinación → fruto"],tema:"de la foto 📷"},
- {q:"Las bacterias con forma de coma se llaman…",a:"Vibrios",opts:["Vibrios","Cocos","Bacilos","Semillas"],tema:"de la foto 📷"},
- {q:"Las bacterias alargadas se llaman…",a:"Bacilos",opts:["Bacilos","Cocos","Vibrios","Huevos"],tema:"de la foto 📷"},
- {q:"Los protozoos se alimentan de…",a:"Otros seres vivos",opts:["Otros seres vivos","Luz solar","Arena","Aire"],tema:"de la foto 📷"},
- {q:"Las algas fabrican su propio alimento porque tienen…",a:"Clorofila",opts:["Clorofila","Huesos","Alas","Garras"],tema:"de la foto 📷"},
- {q:"Los hongos con sombrero y pie se reproducen por…",a:"Esporas",opts:["Esporas","Semillas","Huevos","Crías"],tema:"de la foto 📷"},
- {q:"Las levaduras sirven para…",a:"Hacer pan",opts:["Hacer pan","Fabricar fotosíntesis","Respirar oxígeno","Hacer frutos"],tema:"de la foto 📷"},
- {q:"Los animales vivíparos nacen…",a:"Del vientre de su madre",opts:["Del vientre de su madre","De huevos","De semillas","De hojas"],tema:"de la foto 📷"},
- {q:"Los animales necesitan tomar…",a:"Alimentos",opts:["Alimentos","Aire helado","Energía de la luna","Rocas molidas"],tema:"de la foto 📷"}
+ {q:"Que seres están formados por células?",a:"Os seres vivos",opts:["Os seres vivos","Os seres inertes","As pedras","A auga"],tema:"da foto 📷"},
+ {q:"Cal destes é un ser inerte?",a:"Unha pedra",opts:["Unha pedra","Un can","Unha flor","Unha bacteria"],tema:"da foto 📷"},
+ {q:"Que significa que un ser sexa unicelular?",a:"Que ten unha soa célula",opts:["Que ten unha soa célula","Que ten moitas células","Que non ten células","Que ten ósos"],tema:"da foto 📷"},
+ {q:"Os seres pluricelulares…",a:"Están formados por moitas células",opts:["Están formados por moitas células","Teñen unha soa célula","Non teñen células","Son sempre microscópicos"],tema:"da foto 📷"},
+ {q:"Cal destas é unha función vital?",a:"A reprodución",opts:["A reprodución","Xogar","Cantar","Pintar"],tema:"da foto 📷"},
+ {q:"Para que serve a función de nutrición?",a:"Para obter nutrientes e medrar",opts:["Para obter nutrientes e medrar","Para percibir o que pasa arredor","Para ter descendencia","Para moverse dun sitio a outro"],tema:"da foto 📷"},
+ {q:"Que permite a función de relación?",a:"Percibir os cambios do contorno",opts:["Percibir os cambios do contorno","Comer alimentos","Medrar","Reproducirse"],tema:"da foto 📷"},
+ {q:"Que permite a función de reprodución?",a:"Ter descendencia",opts:["Ter descendencia","Nutrirse","Relacionarse","Medrar"],tema:"da foto 📷"},
+ {q:"De que está formado o compoñente vivo dun ecosistema?",a:"De animais, plantas e bacterias",opts:["De animais, plantas e bacterias","De auga, solo e aire","De pedras e area","De sol e nubes"],tema:"da foto 📷"},
+ {q:"Que é o compoñente inerte dun ecosistema?",a:"O medio físico: auga, solo e aire",opts:["O medio físico: auga, solo e aire","Os animais","As plantas","Os fungos"],tema:"da foto 📷"},
+ {q:"Cantos reinos hai na clasificación dos seres vivos?",a:"Cinco",opts:["Cinco","Dous","Tres","Sete"],tema:"da foto 📷"},
+ {q:"As bacterias forman o reino…",a:"Moneras",opts:["Moneras","Protistas","Fungos","Plantas"],tema:"da foto 📷"},
+ {q:"Que animais son vertebrados?",a:"A tartaruga e a gaivota",opts:["A tartaruga e a gaivota","A araña e o polbo","A medusa e a miñoca","O caracol e a abella"],tema:"da foto 📷"},
+ {q:"Como se reproducen as plantas con flores?",a:"Por sementes",opts:["Por sementes","Por ovos","Por crías","Por follas"],tema:"da foto 📷"},
+ {q:"Os animais ovíparos…",a:"Nacen de ovos",opts:["Nacen de ovos","Nacen do ventre da súa nai","Nacen de sementes","Xorden do solo"],tema:"da foto 📷"},
+ {q:"Que tres partes teñen moitas plantas?",a:"Folla, talo e raíz",opts:["Folla, talo e raíz","Flor, froito e semente","Cabeza, tronco e cola","Ósos, pel e carne"],tema:"da foto 📷"},
+ {q:"Como se chama a parte da folla que se une ao talo?",a:"O pecíolo",opts:["O pecíolo","A raíz","O bulbo","O xerme"],tema:"da foto 📷"},
+ {q:"Que parte da planta absorbe a auga do solo?",a:"A raíz",opts:["A raíz","A flor","O froito","A semente"],tema:"da foto 📷"},
+ {q:"Que parte sostén a planta e transporta as substancias?",a:"O talo",opts:["O talo","A folla","A semente","O pétalo"],tema:"da foto 📷"},
+ {q:"Onde fabrica a planta o seu alimento?",a:"Nas follas",opts:["Nas follas","Na raíz","No talo","Na flor"],tema:"da foto 📷"},
+ {q:"Os musgos e os fieitos son plantas…",a:"Sen flores",opts:["Sen flores","Con flores moi grandes","Carnívoras","De follas de cores"],tema:"da foto 📷"},
+ {q:"As gimnospermas teñen as sementes…",a:"Sen protección de froito",opts:["Sen protección de froito","Dentro dun froito suculento","En flores de cores","En ovos coma os paxaros"],tema:"da foto 📷"},
+ {q:"As anxiospermas teñen as sementes…",a:"Protexidas por un froito",opts:["Protexidas por un froito","Soltas no aire","Agochadas baixo terra","Nos pétalos"],tema:"da foto 📷"},
+ {q:"Como se chama o proceso co que as plantas fabrican o seu alimento?",a:"Fotosíntese",opts:["Fotosíntese","Respiración","Evaporación","Dixestión"],tema:"da foto 📷"},
+ {q:"Que gas toma a planta do aire para facer a fotosíntese?",a:"Dióxido de carbono",opts:["Dióxido de carbono","Osíxeno","Po","Vapor de auga"],tema:"da foto 📷"},
+ {q:"Que gas solta a planta ao aire?",a:"Osíxeno",opts:["Osíxeno","Dióxido de carbono","Fume","Nitróxeno"],tema:"da foto 📷"},
+ {q:"Como se chama o alimento que fabrica a planta?",a:"Zume elaborado",opts:["Zume elaborado","Zume de laranxa","Zume de froitas","Zume de herbas"],tema:"da foto 📷"},
+ {q:"Que é a polinización?",a:"O paso do pole dunha flor a outra",opts:["O paso do pole dunha flor a outra","O regado das plantas","A caída das follas","A xerminación da semente"],tema:"da foto 📷"},
+ {q:"Que parte da flor produce o pole?",a:"Os estames",opts:["Os estames","O pistilo","Os pétalos","O talo"],tema:"da foto 📷"},
+ {q:"Onde están os óvulos da flor?",a:"No pistilo",opts:["No pistilo","Na raíz","Na folla","No solo"],tema:"da foto 📷"},
+ {q:"Que son as esporas?",a:"Células que serven para reproducirse",opts:["Células que serven para reproducirse","Sementes moi grandes","Follas pequenas","Raíces novas"],tema:"da foto 📷"},
+ {q:"As bacterias con forma de coma chámanse…",a:"Vibrios",opts:["Vibrios","Cocos","Bacilos","Esporas"],tema:"da foto 📷"},
+ {q:"As bacterias redondas chámanse…",a:"Cocos",opts:["Cocos","Bacilos","Vibrios","Protozoos"],tema:"da foto 📷"},
+ {q:"As bacterias alongadas chámanse…",a:"Bacilos",opts:["Bacilos","Cocos","Vibrios","Lévedos"],tema:"da foto 📷"},
+ {q:"De que se alimentan os protozoos?",a:"Doutros seres vivos",opts:["Doutros seres vivos","Da luz do sol","Da area","Do aire"],tema:"da foto 📷"},
+ {q:"Por que poden fabricar as algas o seu propio alimento?",a:"Porque teñen clorofila",opts:["Porque teñen clorofila","Porque teñen ósos","Porque teñen ás","Porque teñen garras"],tema:"da foto 📷"},
+ {q:"Como se reproducen os fungos con sombreiro?",a:"Por esporas",opts:["Por esporas","Por sementes","Por ovos","Por crías"],tema:"da foto 📷"},
+ {q:"Para que serven os lévedos?",a:"Para facer pan",opts:["Para facer pan","Para facer a fotosíntese","Para respirar osíxeno","Para facer froitos"],tema:"da foto 📷"},
+ {q:"Os animais vivíparos…",a:"Nacen do ventre da súa nai",opts:["Nacen do ventre da súa nai","Nacen de ovos","Nacen de sementes","Nacen de follas"],tema:"da foto 📷"},
+ {q:"Toca as etapas da reprodución dunha planta con flores, en orde:",tipo:"ordenar",pasos:["Polinización","Fertilización","Froito e sementes","Xerminación"],a:"Polinización → Fertilización → Froito e sementes → Xerminación",tema:"da foto 📷"}
 ];
-
-/* Review decks generated from the photos: part 1 (today) and part 2 (Sunday)*/
+const FOTO_EXTRA=[
+ {q:"É certo que os seres inertes non están formados por células?",tipo:"vf",a:"Verdadeiro",opts:["Verdadeiro","Falso"],tema:"da foto 📷"},
+ {q:"É certo que as plantas non fan a fotosíntese?",tipo:"vf",a:"Falso",opts:["Verdadeiro","Falso"],tema:"da foto 📷"},
+ {q:"É certo que a raíz absorbe a auga do solo?",tipo:"vf",a:"Verdadeiro",opts:["Verdadeiro","Falso"],tema:"da foto 📷"},
+ {q:"É certo que o pistilo é a parte masculina da flor?",tipo:"vf",a:"Falso",opts:["Verdadeiro","Falso"],tema:"da foto 📷"},
+ {q:"Que seres vivos forman o reino Moneras?",a:"As bacterias",opts:["As bacterias","As algas","Os caracois","Os fieitos"],tema:"da foto 📷"},
+ {q:"Que seres forman o reino Protistas?",a:"As algas e os protozoos",opts:["As algas e os protozoos","As bacterias","Os animais","As plantas con flores"],tema:"da foto 📷"},
+ {q:"Que seres forman o reino Fungos?",a:"Os fungos, os lévedos e os mofos",opts:["Os fungos, os lévedos e os mofos","As bacterias","As algas","As plantas sen flores"],tema:"da foto 📷"},
+ {q:"Cantas células ten unha bacteria?",a:"Unha",opts:["Unha","Dúas","Moitas","Ningunha"],tema:"da foto 📷"},
+ {q:"Que é un ecosistema?",a:"Os seres vivos xunto co medio físico",opts:["Os seres vivos xunto co medio físico","Só os animais","Só as plantas","O solo e as pedras"],tema:"da foto 📷"},
+ {q:"Que parte do ovo dá lugar á nova planta?",a:"O xerme",opts:["O xerme","A casca","A clara","A xema"],tema:"da foto 📷"},
+ {q:"Que necesita unha semente para xerminar?",a:"Auga, aire e temperatura axeitada",opts:["Auga, aire e temperatura axeitada","Só escuridade","Só terra seca","Só luz moi forte"],tema:"da foto 📷"},
+ {q:"Que é a fertilización?",a:"A unión do pole co óvulo",opts:["A unión do pole co óvulo","A caída da flor","O regado da planta","A saída das follas"],tema:"da foto 📷"},
+ {q:"Toca as partes da planta de abaixo cara arriba:",tipo:"ordenar",pasos:["Raíz","Talo","Folla","Flor"],a:"Raíz → Talo → Folla → Flor",tema:"da foto 📷"},
+ {q:"Toca as etapas da xerminación en orde:",tipo:"ordenar",pasos:["Semente","Raíz","Talo","Follas"],a:"Semente → Raíz → Talo → Follas",tema:"da foto 📷"},
+ {q:"Une cada ser vivo co seu reino:",tipo:"parejas",pares:[["Bacteria","Moneras"],["Alga","Protistas"],["Lévedo","Fungos"],["Fieito","Plantas"]],a:"Bacteria-Alga-Lévedo-Fieito",tema:"da foto 📷"},
+ {q:"Une cada parte da planta coa súa función:",tipo:"parejas",pares:[["Raíz","Absorbe a auga"],["Talo","Sostén a planta"],["Folla","Fai a fotosíntese"],["Flor","Reproduce a planta"]],a:"Raíz-Talo-Folla-Flor",tema:"da foto 📷"}
+];
+/* ---- repasos (EN GALEGO) ---- */
 const REVIEW1=[
- {q:"¿Qué partes forman el cuerpo de muchas plantas?",a:"Hoja, tallo y raíz",opts:["Hoja, tallo y raíz","Raíz, ala y pico","Pétalo, hoja y fruto","Hueso, músculo y piel"],tema:"revisión de hoy"},
- {q:"¿Qué parte de la planta absorbe el agua y las sales minerales?",a:"La raíz",opts:["La raíz","La flor","El fruto","La semilla"],tema:"revisión de hoy"},
- {q:"¿Qué parte sostiene la planta y lleva las sustancias hasta las hojas?",a:"El tallo",opts:["El tallo","La raíz","El pétalo","La semilla"],tema:"revisión de hoy"},
- {q:"¿Dónde elaboran las plantas su alimento?",a:"En las hojas",opts:["En las hojas","En las piedras","En el aire","En la sombra"],tema:"revisión de hoy"},
- {q:"¿Cómo se llama el proceso con el que las plantas fabrican su alimento?",a:"Fotosíntesis",opts:["Fotosíntesis","Respiración","Evaporación","Digestión"],tema:"revisión de hoy"},
- {q:"¿Qué gas toman las plantas del aire para la fotosíntesis?",a:"Dióxido de carbono",opts:["Dióxido de carbono","Oxígeno","Vapor de agua","Humo"],tema:"revisión de hoy"},
- {q:"¿Qué gas producen las plantas al hacer la fotosíntesis?",a:"Oxígeno",opts:["Oxígeno","Dióxido de carbono","Polvo","Calor"],tema:"revisión de hoy"},
- {q:"Los musgos y los helechos son plantas…",a:"Sin flores",opts:["Sin flores","Con flores vistosas","Insectívoras","Con frutas dulces"],tema:"revisión de hoy"},
- {q:"Lee: «Una planta es un ser vivo.» ¿Verdadero o falso?",tipo:"vf",a:"Verdadero",opts:["Verdadero","Falso"],tema:"revisión de hoy"},
- {q:"Toca las etapas de la vida de una planta, en orden:",tipo:"ordenar",pasos:["La semilla germina","La planta crece","Florece y llega el polen","Se forman el fruto y las semillas"],a:"La semilla germina → La planta crece → Florece y llega el polen → Se forman el fruto y las semillas",tema:"revisión de hoy"}
+ {q:"Que distingue un ser vivo dun inerte?",a:"Os seres vivos están formados por células",opts:["Os seres vivos están formados por células","Os seres vivos son máis grandes","Os seres inertes respiran","Os seres inertes medran"],tema:"da foto 📷"},
+ {q:"Cales son as tres funcións vitais?",a:"Nutrición, relación e reprodución",opts:["Nutrición, relación e reprodución","Comer, durmir e xogar","Nacer, medrar e morrer","Respirar, correr e saltar"],tema:"da foto 📷"},
+ {q:"Que plantas non teñen flores?",a:"Os musgos e os fieitos",opts:["Os musgos e os fieitos","As roseiras","As maceiras","Os caravelos"],tema:"da foto 📷"},
+ {q:"Onde se produce o zume elaborado?",a:"Nas follas",opts:["Nas follas","Na raíz","No talo","Na flor"],tema:"da foto 📷"},
+ {q:"Que parte da flor recibe o pole?",a:"O pistilo",opts:["O pistilo","O estame","O pétalo","O pecíolo"],tema:"da foto 📷"},
+ {q:"Despois da fertilización, o óvulo convértese en…",a:"Semente",opts:["Semente","Froito","Flor","Folla"],tema:"da foto 📷"},
+ {q:"Despois da fertilización, o ovario convértese en…",a:"Froito",opts:["Froito","Semente","Raíz","Pétalo"],tema:"da foto 📷"},
+ {q:"Cal destes animais é ovíparo?",a:"A galiña",opts:["A galiña","O golfiño","A vaca","O can"],tema:"da foto 📷"},
+ {q:"Cal destes animais é vivíparo?",a:"O golfiño",opts:["O golfiño","A galiña","A tartaruga","A araña"],tema:"da foto 📷"},
+ {q:"Que reino está formado por seres unicelulares sen núcleo?",a:"Moneras",opts:["Moneras","Protistas","Fungos","Animais"],tema:"da foto 📷"},
 ];
 const REVIEW2=[
- {q:"Las gimnospermas tienen las semillas…",a:"Sin protección de ningún fruto",opts:["Sin protección de ningún fruto","Dentro de un fruto","En flores de colores","En huevos"],tema:"revisión del domingo"},
- {q:"Las angiospermas tienen las semillas…",a:"Protegidas por un fruto",opts:["Protegidas por un fruto","Escondidas en las hojas","Sueltas al aire","En los pétalos"],tema:"revisión del domingo"},
- {q:"¿Cuál es el orden correcto de la reproducción sexual?",a:"Polinización → fruto → germinación",opts:["Polinización → fruto → germinación","Fruto → germinación → polinización","Germinación → fruto → polinización","Fruto → polinización → germinación"],tema:"revisión del domingo"},
- {q:"¿Dónde se forman los óvulos de la planta?",a:"En el pistilo",opts:["En el pistilo","En la raíz","En la hoja","En el tallo"],tema:"revisión del domingo"},
- {q:"Las bacterias con forma de coma se llaman…",a:"Vibrios",opts:["Vibrios","Cocos","Bacilos","Flores"],tema:"revisión del domingo"},
- {q:"Las bacterias alargadas se llaman…",a:"Bacilos",opts:["Bacilos","Cocos","Vibrios","Semillas"],tema:"revisión del domingo"},
- {q:"Las algas son del reino…",a:"Protistas",opts:["Protistas","Moneras","Hongos","Animales"],tema:"revisión del domingo"},
- {q:"Los protozoos se alimentan de…",a:"Otros seres vivos",opts:["Otros seres vivos","Luz solar","Arena","Piedras"],tema:"revisión del domingo"},
- {q:"Toca parejas: une cada parte de la planta con su función:",tipo:"parejas",pares:[["La raíz","Absorbe el agua"],["El tallo","Sostiene la planta"],["La hoja","Fabrica el alimento"],["La flor","Reproduce la planta"]],a:"raíz-tallo-hoja-flor",tema:"revisión del domingo"},
- {q:"Lee: «Las gimnospermas protegen sus semillas con un fruto.» ¿Verdadero o falso?",tipo:"vf",a:"Falso",opts:["Verdadero","Falso"],tema:"revisión del domingo"}
+ {q:"Todos os seres vivos están formados por células.",tipo:"vf",a:"Verdadeiro",opts:["Verdadeiro","Falso"],tema:"da foto 📷"},
+ {q:"As plantas respiran e tamén fan a fotosíntese.",tipo:"vf",a:"Verdadeiro",opts:["Verdadeiro","Falso"],tema:"da foto 📷"},
+ {q:"Que lle dá a planta ao aire?",a:"Osíxeno",opts:["Osíxeno","Dióxido de carbono","Nitróxeno","Fume"],tema:"da foto 📷"},
+ {q:"Que lle quita a planta ao aire?",a:"Dióxido de carbono",opts:["Dióxido de carbono","Osíxeno","Vapor","Po"],tema:"da foto 📷"},
+ {q:"Que seres vivos son descompoñedores?",a:"Os fungos e as bacterias",opts:["Os fungos e as bacterias","As plantas","Os animais vertebrados","As algas"],tema:"da foto 📷"},
+ {q:"Que é un ser autótrofo?",a:"O que fabrica o seu propio alimento",opts:["O que fabrica o seu propio alimento","O que come outros seres vivos","O que non se move","O que vive na auga"],tema:"da foto 📷"},
+ {q:"Que é un ser heterótrofo?",a:"O que se alimenta doutros seres vivos",opts:["O que se alimenta doutros seres vivos","O que fabrica o seu alimento","O que non respira","O que non medra"],tema:"da foto 📷"},
+ {q:"Cantos reinos hai?",a:"Cinco",opts:["Cinco","Tres","Dous","Sete"],tema:"da foto 📷"},
+ {q:"Que parte da planta transporta a auga?",a:"O talo",opts:["O talo","A folla","A flor","O froito"],tema:"da foto 📷"},
+ {q:"Cales son plantas con flores?",a:"As anxiospermas e as gimnospermas",opts:["As anxiospermas e as gimnospermas","Os musgos e os fieitos","Só as algas","Só os fungos"],tema:"da foto 📷"},
 ];
-/* fotos das tarefas: 40 + 16 exercícios das 29 fotos entram sempre (MC, verdadero/falso, ordenar, parejas) */
-/* Extra das fotos: verdadero/falso, ordenar, parejas e MC mais difíceis */
-const FOTO_EXTRA=[
- {q:"Lee: «Las plantas toman oxígeno para la fotosíntesis.» ¿Verdadero o falso?",tipo:"vf",a:"Falso",opts:["Verdadero","Falso"],tema:"de la foto 📷"},
- {q:"Lee: «Los seres unicelulares tienen muchas células.» ¿Verdadero o falso?",tipo:"vf",a:"Falso",opts:["Verdadero","Falso"],tema:"de la foto 📷"},
- {q:"Lee: «Los musgos y los helechos tienen flores.» ¿Verdadero o falso?",tipo:"vf",a:"Falso",opts:["Verdadero","Falso"],tema:"de la foto 📷"},
- {q:"Lee: «Las angiospermas protegen sus semillas dentro de un fruto.» ¿Verdadero o falso?",tipo:"vf",a:"Verdadero",opts:["Verdadero","Falso"],tema:"de la foto 📷"},
- {q:"Lee: «Una piedra es un ser vivo.» ¿Verdadero o falso?",tipo:"vf",a:"Falso",opts:["Verdadero","Falso"],tema:"de la foto 📷"},
- {q:"Lee: «Las bacterias pertenecen al reino Moneras.» ¿Verdadero o falso?",tipo:"vf",a:"Verdadero",opts:["Verdadero","Falso"],tema:"de la foto 📷"},
- {q:"Toca las etapas de la vida de una planta, en orden:",tipo:"ordenar",pasos:["La semilla germina","La planta crece","Florece y llega el polen","Se forman el fruto y las semillas"],a:"La semilla germina → La planta crece → Florece y llega el polen → Se forman el fruto y las semillas",tema:"de la foto 📷"},
- {q:"Toca los pasos de la fotosíntesis, en orden:",tipo:"ordenar",pasos:["La raíz absorbe el agua","Las hojas toman el dióxido de carbono","La luz del sol da la energía","La planta fabrica el alimento"],a:"La raíz absorbe el agua → Las hojas toman el dióxido de carbono → La luz del sol da la energía → La planta fabrica el alimento",tema:"de la foto 📷"},
- {q:"Toca los pasos de la reproducción sexual, en orden:",tipo:"ordenar",pasos:["Polinización","Formación del fruto","Germinación de la semilla"],a:"Polinización → Formación del fruto → Germinación de la semilla",tema:"de la foto 📷"},
- {q:"Toca parejas: une cada parte de la planta con su función:",tipo:"parejas",pares:[["La raíz","Absorbe el agua"],["El tallo","Sostiene la planta"],["La hoja","Fabrica el alimento"],["La flor","Reproduce la planta"]],a:"raíz-tallo-hoja-flor",tema:"de la foto 📷"},
- {q:"Toca parejas: une cada función vital con lo que hace:",tipo:"parejas",pares:[["La nutrición","Obtiene alimentos"],["La relación","Percibe el entorno"],["La reproducción","Crea descendencia"]],a:"nutrición-relación-reproducción",tema:"de la foto 📷"},
- {q:"Toca parejas: une cada reino con unos seres:",tipo:"parejas",pares:[["Moneras","Las bacterias"],["Protistas","Los protozoos"],["Hongos","Las setas"],["Plantas","Árboles y flores"]],a:"Moneras-Protistas-Hongos-Plantas",tema:"de la foto 📷"},
- {q:"¿Qué necesitan las plantas para hacer la fotosíntesis?",a:"Agua, dióxido de carbono y luz solar",opts:["Agua, dióxido de carbono y luz solar","Huesos, sangre y carne","Piedras, arena y sal","Música, baile y juegos"],tema:"de la foto 📷"},
- {q:"Los animales que nacen de huevos se llaman…",a:"Ovíparos",opts:["Ovíparos","Vivíparos","Semilleros","Floreados"],tema:"de la foto 📷"},
- {q:"Los pinos, abetos y cipreses son plantas…",a:"Gimnospermas",opts:["Gimnospermas","Angiospermas","Musgos","Helechos"],tema:"de la foto 📷"},
- {q:"Los animales que nacen del vientre de su madre se llaman…",a:"Vivíparos",opts:["Vivíparos","Ovíparos","Insectívoros","Carnívoros"],tema:"de la foto 📷"}
-];
-function withFoto(st){ if(!Array.isArray(st.custom)) st.custom=[]; const seenQ=new Set(st.custom.map(e=>e.q)); FOTO_EX.concat(FOTO_EXTRA).forEach(e=>{ if(!seenQ.has(e.q)) st.custom.push(e); }); return st; }
+
+function withFoto(st){ if(!Array.isArray(st.custom)) st.custom=[];
+  /* migración única: os exercicios antigos gardados en castelán xa non valen (todo vai en galego) */
+  if(st.migr!==1){ st.custom=st.custom.filter(e=>e.tema!=="de la foto 📷"); st.migr=1; }
+  const seenQ=new Set(st.custom.map(e=>e.q)); FOTO_EX.concat(FOTO_EXTRA).forEach(e=>{ if(!seenQ.has(e.q)) st.custom.push(e); }); return st; }
 function load(){
   try{const s=JSON.parse(localStorage.getItem(LS_KEY)||"null");
     if(!s||s.v!==LS_VER) return withFoto(defaultState());
@@ -535,7 +594,7 @@ function genFoto(){const c=state.custom;return c.length?pick(c):{q:"¡Toma una f
 function extractExercises(text){
   const out=[]; const words=[];
   const clean=(text||"").replace(/\s+/g," ").trim();
-  const STOP=new Set(["para","con","este","esta","estos","estas","como","pero","porque","donde","cuando","también","muy","mucho","cada","sobre","hasta","entre","desde"]);
+  const STOP=new Set(["para","con","este","esta","estes","estas","como","pero","porque","onde","cando","tamén","moi","moito","cada","sobre","ata","entre","desde","unha","unhas","dun","dunha","dos","das","coa","coas","que","sen","son","está"]);
   const lines=clean.split(/[\n.!?]/).map(s=>s.trim()).filter(s=>s.split(" ").length>=4);
   const cleanWord=w=>w.replace(/[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ]/g,"");
   for(const ln of lines) ln.split(" ").forEach(w=>{const c=cleanWord(w); if(c.length>=4&&!STOP.has(c.toLowerCase())) words.push(c);});
@@ -552,7 +611,7 @@ function extractExercises(text){
   if(nums.length>=2&&out.length<40){
     const a=pick(nums),b=pick(nums),op=pick(["+","−"]);
     const r=op==="+"?Number(a)+Number(b):Math.max(0,Number(a)-Number(b));
-    out.push({q:"¿Cuánto es "+a+" "+op+" "+b+"?",a:String(r),opts:opts4(String(r),[String(r+1),String(r-1),String(r+10)])});
+    out.push({q:"Canto é "+a+" "+op+" "+b+"?",a:String(r),opts:opts4(String(r),[String(r+1),String(r-1),String(r+10)])});
   }
   return out.slice(0,40);
 }
@@ -575,31 +634,34 @@ function genMat(){const t=pick(["+","−","×"]);
   opts:opts4(String(a*b),[a*b+1,a*b-1,a*b+2,a*b+10,a*b+b])};}
 function lexGen(pairs,ask){const [w,t]=pick(pairs);
   const others=pairs.filter(p=>p[1]!==t).map(p=>p[1]);
-  return {q:ask==="w"?("¿Cómo se dice \""+t+"\" en inglés?"):("¿Qué significa \""+w+"\" en inglés?"),
+  return {q:ask==="w"?("¿Como se di «"+t+"» en inglés?"):("¿Que significa «"+w+"» en inglés?"),
     a:ask==="w"?w:t, opts:opts4(ask==="w"?w:t,others)};}
-const LEX=[["cat","gato"],["dog","perro"],["house","casa"],["water","agua"],["sun","sol"],["school","escuela"],
-["book","libro"],["fish","pez"],["tree","árbol"],["friend","amigo"],["happy","feliz"],["big","grande"]];
+const LEX=[["cat","gato"],["dog","can"],["house","casa"],["water","auga"],["sun","sol"],["school","escola"],
+["book","libro"],["fish","peixe"],["tree","árbore"],["friend","amigo"],["happy","feliz"],["big","grande"]];
 function genEng(){return lexGen(LEX,pick(["w","t"]));}
-const ES=[["perro","animal que ladra"],["gato","animal que maúlla"],["casa","donde vivimos"],["libro","para leer"],["agua","para beber"],["sol","nos calienta"],["amigo","persona que queremos"],["escuela","donde aprendemos"],["árbol","tiene tronco y hojas"],["pequeño","corto de tamaño"]];
+const ES=[["perro","animal que ladra"],["gato","animal que maúlla"],["casa","onde vivimos"],["libro","para ler"],["agua","para beber"],["sol","dános calor"],["amigo","persoa que queremos"],["escuela","onde aprendemos"],["árbol","ten tronco e follas"],["pequeño","baixo de tamaño"]];
 function genCast(){const [w,t]=pick(ES);const others=ES.filter(p=>p[1]!==t).map(p=>p[1]);
-  return{q:"¿Qué significa «"+w+"»?",a:t,opts:opts4(t,others)};}
-const GL=[["gato","animal que maúlla"],["can","animal que ladra"],["casa","donde vivimos"],["libro","para leer"],["auga","para beber"],["sol","nos calienta"],["amigo","persona que queremos"],["escola","donde aprendemos"],["árbore","tiene tronco y hojas"],["pequeno","corto de tamaño"]];
+  return{q:"En castelán, «"+w+"» significa…",a:t,opts:opts4(t,others)};}
+const GL=[["gato","animal que maúlla"],["can","animal que ladra"],["casa","onde vivimos"],["libro","para ler"],["auga","para beber"],["sol","dános calor"],["amigo","persoa que queremos"],["escola","onde aprendemos"],["árbore","ten tronco e follas"],["pequeno","baixo de tamaño"]];
 function genGal(){const [w,t]=pick(GL);const others=GL.filter(p=>p[1]!==t).map(p=>p[1]);
-  return{q:"En gallego, «"+w+"» significa…",a:t,opts:opts4(t,others)};}
-const NAT=[["¿Qué necesitan las plantas para crecer?","Sol, agua y aire"],["¿Qué planeta es conocido como el planeta rojo?","Marte"],["¿Qué animal es un mamífero que vuela?","El murciélago"],["¿Qué hacen las abejas en la naturaleza?","Polinizan las flores"],["¿Qué órgano bombea la sangre?","El corazón"]];
+  return{q:"En galego, «"+w+"» significa…",a:t,opts:opts4(t,others)};}
+const NAT=[["Que necesitan as plantas para medrar?","Sol, auga e aire"],["Que planeta é coñecido como o planeta vermello?","Marte"],["Que animal é un mamífero que voa?","O morcego"],["Que fan as abellas na natureza?","Polinizan as flores"],["Que órgano bombea o sangue?","O corazón"]];
 function genNat(){const [q,a]=pick(NAT);const others=NAT.filter(p=>p[1]!==a).map(p=>p[1]);
   return{q,a,opts:opts4(a,others)};}
-const SOC=[["¿Cuál es la capital de Galicia?","Santiago de Compostela"],["¿Cuál es el océano más grande del mundo?","El Océano Pacífico"],["¿En qué continente está España?","Europa"],["¿Qué río pasa por Santiago de Compostela?","El río Sarela"],["¿Cómo se llama el mapa que muestra países?","El mapamundi"]];
+const SOC=[["Cal é a capital de Galicia?","Santiago de Compostela"],["Cal é o océano máis grande do mundo?","O océano Pacífico"],["En que continente está España?","Europa"],["Que río pasa por Santiago de Compostela?","O río Sarela"],["Como se chama o mapa que amosa os países?","O mapamundi"]];
 function genSoc(){const [q,a]=pick(SOC);const others=SOC.filter(p=>p[1]!==a).map(p=>p[1]);
   return{q,a,opts:opts4(a,others)};}
 
 /* ============== TIENDA ============== */
 const SHOP=[
  {cat:"Juegos", id:"memoria", em:"🧠", nm:"Juego de Memoria", pr:40, tag:"juegos", act:showMem},
- {cat:"Juegos", id:"desenho", em:"🎨", nm:"Página de Dibujo", pr:25, tag:"juegos", act:showDesenho},
  {cat:"Juegos", id:"lluvia", em:"🎯", nm:"Lluvia de frutas", pr:35, tag:"juegos", act:showLluvia},
  {cat:"Juegos", id:"simon", em:"🎵", nm:"Simón Gatuno", pr:50, tag:"juegos", act:showSimon},
  {cat:"Juegos", id:"sumas", em:"➕", nm:"Suma veloz", pr:45, tag:"juegos", act:showSumas},
+ {cat:"Juegos", id:"tres", em:"⭕", nm:"Tres en raya", pr:25, tag:"juegos", act:showTres},
+ {cat:"Juegos", id:"aho", em:"🔤", nm:"Ahorcado galego", pr:30, tag:"juegos", act:showAhorcado},
+ {cat:"Juegos", id:"p2048", em:"🔢", nm:"2048", pr:45, tag:"juegos", act:show2048},
+ {cat:"Juegos", id:"minas", em:"💣", nm:"Buscaminas", pr:55, tag:"juegos", act:showMinas},
  {id:"selva1", cat:"Pegatinas", em:"🦁", nm:"Pegatina León", pr:15},
  {id:"selva2", cat:"Pegatinas", em:"🐙", nm:"Pegatina Pulpo", pr:20},
  {id:"selva3", cat:"Pegatinas", em:"🦄", nm:"Pegatina Unicornio RARO", pr:80, rare:true},
@@ -750,7 +812,7 @@ function fallbackSpeak(line,stop,seq){
 /* ============== UI ============== */
 const $=id=>document.getElementById(id);
 /* ============== ABAS DE NAVEGACIÓN ============== */
-const GAME_CARDS=["card-color","card-desenho","card-mem","card-lluvia","card-simon","card-sumas"];
+const GAME_CARDS=["card-color","card-mem","card-lluvia","card-simon","card-sumas","card-tres","card-aho","card-2048","card-minas"];
 function setTab(id){
   document.body.dataset.tab=id;
   [...document.querySelectorAll("#nav button")].forEach(b=>b.classList.toggle("on",b.dataset.tab===id));
@@ -881,16 +943,127 @@ function paintParejas(ex,box,after){
   });
 }
 /* ===== Discursivas: voz (microfone) e escrita ===== */
-const ES_NUM={cero:0,uno:1,un:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,once:11,doce:12,trece:13,catorce:14,quince:15,dieciseis:16,diecisiete:17,dieciocho:18,diecinueve:19,veinte:20,veintiun:21,veintiuno:21,veintidos:22,veintitres:23,veinticuatro:24,veinticinco:25,veintiseis:26,veintisiete:27,veintiocho:28,veintinueve:29,treinta:30,cuarenta:40,cincuenta:50,sesenta:60,setenta:70,ochenta:80,noventa:90,cien:100,ciento:100};
-const ES_STOP=new Set("el la los las un una unos unas de del y o u es son al a en que se su sus lo le les".split(" "));
+/* ===== Comparación de respostas =====
+   Acepta a resposta correcta dita con outras palabras cando o significado é o mesmo:
+     «enerxía da luz do sol» ≈ «enerxía solar» ≈ «a luz do sol»
+   Como: normaliza (minúsculas, sen acentos), quita palabras vacías, reduce cada
+   palabra ao seu concepto do temario (sinónimos galego/castelán, plurais) e esixe
+   que a resposta cubra a maior parte dos conceptos. Unha negación explícita
+   («non…») nunca acerta se a resposta correcta non a leva. */
+const NUMW={cero:0,uno:1,unha:1,una:1,un:1,dous:2,dos:2,tres:3,catro:4,cuatro:4,cinco:5,seis:6,sete:7,siete:7,oito:8,ocho:8,nove:9,nueve:9,dez:10,diez:10,once:11,doce:12,trece:13,catorce:14,quince:15,dezaseis:16,dieciseis:16,dezasete:17,diecisiete:17,dezaoito:18,dieciocho:18,dezanove:19,diecinueve:19,vinte:20,veinte:20,trinta:30,treinta:30,corenta:40,cuarenta:40,cincuenta:50,sesenta:60,setenta:70,oitenta:80,ochenta:80,noventa:90,cen:100,cien:100,cento:100};
+const STOP=new Set(("a o as os un unha uns unhas de do da dos das dun dunha duns dunhas no na nos nas nun nunha "+
+ "e ou u que quen se lle lles seu sua seus suas ao aos co coa cos coas para por con sen sobre entre ata mesmo "+
+ "el la los las unos unas del al en es son su sus lo le les como cando onde porque tamen tamén moi moito "+
+ "xa xa moi e é esta este estas estes iso isto aquilo lle estan era eran foi foron hai ser son ten "+
+ "medio fisico parte partes conxunto formados formado formadas formada serven serve tipo clase elaborado elaborada").split(" "));
 function normTxt(s){ return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim(); }
-/* tokens normalizados: minúsculas, sem acento/pontuação, números por extenso → dígitos, sem stopwords */
-function toks(s){ return normTxt(s).split(" ").filter(Boolean).map(w=>ES_NUM[w]!==undefined?String(ES_NUM[w]):w).filter(w=>!ES_STOP.has(w)); }
-/* tolerante: acerta se todos os tokens da certa estiverem na resposta da criança (ou vice-versa) */
+const CONCEPT=new Map(), DEF=[];   /* DEF: definición longa → termo que a resume */
+function syn(canon,alts){ CONCEPT.set(canon,canon);
+  alts.forEach(a=>{ if(a.includes(" ")) DEF.push([a,canon]); else CONCEPT.set(a,canon); }); }
+/* sinónimos do temario (galego ↔ castelán, formas usuais) */
+[["sol",["sol","solar","luz","soleado"]],
+ ["auga",["auga","agua"]],
+ ["terra",["terra","tierra","solo","chan"]],
+ ["aire",["aire","atmosfera","atmosferico"]],
+ ["planta",["planta","vexetal","vexetais"]],
+ ["folla",["folla","hoja","follaxe"]],
+ ["raiz",["raiz","raiceira","raices"]],
+ ["talo",["talo","tallo"]],
+ ["flor",["flor","flores"]],
+ ["froito",["froito","froita","fruto","fruta"]],
+ ["semente",["semente","semilla"]],
+ ["ovulo",["ovulo","ovulos","ovulo"]],
+ ["pole",["pole","polen"]],
+ ["fotosintese",["fotosintese","fotosintesis"]],
+ ["osixeno",["osixeno","oxigeno","o2"]],
+ ["dioxido",["dioxido","co2","dioxido de carbono"]],
+ ["celula",["celula","celulas"]],
+ ["servivo",["seres vivos","ser vivo"]],
+ ["inerte",["inerte","inertes","inanimado"]],
+ ["nutricion",["nutricion","alimentacion","nutrirse","alimentarse","alimento","alimentos","comer"]],
+ ["relacion",["relacion","percibir","percepcion","sentidos"]],
+ ["reproducion",["reproducion","reproducirse","reproduccion","reproducen"]],
+ ["ecosistema",["ecosistema","ecosistemas","habitat","seres vivos xunto co medio fisico"]],
+ ["bacteria",["bacteria","bacterias","microbios","microorganismo"]],
+ ["fungo",["fungo","fungos","hongo","hongos","cogomelo","cogumelos"]],
+ ["alga",["alga","algas"]],
+ ["protozoo",["protozoo","protozoos"]],
+ ["espora",["espora","esporas","celulas que serven para reproducirse"]],
+ ["monera",["monera","moneras"]],
+ ["protista",["protista","protistas"]],
+ ["oviparo",["oviparo","oviparos"]],
+ ["viviparo",["viviparo","viviparos"]],
+ ["vertebrado",["vertebrado","vertebrados"]],
+ ["invertebrado",["invertebrado","invertebrados"]],
+ ["mamifero",["mamifero","mamiferos"]],
+ ["ave",["ave","aves","paxaro","paxaros","pajaro","pajaros"]],
+ ["peixe",["peixe","peixes","pez","peces"]],
+ ["anfibio",["anfibio","anfibios"]],
+ ["reptil",["reptil","reptiles","reptis"]],
+ ["polinizacion",["polinizacion","polinizan","polinizar","paso do pole dunha flor a outra"]],
+ ["fertilizacion",["fertilizacion","fecundacion","fecundar","union do pole co ovulo"]],
+ ["xerminacion",["xerminacion","germinacion","xerminar","germinar","xermina","germina"]],
+ ["clorofila",["clorofila"]],
+ ["zume",["zume","zumo","savia"]],
+ ["estame",["estame","estames","estambre","estambres"]],
+ ["pistilo",["pistilo","pistilos","carpena"]],
+ ["petalo",["petalo","petalos"]],
+ ["peciolo",["peciolo","peciolos"]],
+ ["medrar",["medrar","medra","medran","medrou","crecer","crece","crecen","crecemento"]],
+ ["respirar",["respirar","respira","respiran","respiracion","respiran"]],
+ ["calor",["calor","quenta","quentar","calienta","calentar"]],
+ ["santiago",["santiago de compostela","santiago","compostela"]],
+ ["galicia",["galicia","galego","galega"]],
+ ["oceano",["oceano","oceanos"]],
+ ["continente",["continente","continentes"]],
+ ["europa",["europa"]],
+ ["mapamundi",["mapamundi","mapa mundi"]],
+ ["cinco",["cinco"]],
+ ["verdadeiro",["verdadeiro","verdadero","certo","true"]],
+].forEach(p=>syn(p[0],p[1]));
+DEF.sort((a,b)=>b[0].length-a[0].length);
+function canonWord(w){
+  if(CONCEPT.has(w)) return CONCEPT.get(w);
+  if(w.length>4 && w.endsWith("es") && CONCEPT.has(w.slice(0,-2))) return CONCEPT.get(w.slice(0,-2));
+  if(w.length>3 && w.endsWith("s") && CONCEPT.has(w.slice(0,-1))) return CONCEPT.get(w.slice(0,-1));
+  return w;
+}
+/* conceptos da frase: plurais e sinónimos xa reducidos a un único termo */
+function concepts(s){
+  const out=[];
+  normTxt(s).split(" ").filter(Boolean).forEach(function(w){
+    if(NUMW[w]!==undefined) w=String(NUMW[w]);
+    if(STOP.has(w)) return;
+    out.push(canonWord(w));
+  });
+  return out;
+}
+const NEG=/(^|\s)(non|no|nunca|tampouco|tampoco|xamas|jamas)(\s|$)/;
+/* dous conceptos son iguais se coinciden ou comparten raíz (fotosintese/fotosintesis, formados/formadas) */
+function sameConcept(a,b){
+  if(a===b) return true;
+  /* g/x e j/x son a mesma letra en galego e castelán (enerxia/energia, viaxe/viaje) */
+  const gx=function(w){ return w.replace(/[gj]/g,"x"); };
+  if(a.length>=5 && b.length>=5 && gx(a)===gx(b)) return true;
+  return a.length>=6 && b.length>=6 && a.slice(0,6)===b.slice(0,6);
+}
 function answersMatch(expected,heard){
-  const e=toks(expected), h=toks(heard); if(!e.length||!h.length) return false;
-  const hS=new Set(h), eS=new Set(e);
-  return e.every(t=>hS.has(t)) || h.every(t=>eS.has(t));
+  const ne=normTxt(expected), nh=normTxt(heard);
+  if(!ne||!nh) return false;
+  if(NEG.test(nh)&&!NEG.test(ne)) return false;      /* «non hai fotosíntese» non acerta */
+    const e=concepts(expected), h=concepts(heard);
+    if(!e.length) return ne===nh;
+    if(!h.length) return false;
+    /* a certa é unha definición e a nena respondeu co termo que a resume («fertilización») */
+    for(let i=0;i<DEF.length;i++){
+      if(ne.indexOf(DEF[i][0])>=0 && h.length===1 && h[0]===DEF[i][1]) return true;
+    }
+    const used=new Set(); let hit=0;
+    e.forEach(function(t){
+      const i=h.findIndex(function(u,k){ return !used.has(k)&&sameConcept(t,u); });
+      if(i>=0){ hit++; used.add(i); }
+    });
+    return hit/e.length>=0.6;   /* cubriu a maior parte dos conceptos da resposta certa */
 }
 function showAnswerCard(box,a){
   box.innerHTML="";
@@ -1027,7 +1200,7 @@ function nextInDeck(){
   },deckTimer||0);
 }
 function buildPractice(){
-  const fotos=(state.custom||[]).filter(e=>e.tema==="de la foto 📷");
+  const fotos=(state.custom||[]).filter(e=>e.tema==="da foto 📷");
   const pool=fotos.length?fotos:FOTO_EX;
   const list=[]; let bag=[];
   while(list.length<PRACTICE_N){
@@ -1092,21 +1265,246 @@ function renderAvatar(){
   });
 }
 
-/* página de dibujo (cuadrícula 8×8) */
-let paintColor="#4a7cff";
-const PAINT_COLORS=["#4a7cff","#22b573","#f5a623","#ff70a6","#8e6ff0","#33c4c4","#555555","#ffffff"];
-function buildPaint(){
-  const p=$("palette"); p.innerHTML="";
-  PAINT_COLORS.forEach(c=>{const b=document.createElement("button");b.className="sw";
-    b.style.background=c;b.setAttribute("aria-pressed",c===paintColor);
-    b.onclick=()=>{paintColor=c;buildPaint();};p.appendChild(b);});
-  const g=$("paint"); g.innerHTML="";
-  for(let i=0;i<64;i++){const d=document.createElement("div");d.className="px";
-    d.onclick=()=>{d.classList.toggle("on");d.style.setProperty("--pc",paintColor);};
-    g.appendChild(d);}
+/* minijuego: tres en raya (Gatuno xoga con regras simples: gañar, bloquear, centro) */
+const TRES_LINES=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+let tresB=null, tresOn=false;
+function tresWinner(b){
+  for(const L of TRES_LINES){ if(b[L[0]]&&b[L[0]]===b[L[1]]&&b[L[0]]===b[L[2]]) return {who:b[L[0]],line:L}; }
+  return b.indexOf("")<0 ? {who:"-",line:[]} : null;
 }
-$("btnClear").onclick=()=>{document.querySelectorAll(".px").forEach(d=>d.classList.remove("on"));};
-function showDesenho(){ $("card-desenho").style.display=""; $("card-desenho").scrollIntoView({behavior:"smooth"}); buildPaint(); }
+function tresPaint(){
+  [...$("tres").children].forEach((b,i)=>{ b.textContent=tresB[i]; });
+}
+function tresEnd(w){
+  tresOn=false;
+  if(w.who==="❌"){
+    w.line.forEach(i=>$("tres").children[i].classList.add("win"));
+    earn(12,"tres en raya"); confetti(); speak("¡Ganaste! ¡Qué bien!");
+    $("tresStat").textContent="🏆 ¡Ganaste! +12 🪙 — toca Jugar otra vez.";
+  } else if(w.who==="⭕") $("tresStat").textContent="Ganó Gatuno 🐱 — toca Jugar otra vez.";
+  else { earn(4,"tres en raya (empate)"); $("tresStat").textContent="Empate 🤝 +4 🪙 — toca Jugar otra vez."; }
+}
+function tresPlay(i){
+  if(!tresOn||tresB[i]) return;
+  tresB[i]="❌"; vibrate(20); tresPaint();
+  let w=tresWinner(tresB); if(w) return tresEnd(w);
+  const empty=[]; tresB.forEach((v,k)=>{ if(!v) empty.push(k); });
+  const gaña=(quen)=>{ for(const k of empty){ const c=tresB.slice(); c[k]=quen; const r=tresWinner(c); if(r&&r.who===quen) return k; } return -1; };
+  let mv=gaña("⭕"); if(mv<0) mv=gaña("❌");
+  if(mv<0) mv = tresB[4]==="" ? 4 : -1;
+  if(mv<0){ const corners=[0,2,6,8].filter(k=>!tresB[k]); mv = corners.length?pick(corners):pick(empty); }
+  tresB[mv]="⭕"; tresPaint();
+  w=tresWinner(tresB); if(w) return tresEnd(w);
+  $("tresStat").textContent="Tu turno ❌";
+}
+function startTres(){
+  tresB=["","","","","","","","",""]; tresOn=true;
+  $("tresStat").textContent="Tú eres ❌ y Gatuno ⭕. ¡Empiezas!";
+  const box=$("tres"); box.innerHTML="";
+  tresB.forEach((_,i)=>{ const b=document.createElement("button"); b.onclick=()=>tresPlay(i); box.appendChild(b); });
+}
+function showTres(){ setTab("ex"); $("card-tres").style.display=""; $("card-tres").scrollIntoView({behavior:"smooth"}); startTres(); }
+$("btnTres").onclick=startTres;
+
+/* minijuego: ahorcado con palabras de galego (pistas de Ciencias da Natureza) */
+const AHO_WORDS=[
+ ["FOTOSINTESE","A planta fabrica o seu alimento con auga, luz e aire"],
+ ["CELULA","A unidade máis pequena dos seres vivos"],
+ ["RAIZ","Parte da planta que absorbe a auga do solo"],
+ ["FLOR","Parte da planta que produce as sementes"],
+ ["SEMENTE","Dela nace unha nova planta"],
+ ["BACTERIA","Ser vivo microscópico dunha soa célula"],
+ ["ECOSISTEMA","Os seres vivos e o lugar onde viven"],
+ ["TARTARUGA","Animal que leva a casa ás costas"],
+ ["ESTRELA","Brilla no ceo pola noite"],
+ ["GIRASOL","Flor amarela que mira ao Sol"],
+ ["PLUMA","Cobre o corpo das aves"],
+ ["POLBO","Animal mariño con oito brazos"],
+ ["VOLCAN","Montaña que bota lava"],
+ ["FOLERPA","Animal que salta de flor en flor"]
+];
+const AHO_FACES=["😺","😸","😼","🙀","😾","😿","😵"];
+const AHO_KEYS="ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split("");
+let ahoWord="", ahoHit={}, ahoMiss=0, ahoOn=false;
+function ahoPaint(){
+  const box=$("ahoBox"); box.innerHTML="";
+  ahoWord.split("").forEach(ch=>{
+    const d=document.createElement("div"); d.className="l";
+    d.textContent=ahoHit[ch]?ch:"";
+    box.appendChild(d);
+  });
+  [...$("ahoKeys").children].forEach(b=>{
+    const ch=b.dataset.ch, tried=!!ahoHit[ch];
+    b.classList.toggle("no",tried && ahoWord.indexOf(ch)<0);
+    b.disabled=tried || !ahoOn;
+  });
+  $("ahoFace").textContent=AHO_FACES[Math.min(ahoMiss,6)];
+}
+function ahoWin(){
+  ahoOn=false; ahoPaint();
+  const premio=10+3*(6-ahoMiss);
+  earn(premio,"ahorcado"); confetti(); speak("¡Palabra completada! ¡Bien!");
+  $("ahoStat").textContent="🏆 ¡Era "+ahoWord+"! +"+premio+" 🪙";
+}
+function ahoLose(){
+  ahoOn=false;
+  ahoWord.split("").forEach(ch=>{ ahoHit[ch]=true; });
+  ahoPaint();
+  $("ahoStat").textContent="Era "+ahoWord+". La próxima sale 😉";
+}
+function ahoTry(ch){
+  if(!ahoOn||ahoHit[ch]) return;
+  ahoHit[ch]=true;
+  if(ahoWord.indexOf(ch)<0){ ahoMiss++; vibrate(30); }
+  ahoPaint();
+  if(ahoMiss>=6){ ahoLose(); return; }
+  if(ahoWord.split("").every(c=>ahoHit[c])) ahoWin();
+}
+function startAho(){
+  const w=pick(AHO_WORDS); ahoWord=w[0]; ahoHit={}; ahoMiss=0; ahoOn=true;
+  $("ahoStat").textContent="Pista: "+w[1];
+  const kb=$("ahoKeys"); kb.innerHTML="";
+  AHO_KEYS.forEach(ch=>{
+    const b=document.createElement("button"); b.dataset.ch=ch; b.textContent=ch;
+    b.onclick=()=>ahoTry(ch); kb.appendChild(b);
+  });
+  ahoPaint();
+}
+function showAhorcado(){ setTab("ex"); $("card-aho").style.display=""; $("card-aho").scrollIntoView({behavior:"smooth"}); startAho(); }
+
+/* minijuego: 2048 (xunta números iguais ata chegar a 2048) */
+const P2048_COLORS={2:"#eee4da",4:"#ede0c8",8:"#f2b179",16:"#f59563",32:"#f67c5f",64:"#f65e3b",128:"#edcf72",256:"#edcc61",512:"#edc850",1024:"#edc53f",2048:"#edc22e"};
+let g2048=[], s2048=0, max2048=0, on2048=false;
+function add2048(){
+  const empty=[]; g2048.forEach((v,k)=>{ if(!v) empty.push(k); });
+  if(empty.length) g2048[pick(empty)] = Math.random()<0.9 ? 2 : 4;
+}
+function paint2048(){
+  const box=$("g2048");
+  if(box.children.length!==16){ box.innerHTML=""; for(let i=0;i<16;i++){ const d=document.createElement("div"); d.className="t"; box.appendChild(d); } }
+  [...box.children].forEach((d,i)=>{
+    const v=g2048[i];
+    d.textContent = v||"";
+    d.style.background = v ? (P2048_COLORS[v]||"#3c3a32") : "#fff";
+    d.style.color = v>=8 ? "#fff" : "#2b2d42";
+    d.style.fontSize = v>=1024 ? "15px" : v>=128 ? "17px" : "19px";
+  });
+  $("p2048Stat").textContent="Puntos: "+s2048+" · mejor ficha: "+Math.max.apply(null,g2048);
+}
+function move2048(d){
+  if(!on2048) return;
+  const before=g2048.join(","), lines=[];
+  for(let a=0;a<4;a++){
+    const idx=[];
+    for(let b=0;b<4;b++){
+      if(d==="left") idx.push(a*4+b);
+      else if(d==="right") idx.push(a*4+(3-b));
+      else if(d==="up") idx.push(b*4+a);
+      else idx.push((3-b)*4+a);
+    }
+    lines.push(idx);
+  }
+  lines.forEach(line=>{
+    const vals=line.map(i=>g2048[i]).filter(v=>v), out=[];
+    for(let k=0;k<vals.length;k++){
+      if(k+1<vals.length && vals[k]===vals[k+1]){ out.push(vals[k]*2); s2048+=vals[k]*2; k++; }
+      else out.push(vals[k]);
+    }
+    while(out.length<4) out.push(0);
+    line.forEach((idx,k)=>{ g2048[idx]=out[k]; });
+  });
+  if(g2048.join(",")!==before){ add2048(); vibrate(15); }
+  paint2048();
+  const mx=Math.max.apply(null,g2048);
+  if(mx>=64 && mx>max2048){
+    const premio = mx>=1024?15 : mx>=256?8 : 4;
+    max2048=mx; earn(premio,"2048"); confetti();
+    $("p2048Stat").textContent="¡Ficha "+mx+"! +"+premio+" 🪙";
+    if(mx>=2048){ on2048=false; speak("¡Llegaste a 2048! ¡Increíble!"); $("p2048Stat").textContent="🏆 ¡2048! +"+premio+" 🪙 — Jugar otra vez"; return; }
+  }
+  if(!can2048()){ on2048=false; $("p2048Stat").textContent="Sin movimientos — puntos "+s2048+". Jugar otra vez."; }
+}
+function can2048(){
+  if(g2048.indexOf(0)>=0) return true;
+  for(let r=0;r<4;r++) for(let c=0;c<4;c++){
+    const v=g2048[r*4+c];
+    if(c<3 && g2048[r*4+c+1]===v) return true;
+    if(r<3 && g2048[(r+1)*4+c]===v) return true;
+  }
+  return false;
+}
+function start2048(){
+  g2048=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]; s2048=0; max2048=0; on2048=true;
+  add2048(); add2048(); paint2048();
+}
+function show2048(){ setTab("ex"); $("card-2048").style.display=""; $("card-2048").scrollIntoView({behavior:"smooth"}); start2048(); }
+$("mUp").onclick=()=>move2048("up");
+$("mDown").onclick=()=>move2048("down");
+$("mLeft").onclick=()=>move2048("left");
+$("mRight").onclick=()=>move2048("right");
+$("btn2048New").onclick=start2048;
+
+/* minijuego: buscaminas 6x6 con 6 minas (modo bandeira para marcar) */
+let minas=[], minasOpen=[], minasFlag=[], minasOn=false, minasFlagMode=false;
+function minasNeigh(i){
+  const r=Math.floor(i/6), c=i%6, out=[];
+  for(let dr=-1;dr<=1;dr++) for(let dc=-1;dc<=1;dc++){
+    if(!dr&&!dc) continue;
+    const rr=r+dr, cc=c+dc;
+    if(rr>=0&&rr<6&&cc>=0&&cc<6) out.push(rr*6+cc);
+  }
+  return out;
+}
+function minasPaint(){
+  const box=$("minas");
+  [...box.children].forEach((b,i)=>{
+    b.classList.toggle("op",minasOpen[i]);
+    b.classList.remove("boom");
+    if(minasOpen[i]) b.textContent = minas[i]>0 ? minas[i] : (minas[i]===0 ? "" : "💣");
+    else b.textContent = minasFlag[i] ? "🚩" : "";
+    b.style.color = minas[i]===1?"#2b6cb0":minas[i]===2?"#2f855a":minas[i]===3?"#b7791f":"#c53030";
+  });
+  $("minasStat").textContent="6 minas · abiertas "+minasOpen.filter(Boolean).length+"/30"+(minasFlagMode?" · toca para poñer 🚩":"");
+  $("btnMinasFlag").textContent = minasFlagMode ? "🚩 Bandeira ON" : "🚩 Modo bandera";
+}
+function minasOpenCell(i){
+  if(!minasOn||minasOpen[i]||minasFlag[i]) return;
+  if(minas[i]===-1){
+    minasOn=false;
+    minas.forEach((v,k)=>{ if(v===-1) minasOpen[k]=true; });
+    minasPaint();
+    $("minas").children[i].classList.add("boom");
+    $("minasStat").textContent="💥 ¡Boom! — toca Jugar otra vez.";
+    return;
+  }
+  minasOpen[i]=true;
+  if(minas[i]===0) minasNeigh(i).forEach(k=>minasOpenCell(k));
+  minasPaint();
+  const left=minasOpen.filter((v,k)=>v&&minas[k]!==-1).length;
+  if(left>=30){
+    minasOn=false;
+    earn(15,"buscaminas"); confetti(); speak("¡Campo limpo! ¡Ben feito!");
+    $("minasStat").textContent="🏆 ¡Campo limpo! +15 🪙";
+  }
+}
+function startMinas(){
+  minas=[]; for(let i=0;i<36;i++) minas.push(0);
+  let postas=0;
+  while(postas<6){ const k=Math.floor(Math.random()*36); if(minas[k]!==-1){ minas[k]=-1; postas++; } }
+  minas=minas.map((v,i)=> v===-1 ? -1 : minasNeigh(i).filter(k=>minas[k]===-1).length);
+  minasOpen=[]; minasFlag=[]; for(let i=0;i<36;i++){ minasOpen.push(false); minasFlag.push(false); }
+  minasOn=true; minasFlagMode=false;
+  const box=$("minas"); box.innerHTML="";
+  for(let i=0;i<36;i++){
+    const b=document.createElement("button");
+    b.onclick=()=>{ if(minasFlagMode && !minasOpen[i]){ minasFlag[i]=!minasFlag[i]; minasPaint(); } else minasOpenCell(i); };
+    box.appendChild(b);
+  }
+  minasPaint();
+}
+function showMinas(){ setTab("ex"); $("card-minas").style.display=""; $("card-minas").scrollIntoView({behavior:"smooth"}); startMinas(); }
+$("btnMinasFlag").onclick=()=>{ minasFlagMode=!minasFlagMode; minasPaint(); };
+$("btnMinasNew").onclick=startMinas;
 
 /* minijuego de memoria (4 parejas) */
 function showMem(){
@@ -1215,54 +1613,264 @@ function newSuma(){
   });
 }
 
-/* ===== minijuego: colorear (responde bien y pinta el gato) ===== */
-const CO_COLORS=[
- {t:"rojo",c:"#ff5b5b"},{t:"azul",c:"#4a7cff"},{t:"verde",c:"#22b573"},{t:"amarillo",c:"#f5c518"},
- {t:"rosa",c:"#ff70a6"},{t:"morado",c:"#8e6ff0"},{t:"naranja",c:"#ff9d3b"},{t:"celeste",c:"#33c4c4"}
+/* ===== minijuego: colorear (responde bien y se pinta el dibujo) =====
+   Cada dibujo declara sus propias partes pintables en el SVG: data-g (grupo que se
+   pinta de una vez), data-c (color) y data-n (nombre de la parte, en la interfaz).
+   El motor no sabe qué animal pinta: por cada respuesta correcta rellena el
+   siguiente grupo. Añadir arte = añadir un objeto a ART. */
+const ART=[
+{id:"gato",em:"🐱",nome:"el gato",svg:`<ellipse data-g="corpo" data-n="el cuerpo" data-c="#f7b267" cx="100" cy="150" rx="46" ry="28"/>
+<path data-g="rabo" data-n="la cola" data-c="#f7b267" d="M144 150 q30 0 26 -26 q-2 -13 -13 -10 q7 11 -3 17 q-9 6 -15 4 z"/>
+<rect data-g="patas" data-n="las patas" data-c="#f9c784" x="70" y="168" width="15" height="20" rx="7"/>
+<rect data-g="patas" data-c="#f9c784" x="115" y="168" width="15" height="20" rx="7"/>
+<polygon data-g="orellas" data-n="las orejas" data-c="#f7b267" points="62,56 46,18 86,40"/>
+<polygon data-g="orellas" data-c="#f7b267" points="138,56 154,18 114,40"/>
+<ellipse data-g="cabeza" data-n="la cabeza" data-c="#f9c784" cx="100" cy="80" rx="50" ry="42"/>
+<path data-g="listas" data-n="las rayas" data-c="#e08b3f" d="M100 40 v14 M86 42 v12 M114 42 v12" fill="none" stroke="#e08b3f" stroke-width="5" stroke-linecap="round"/>
+<circle data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="82" cy="76" r="8"/>
+<circle data-g="ollos" data-c="#2b2d42" cx="118" cy="76" r="8"/>
+<path data-g="nariz" data-n="la nariz" data-c="#e56b6f" d="M94 92 q6 8 12 0 q-6 10 -12 0 z"/>`},
+
+{id:"can",em:"🐶",nome:"el perro",svg:`<ellipse data-g="corpo" data-n="el cuerpo" data-c="#d9a066" cx="100" cy="150" rx="46" ry="26"/>
+<path data-g="rabo" data-n="la cola" data-c="#d9a066" d="M146 146 q26 -8 22 -28 q-2 -10 -11 -8 q6 10 -3 15 q-8 4 -13 2 z"/>
+<rect data-g="patas" data-n="las patas" data-c="#c98e4b" x="70" y="166" width="15" height="22" rx="7"/>
+<rect data-g="patas" data-c="#c98e4b" x="115" y="166" width="15" height="22" rx="7"/>
+<ellipse data-g="cabeza" data-n="la cabeza" data-c="#e0b07a" cx="100" cy="82" rx="42" ry="38"/>
+<ellipse data-g="orellas" data-n="las orejas" data-c="#c98e4b" cx="66" cy="96" rx="11" ry="23"/>
+<ellipse data-g="orellas" data-c="#c98e4b" cx="134" cy="96" rx="11" ry="23"/>
+<ellipse data-g="focino" data-n="el hocico" data-c="#f2d0a9" cx="100" cy="96" rx="19" ry="13"/>
+<path data-g="lingua" data-n="la lengua" data-c="#ff6b6b" d="M96 114 q4 12 8 0 z"/>
+<circle data-g="nariz" data-n="la nariz" data-c="#3d3d3d" cx="100" cy="91" r="5"/>
+<circle data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="84" cy="74" r="6"/>
+<circle data-g="ollos" data-c="#2b2d42" cx="116" cy="74" r="6"/>`},
+
+{id:"capivara",em:"🦫",nome:"la capibara",svg:`<ellipse data-g="corpo" data-n="el cuerpo" data-c="#a47148" cx="100" cy="144" rx="56" ry="30"/>
+<rect data-g="patas" data-n="las patas" data-c="#8c5e3c" x="66" y="160" width="16" height="26" rx="7"/>
+<rect data-g="patas" data-c="#8c5e3c" x="118" y="160" width="16" height="26" rx="7"/>
+<rect data-g="cabeza" data-n="la cabeza" data-c="#b9835a" x="64" y="56" width="72" height="54" rx="24"/>
+<circle data-g="orellas" data-n="las orejas" data-c="#8c5e3c" cx="70" cy="56" r="8"/>
+<circle data-g="orellas" data-c="#8c5e3c" cx="130" cy="56" r="8"/>
+<rect data-g="focino" data-n="el hocico" data-c="#c99a72" x="80" y="90" width="40" height="27" rx="13"/>
+<path data-g="nariz" data-n="la nariz" data-c="#5b3a29" d="M92 98 q4 -5 8 0 q4 -5 8 0 v4 q-8 5 -16 0 z"/>
+<circle data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="86" cy="76" r="5"/>
+<circle data-g="ollos" data-c="#2b2d42" cx="114" cy="76" r="5"/>`},
+
+{id:"coello",em:"🐰",nome:"el conejo",svg:`<ellipse data-g="corpo" data-n="el cuerpo" data-c="#f7f7fa" cx="100" cy="146" rx="38" ry="30"/>
+<ellipse data-g="patas" data-n="las patas" data-c="#e6e6ee" cx="78" cy="168" rx="16" ry="9"/>
+<ellipse data-g="patas" data-c="#e6e6ee" cx="122" cy="168" rx="16" ry="9"/>
+<circle data-g="rabo" data-n="el rabo" data-c="#ffffff" cx="58" cy="144" r="10"/>
+<ellipse data-g="orellas" data-n="las orejas" data-c="#f7f7fa" cx="84" cy="42" rx="10" ry="31"/>
+<ellipse data-g="orellas" data-c="#f7f7fa" cx="116" cy="42" rx="10" ry="31"/>
+<ellipse data-g="orellas-int" data-n="el interior de las orejas" data-c="#ffc2d1" cx="84" cy="42" rx="5" ry="22"/>
+<ellipse data-g="orellas-int" data-c="#ffc2d1" cx="116" cy="42" rx="5" ry="22"/>
+<circle data-g="cabeza" data-n="la cabeza" data-c="#f7f7fa" cx="100" cy="86" r="35"/>
+<circle data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="88" cy="80" r="5"/>
+<circle data-g="ollos" data-c="#2b2d42" cx="112" cy="80" r="5"/>
+<path data-g="nariz" data-n="la nariz" data-c="#ff8fa3" d="M94 94 q6 6 12 0 q-6 8 -12 0 z"/>
+<path data-g="cenoria" data-n="la zanahoria" data-c="#ff9f1c" d="M44 150 q14 -8 26 4 q-12 12 -26 -4 z"/>
+<path data-g="follas" data-n="las hojas" data-c="#43aa8b" d="M44 150 q-2 -12 8 -14 q2 10 -8 14 z"/>`},
+{id:"unicornio",em:"🦄",nome:"el unicornio",svg:`<ellipse data-g="corpo" data-n="el cuerpo" data-c="#f3e8ff" cx="100" cy="142" rx="46" ry="28"/>
+<path data-g="rabo" data-n="la cola" data-c="#ff8fab" d="M144 138 q30 -4 26 -30 q-2 -10 -12 -7 q6 10 -3 16 q-8 5 -13 3 z"/>
+<rect data-g="patas" data-n="las patas" data-c="#e5d4f7" x="68" y="156" width="13" height="32" rx="6"/>
+<rect data-g="patas" data-c="#e5d4f7" x="86" y="158" width="13" height="30" rx="6"/>
+<rect data-g="patas" data-c="#e5d4f7" x="112" y="158" width="13" height="30" rx="6"/>
+<rect data-g="patas" data-c="#e5d4f7" x="130" y="156" width="13" height="32" rx="6"/>
+<ellipse data-g="cabeza" data-n="la cabeza" data-c="#f7eeff" cx="100" cy="80" rx="37" ry="33"/>
+<path data-g="crina" data-n="la crin" data-c="#ff8fab" d="M118 56 q22 8 16 34 q-4 18 -16 24 q10 -24 2 -38 q-6 -12 -2 -20 z"/>
+<polygon data-g="corno" data-n="el cuerno" data-c="#ffd166" points="92,48 100,8 108,48"/>
+<circle data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="88" cy="76" r="5"/>
+<circle data-g="ollos" data-c="#2b2d42" cx="112" cy="76" r="5"/>
+<path data-g="estrelas" data-n="las estrellas" data-c="#ffd166" transform="translate(34,44)" d="M0 -7 L2 -2 L7 0 L2 2 L0 7 L-2 2 L-7 0 L-2 -2 Z"/>
+<path data-g="estrelas" data-c="#ffd166" transform="translate(166,64) scale(.8)" d="M0 -7 L2 -2 L7 0 L2 2 L0 7 L-2 2 L-7 0 L-2 -2 Z"/>
+<path data-g="estrelas" data-c="#ffd166" transform="translate(150,24) scale(.6)" d="M0 -7 L2 -2 L7 0 L2 2 L0 7 L-2 2 L-7 0 L-2 -2 Z"/>`},
+
+{id:"princesa",em:"👸",nome:"la princesa",svg:`<path data-g="vestido" data-n="el vestido" data-c="#ff8fab" d="M100 116 L74 184 Q100 194 126 184 Z"/>
+<rect data-g="blusa" data-n="la blusa" data-c="#ffd1dc" x="86" y="100" width="28" height="22" rx="8"/>
+<ellipse data-g="brazos" data-n="los brazos" data-c="#ffe0bd" cx="78" cy="112" rx="9" ry="5" transform="rotate(-28 78 112)"/>
+<ellipse data-g="brazos" data-c="#ffe0bd" cx="122" cy="112" rx="9" ry="5" transform="rotate(28 122 112)"/>
+<path data-g="pelo" data-n="el pelo" data-c="#8b5e3c" d="M68 78 q0 -36 32 -36 q32 0 32 36 q-6 -18 -32 -18 q-26 0 -32 18 z"/>
+<circle data-g="cara" data-n="la cara" data-c="#ffe0bd" cx="100" cy="78" r="30"/>
+<polygon data-g="coroa" data-n="la corona" data-c="#ffd166" points="78,50 84,28 92,42 100,22 108,42 116,28 122,50"/>
+<circle data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="90" cy="76" r="4.5"/>
+<circle data-g="ollos" data-c="#2b2d42" cx="110" cy="76" r="4.5"/>
+<path data-g="boca" data-n="la boca" data-c="#e63946" d="M94 90 q6 8 12 0 q-6 4 -12 0 z"/>`},
+
+{id:"fada",em:"🧚",nome:"el hada",svg:`<ellipse data-g="as" data-n="las alas" data-c="#cde7ff" cx="60" cy="118" rx="15" ry="32" transform="rotate(-24 60 118)"/>
+<ellipse data-g="as" data-c="#cde7ff" cx="140" cy="118" rx="15" ry="32" transform="rotate(24 140 118)"/>
+<path data-g="vestido" data-n="el vestido" data-c="#b388eb" d="M100 108 L82 172 Q100 180 118 172 Z"/>
+<path data-g="pelo" data-n="el pelo" data-c="#f4a261" d="M70 82 q0 -38 30 -38 q30 0 30 38 q-8 -20 -30 -20 q-22 0 -30 20 z"/>
+<circle data-g="cara" data-n="la cara" data-c="#ffe0bd" cx="100" cy="80" r="28"/>
+<circle data-g="ollos" data-n="los ojos" data-c="#2b2d42" cx="91" cy="78" r="4.5"/>
+<circle data-g="ollos" data-c="#2b2d42" cx="109" cy="78" r="4.5"/>
+<path data-g="varita" data-n="la varita" data-c="#c9a227" d="M132 164 l24 -34" fill="none" stroke="#c9a227" stroke-width="4" stroke-linecap="round"/>
+<path data-g="estrela-varita" data-n="la estrella de la varita" data-c="#ffd166" transform="translate(158,126)" d="M0 -8 L2.4 -2.4 L8 0 L2.4 2.4 L0 8 L-2.4 2.4 L-8 0 L-2.4 -2.4 Z"/>
+<path data-g="estrelas" data-n="las estrellas" data-c="#ffd166" transform="translate(34,50) scale(.8)" d="M0 -8 L2.4 -2.4 L8 0 L2.4 2.4 L0 8 L-2.4 2.4 L-8 0 L-2.4 -2.4 Z"/>
+<path data-g="estrelas" data-c="#ffd166" transform="translate(168,60) scale(.6)" d="M0 -8 L2.4 -2.4 L8 0 L2.4 2.4 L0 8 L-2.4 2.4 L-8 0 L-2.4 -2.4 Z"/>`},
+
+{id:"mundo",em:"🏰",nome:"el mundo encantado",svg:`<polygon data-g="montana" data-n="la montaña" data-c="#9ad0a8" points="0,164 62,92 124,164"/>
+<polygon data-g="montana2" data-n="la otra montaña" data-c="#7fbf8f" points="78,164 140,98 200,164"/>
+<rect data-g="castelo" data-n="el castillo" data-c="#cfd8f5" x="78" y="98" width="46" height="62"/>
+<rect data-g="torres" data-n="las torres" data-c="#dfe6fb" x="62" y="82" width="18" height="78"/>
+<rect data-g="torres" data-c="#dfe6fb" x="122" y="82" width="18" height="78"/>
+<polygon data-g="tellados" data-n="los tejados" data-c="#8e6ff0" points="60,82 71,58 82,82"/>
+<polygon data-g="tellados" data-c="#8e6ff0" points="120,82 131,58 142,82"/>
+<polygon data-g="tellados" data-c="#8e6ff0" points="80,98 100,74 120,98"/>
+<rect data-g="ventas" data-n="las ventanas" data-c="#ffd166" x="70" y="100" width="8" height="12" rx="3"/>
+<rect data-g="ventas" data-c="#ffd166" x="124" y="100" width="8" height="12" rx="3"/>
+<path data-g="porta" data-n="la puerta" data-c="#8b5e3c" d="M92 160 v-22 a9 9 0 0 1 18 0 v22 z"/>
+<circle data-g="lua" data-n="la luna" data-c="#ffd166" cx="168" cy="34" r="14"/>
+<ellipse data-g="nubes" data-n="las nubes" data-c="#ffffff" cx="38" cy="46" rx="18" ry="9"/>
+<ellipse data-g="nubes" data-c="#ffffff" cx="52" cy="42" rx="12" ry="7"/>
+<path data-g="estrelas" data-n="las estrellas" data-c="#ffd166" transform="translate(110,32) scale(.7)" d="M0 -8 L2.4 -2.4 L8 0 L2.4 2.4 L0 8 L-2.4 2.4 L-8 0 L-2.4 -2.4 Z"/>
+<path data-g="estrelas" data-c="#ffd166" transform="translate(150,86) scale(.55)" d="M0 -8 L2.4 -2.4 L8 0 L2.4 2.4 L0 8 L-2.4 2.4 L-8 0 L-2.4 -2.4 Z"/>
+<path data-g="camiño" data-n="el camino" data-c="#e0c9a6" d="M92 164 q8 -12 16 0 z"/>
+<circle data-g="arbore" data-n="el árbol" data-c="#4caf50" cx="34" cy="132" r="13"/>
+<rect data-g="tronco" data-n="el tronco" data-c="#8b5e3c" x="31" y="140" width="6" height="20" rx="2"/>`},
+/*ART-END*/
 ];
-const CO_PARTS=[["co-earL|co-earR","las orejas"],["co-head","la cabeza"],["co-eyeL|co-eyeR","los ojos"],["co-nose","la nariz"],["co-body","el cuerpo"]];
-const CO_Q=[
- {q:"¿Qué gas toman las plantas del aire para vivir?",a:"Dióxido de carbono",opts:["Dióxido de carbono","Oxígeno","Humo","Vapor"]},
- {q:"¿Dónde elaboran las plantas su alimento?",a:"En las hojas",opts:["En las hojas","En las raíces","En las piedras","En el tallo"]},
- {q:"¿Qué hace todo ser vivo?",a:"Se alimenta y crece",opts:["Se alimenta y crece","No cambia nunca","Es de plástico","No respira"]},
- {q:"¿Qué parte de la planta absorbe el agua?",a:"La raíz",opts:["La raíz","La flor","El pétalo","La semilla"]},
- {q:"¿Cómo se llama fabricar alimento con la luz del sol?",a:"Fotosíntesis",opts:["Fotosíntesis","Digestión","Evaporación","Natación"]}
-];
-let coStep=0;
-function showColorear(){
-  setTab("ex"); $("card-color").style.display=""; $("card-color").scrollIntoView({behavior:"smooth"});
-  $("exercise").style.display="none"; $("subjects").style.display=""; $("btnNew").style.display="";
-  coStep=0;
-  CO_PARTS.forEach(p=>p[0].split("|").forEach(id=>$(id).setAttribute("fill","#eceff5")));
-  $("coStat").textContent="Responde bien para pintar cada parte 🎨";
-  coPaintStep();
+let coCur=null, coGroups=[], coDone=0, coPool=[], coAt=0, coMode="pintar", coTiles=[];
+const CO_MODES=[["pintar","🎨 Pintar"],["revelar","🌈 Revelar"],["descubrir","🫣 Descubrir"],["sombra","🌑 ¿Qué es?"]];
+function coShuffle(a){ const b=a.slice(); for(let i=b.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=b[i]; b[i]=b[j]; b[j]=t; } return b; }
+function coGroupList(svg){
+  const m=new Map();
+  svg.querySelectorAll("[data-g]").forEach(function(el){
+    const k=el.getAttribute("data-g");
+    if(!m.has(k)) m.set(k,{n:el.getAttribute("data-n")||"",els:[]});
+    m.get(k).els.push(el);
+  });
+  return Array.from(m.values());
 }
-function coPaintStep(){
-  const part=CO_PARTS[coStep], Q=CO_Q[coStep];
-  $("coQ").textContent="Pinta "+part[1]+": "+Q.q;
+function coEls(){ return Array.prototype.slice.call($("coArt").querySelectorAll("[data-g]")); }
+function coQuestions(){
+  function ok(e){ return Array.isArray(e.opts)&&e.opts.length>=3&&e.opts.indexOf(e.a)>=0; }
+  let pool=(state.custom||[]).filter(ok);
+  if(pool.length<8) pool=pool.concat(FOTO_EX.filter(ok));
+  return coShuffle(pool);
+}
+function coFill(g){
+  const c=g.els[0].getAttribute("data-c")||"#f5c518";
+  g.els.forEach(function(el){ el.style.fill=c; el.style.stroke=""; el.style.opacity="1"; el.classList.add("painted"); });
+}
+function coApplyMode(){
+  const els=coEls();
+  coTiles=[]; $("coArt").querySelectorAll(".co-tiles").forEach(function(n){ n.remove(); });
+  els.forEach(function(el){
+    el.classList.remove("painted");
+    if(coMode==="pintar"){ el.style.fill=""; el.style.stroke=""; }
+    else if(coMode==="revelar"||coMode==="sombra"){ el.style.fill="#2f3446"; el.style.stroke="#2f3446"; }
+    else { el.style.fill=el.getAttribute("data-c"); el.style.stroke=""; el.classList.add("painted"); }
+  });
+  if(coMode==="descubrir") coCover();
+}
+/* en «descubrir» o debuxo xa está pintado pero tapado: cada acerto destapa unha peza */
+function coCover(){
+  const n=coGroups.length, box=document.createElement("div");
+  box.className="co-tiles";
+  box.style.gridTemplateColumns="repeat(4,1fr)";
+  coTiles=coShuffle(coGroups.map(function(g,i){ return i; })).map(function(i){
+    const t=document.createElement("div"); t.className="co-tile"; box.appendChild(t); return t;
+  });
+  $("coArt").appendChild(box);
+}
+function coNextArt(){ const i=ART.indexOf(coCur); return ART[(i+1)%ART.length]; }
+function coFinish(){
+  $("coQ").textContent=""; $("coOpts").innerHTML="";
+  $("coStat").textContent=coCur.em+" ¡"+coCur.nome+" está terminado! +12 🪙";
+  state.album=state.album||{}; state.album[coCur.id]=true;
+  coAlbum();
+  earn(12,"colorear y aprender"); confetti();
+  state.exDone++; state.exRight++; streakTouch(true); save(); renderReport(); renderWallet();
+  speak("¡Qué bonito! Has pintado "+coCur.nome+". ¡Bien hecho!");
+}
+function coAsk(){
+  if(coMode==="sombra"){ coAskSombra(); return; }
+  if(coDone>=coGroups.length){ coFinish(); return; }
+  const Q=coPool[coAt%coPool.length], g=coGroups[coDone];
+  const pre = coMode==="descubrir" ? "Descubre una pieza: " : (g.n?"Pinta "+g.n+": ":"");
+  $("coQ").textContent=pre+Q.q;
+  $("coStat").textContent="Llevas "+coDone+" de "+coGroups.length+" "+(coMode==="descubrir"?"piezas":"partes")+" "+coCur.em;
   const box=$("coOpts"); box.innerHTML="";
-  Q.opts.slice().sort(()=>Math.random()-0.5).forEach((o,i)=>{
-    const col=CO_COLORS[(coStep*4+i)%CO_COLORS.length];
-    const b=document.createElement("button"); b.className="co-btn"; b.style.background=col.c; b.textContent=o;
-    b.onclick=()=>{
-      if(o===Q.a){
-        vibrate(50); part[0].split("|").forEach(id=>$(id).setAttribute("fill",col.c));
-        $("coOpts").innerHTML=""; coStep++;
-        if(coStep>=CO_PARTS.length){
-          $("coStat").textContent="🐱 ¡Tu gato está pintado! +12 🪙"; $("coQ").textContent="";
-          earn(12,"colorear y aprender"); confetti();
-          state.exDone++; state.exRight++; streakTouch(true); save(); renderReport(); renderWallet();
-          speak("¡Qué bonito! Tu gato está pintado. ¡Bien hecho!");
-          return;
-        }
-        coPaintStep();
-      } else { b.classList.add("no"); b.disabled=true; $("coStat").textContent="¡Casi! Prueba otro color."; }
+  coShuffle(Q.opts).forEach(function(o){
+    const b=document.createElement("button"); b.className="co-btn"; b.textContent=o;
+    b.onclick=function(){
+      if(o!==Q.a){ b.classList.add("no"); b.disabled=true; return; }
+      vibrate(40); coAt++; coDone++;
+      if(coMode==="descubrir"){
+        const t=coTiles.shift(); if(t){ t.style.opacity="0"; setTimeout(function(){ t.remove(); },350); }
+      } else { coFill(g); }
+      if(coDone>=coGroups.length){ coFinish(); return; }
+      coAsk();
+    };
+    box.appendChild(b);
+  });
+ }
+/* «¿Qué es?»: silueta e catro nomes. Un acerto amosa o debuxo con cor e pasa ao seguinte */
+function coAskSombra(){
+  $("coQ").textContent="¿Qué dibujo se esconde?";
+  const box=$("coOpts"); box.innerHTML="";
+  const nomes=coShuffle(ART.map(function(a){ return a.nome; })).slice(0,3);
+  if(nomes.indexOf(coCur.nome)<0) nomes[0]=coCur.nome;
+  coShuffle(nomes).forEach(function(n){
+    const b=document.createElement("button"); b.className="co-btn"; b.textContent=n;
+    b.onclick=function(){
+      if(n!==coCur.nome){ b.classList.add("no"); b.disabled=true; $("coStat").textContent="¡Casi! Mira bien la forma…"; return; }
+      coGroups.forEach(coFill);
+      $("coOpts").innerHTML="";
+      $("coQ").textContent="¡Era "+coCur.nome+"! 🎉";
+      $("coStat").textContent="+6 🪙";
+      earn(6,"adivinar la silueta"); state.exDone++; state.exRight++; streakTouch(true); save(); renderReport(); renderWallet();
+      box.innerHTML="";
+      setTimeout(function(){ if(coMode==="sombra") coRender(coNextArt().id,"sombra"); },1600);
     };
     box.appendChild(b);
   });
 }
-$("btnColor").onclick=showColorear;
-$("btnCoClose").onclick=()=>{ $("card-color").style.display="none"; };
+function coAlbum(){
+  const box=$("coAlbum"); if(!box) return;
+  state.album=state.album||{};
+  box.innerHTML="";
+  ART.forEach(function(a){
+    const d=document.createElement("div");
+    d.className="co-slot"+(state.album[a.id]?" got":""); d.title=a.nome;
+    d.innerHTML=state.album[a.id]?a.em:'<span class="q">?</span>';
+    box.appendChild(d);
+  });
+}
+function coRender(id,modo){
+  if(modo) coMode=modo;
+  coCur=ART.filter(function(a){ return a.id===id; })[0]||coCur||ART[0];
+  $("coArt").innerHTML='<svg viewBox="0 0 200 200" role="img" aria-label="Dibujo para colorear">'+coCur.svg+"</svg>";
+  coGroups=coGroupList($("coArt").querySelector("svg"));
+  coDone=0; coPool=coQuestions(); coAt=0;
+  $("coPick").querySelectorAll(".co-chip").forEach(function(c){ c.classList.toggle("on",c.dataset.id===coCur.id); });
+  $("coModes").querySelectorAll(".co-mode").forEach(function(m){ m.classList.toggle("on",m.dataset.modo===coMode); });
+  coApplyMode();
+  coAlbum();
+  if(coMode==="sombra"){ $("coStat").textContent="Adivina el dibujo escondido 🌑"; coAsk(); return; }
+  $("coStat").textContent=(coMode==="descubrir"?"Responde y destapa ":"Responde bien para pintar ")+coCur.nome+" 🎨";
+  coAsk();
+}
+function showColorear(id,modo){
+  setTab("ex"); $("card-color").style.display=""; $("card-color").scrollIntoView({behavior:"smooth"});
+  $("exercise").style.display="none"; $("subjects").style.display=""; $("btnNew").style.display="";
+  if(!$("coPick").dataset.built){
+    CO_MODES.forEach(function(m){
+      const b=document.createElement("button"); b.className="co-mode"; b.dataset.modo=m[0]; b.textContent=m[1];
+      b.onclick=function(){ coRender(coCur?coCur.id:ART[0].id,m[0]); };
+      $("coModes").appendChild(b);
+    });
+    ART.forEach(function(a){
+      const b=document.createElement("button"); b.className="co-chip"; b.dataset.id=a.id;
+      b.innerHTML='<span class="em">'+a.em+'</span>'+a.nome.replace(/^(el|la) /,"");
+      b.onclick=function(){ coRender(a.id); };
+      $("coPick").appendChild(b);
+    });
+    $("coPick").dataset.built="1";
+  }
+  coRender(id||(coCur?coCur.id:ART[0].id),modo);
+}
+$("btnColor").onclick=function(){ showColorear(); };
+$("btnCoClose").onclick=function(){ $("card-color").style.display="none"; };
 
 /* ============== QUADRO DE PEGATINAS ============== */
 let stkPick=null, stkSel=null;

@@ -38,16 +38,17 @@ TTS_RATE = 300    # /tts, por hora por IP
 WINDOW = 3600
 _hits = {}
 
-SYSTEM = """Eres una profesora de 3.º de Primaria en Galicia (España). Generas ejercicios de refuerzo en español (castellano) para una niña de 8 años, a partir del texto del libro y el cuaderno que te paso y de las materias del examen indicadas.
+SYSTEM = """Eres una profesora de 3.º de Primaria en Galicia (España). Generas ejercicios de refuerzo EN GALEGO para una niña de 8 años, a partir del texto del libro y el cuaderno que te paso y de las materias del examen indicadas.
 
 Reglas:
+- TODO el contenido va en galego: enunciados, opciones, respuestas, pasos y parejas. Los nombres de los campos JSON siguen en castellano (q, a, opts, pasos, pares, tipo).
 - Genera 16 ejercicios que cubran los temas. Sin repetir preguntas.
 - Mezcla los tipos:
   1) Opción múltiple: {"q":"...","a":"...","opts":["...","...","...","..."]} — «a» debe ser EXACTAMENTE una de las opts; los otros tres distractores plausibles y de la misma categoría (nada absurdo ni gracioso).
-  2) Verdadero/falso: {"q":"Lee: «...» ¿Verdadero o falso?","tipo":"vf","a":"Verdadero","opts":["Verdadero","Falso"]}
-  3) Ordenar: {"q":"Toca las etapas ..., en orden:","tipo":"ordenar","pasos":["paso 1","paso 2","paso 3"],"a":"paso 1 → paso 2 → paso 3"}
-  4) Parejas: {"q":"Toca parejas: une cada ... con su ...:","tipo":"parejas","pares":[["término","definición"],["término","definición"],["término","definición"]],"a":"resumen corto"}
-- Frases cortas y vocabulario de 8 años. 100% español. Nada de preguntas tontas.
+  2) Verdadero/falso: {"q":"Le: «...» ¿Verdadeiro ou falso?","tipo":"vf","a":"Verdadeiro","opts":["Verdadeiro","Falso"]}
+  3) Ordenar: {"q":"Toca as etapas ..., en orde:","tipo":"ordenar","pasos":["paso 1","paso 2","paso 3"],"a":"paso 1 → paso 2 → paso 3"}
+  4) Parejas: {"q":"Toca as parellas: une cada ... coa súa ...:","tipo":"parejas","pares":[["termo","definición"],["termo","definición"],["termo","definición"]],"a":"resumo curto"}
+- Frases cortas y vocabulario de 8 años. Galego correcto (normativa galega, non castelán nin portugués). Nada de preguntas tontas.
 - Responde SOLO con JSON válido: {"ejercicios":[...16 objetos...]} sin texto adicional."""
 
 
@@ -66,9 +67,11 @@ def validate(items):
             continue
         tipo = it.get("tipo")
         if tipo == "vf":
+            # a resposta é sempre o rótulo galego que o botón amosa
+            yes = clean_str(it.get("a"), 20).strip().lower() in ("verdadeiro", "verdadero", "true", "v")
             out.append({"q": q, "tipo": "vf",
-                        "a": "Verdadero" if it.get("a") == "Verdadero" else "Falso",
-                        "opts": ["Verdadero", "Falso"]})
+                        "a": "Verdadeiro" if yes else "Falso",
+                        "opts": ["Verdadeiro", "Falso"]})
         elif tipo == "ordenar":
             pasos = [clean_str(p, 120) for p in (it.get("pasos") or [])]
             pasos = [p for p in pasos if p]
@@ -194,7 +197,8 @@ def call_chat(messages, name, text):
     return (content or "").strip()[:800]
 
 
-TTS_VOICE = "es-MX-DaliaNeural"   # voz feminina jovem (MX); pitch alto soa infantil
+TTS_VOICE = "gl-ES-SabelaNeural"          # voz galega: os exercicios lense en galego
+TTS_VOICE_FALLBACK = "es-ES-ElviraNeural"  # se o servizo non ten a voz galega
 TTS_PITCH = "+30Hz"
 _tts_cache = {}
 
@@ -205,15 +209,22 @@ def _synth_tts(text):
 
     import edge_tts
 
-    async def _go():
-        c = edge_tts.Communicate(text, TTS_VOICE, pitch=TTS_PITCH)
+    async def _go(voice):
+        c = edge_tts.Communicate(text, voice, pitch=TTS_PITCH)
         buf = bytearray()
         async for chunk in c.stream():
             if chunk.get("type") == "audio":
                 buf.extend(chunk["data"])
         return bytes(buf)
 
-    return asyncio.run(_go())
+    for voice in (TTS_VOICE, TTS_VOICE_FALLBACK):
+        try:
+            audio = asyncio.run(_go(voice))
+            if audio:
+                return audio
+        except Exception:
+            continue
+    raise RuntimeError("edge-tts: ninguna voz disponible")
 
 
 def call_model(text, topics):
