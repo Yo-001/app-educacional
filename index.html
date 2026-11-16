@@ -2041,18 +2041,24 @@ function addMsg(role,text){
   d.className="msg "+(role==="cat"?"cat":"kid"); d.textContent=text;
   log.appendChild(d); log.scrollTop=log.scrollHeight; return d;
 }
-async function sendChat(text){
+/* pide a resposta ao gato. Separado de sendChat porque o micrófono pode lanzala por adiantado,
+   mentres a nena aínda está a rematar a frase (ver o bloque do micrófono). */
+function askChat(text, signal){
+  return fetch(BACKEND_URL+"/chat",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({text:text, name:state.name||"", messages:chatHist.slice(-12)}), signal:signal})
+    .then(r=>{ if(!r.ok) throw 0; return r.json(); })
+    .then(d=>((d&&d.text)||"").trim()||"Miau… no lo entendí, ¿me lo repites?");
+}
+async function sendChat(text, pre){
   text=(text||"").trim(); if(!text||chatBusy) return;
   /* el nombre se fija SOLO en el campo dedicado (#chatName); cualquier mensaje libre va al gato —
      antes el primer mensaje "hola gatito" quedaba grabado como nombre para siempre */
   addMsg("kid",text); $("chatIn").value="";
   chatBusy=true; $("chatTyping").style.display=""; $("btnChatSend").disabled=true;
   try{
-    const r=await fetch(BACKEND_URL+"/chat",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({text:text, name:state.name||"", messages:chatHist.slice(-12)})});
-    if(!r.ok) throw 0;
-    const d=await r.json();
-    const reply=((d&&d.text)||"").trim()||"Miau… no lo entendí, ¿me lo repites?";
+    /* pre: respuesta ya pedida por adelantado; si se abortó o falló, se pide ahora */
+    let reply=pre?await pre.catch(()=>""):"";
+    if(!reply) reply=await askChat(text);
     chatHist.push({role:"user",content:text},{role:"assistant",content:reply});
     if(chatHist.length>16) chatHist=chatHist.slice(-16);
     addMsg("cat",reply); speak(reply);
@@ -2070,37 +2076,59 @@ $("chatName").addEventListener("keydown",e=>{
 });
 $("btnEditName").onclick=()=>{ const r=$("nameRow"); const show=r.style.display==="none"; r.style.display=show?"":"none"; if(show){ $("chatName").value=state.name||""; $("chatName").focus(); } };
 /* micrófono continuo: toca 🎤 una vez y la niña habla con el gato; el micro sigue encendido hasta
-   volver a tocar el botón. El gato NUNCA se apresura: espera SILENCE_MS en completo silencio tras la
-   última sílaba antes de responder (la Maitê, de 8 años, habla con pausas largas).
-   El gato tampoco se escucha a sí mismo: mientras piensa o habla, lo que oye el micro se descarta. */
+   volver a tocar el botón. El gato espera a que el reconocedor dé la frase por CERRADA (resultado
+   final, que ya viene tras ~1 s de silencio) y solo añade un margen pequeño — antes esperaba 2,8 s
+   fijos por encima y la conversación se hacía lenta. Mientras piensa o habla, el gato no se escucha. */
 (function(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){ $("btnMic").style.display="none"; return; }
-  const SILENCE_MS=2800; /* silencio continuo que cierra el turno de la niña */
+  const GAP_FINAL=1300; /* margen de silencio tras un resultado final: cierra el turno de la niña */
+  const GAP_PAUSE=2600; /* solo hay resultados interinos (sigue hablando): tope de espera */
+  const SPEC_MS=550;    /* petición adelantada: el gato piensa mientras acaba el silencio */
   const HINT="Tu gato tutor te escucha 🎤 — tómate tu tiempo, espera a que termines de hablar.";
   const btn=$("btnMic");
-  let micOn=false, rec=null, calmPoll=0, silenceT=0, pending="", lastInterim="";
+  let micOn=false, rec=null, calmPoll=0, silenceT=0, specT=0, pending="", lastInterim="", spec=null;
   const setUI=(on,hint)=>{
     btn.textContent=on?"👂":"🎤";
     btn.style.background=on?"#ff5252":""; btn.style.color=on?"#fff":"";
     if(hint) $("chatHint").textContent=hint;
   };
   const quiet=()=>Date.now()<catQuietUntil; /* cola de eco tras la voz del gato */
+  const turnText=()=>(pending+" "+lastInterim).trim();
+  const dropSpec=()=>{ clearTimeout(specT); const s=spec; spec=null; if(s&&s.ctrl){ try{ s.ctrl.abort(); }catch(e){} } };
+  /* usa la respuesta ya pedida solo si se pidió exactamente con este texto; si no, se descarta */
+  const takeSpec=t=>{
+    clearTimeout(specT);
+    const s=spec; spec=null; if(!s) return null;
+    if(s.text===t) return s.p;
+    if(s.ctrl){ try{ s.ctrl.abort(); }catch(e){} }
+    return null;
+  };
+  const startSpec=()=>{
+    if(spec||!micOn||chatBusy||speechPlaying>0) return;
+    const t=turnText(); if(!t) return;
+    const ctrl=(typeof AbortController!=="undefined")?new AbortController():null;
+    const p=askChat(t, ctrl?ctrl.signal:null);
+    p.catch(()=>{}); /* el aborto es normal aquí: evita el aviso de promesa sin manejar */
+    spec={text:t, ctrl:ctrl, p:p};
+  };
   const flush=()=>{
     clearTimeout(silenceT);
     const waitQ=catQuietUntil-Date.now();
     if(waitQ>0){ silenceT=setTimeout(flush, waitQ+80); return; } /* la cola de eco aún audible: reintenta tras ella, sin perder lo oído */
-    const t=(pending+" "+lastInterim).trim();
+    const t=turnText();
+    const pre=takeSpec(t);
     pending=""; lastInterim="";
-    if(t){ setUI(true,"El gato está pensando… 🐾"); sendChat(t); }
+    if(t){ setUI(true,"El gato está pensando… 🐾"); sendChat(t, pre); }
     else if(micOn) setUI(true,"Te escucho… tómate tu tiempo 🐱");
   };
   const stopMic=()=>{
     micOn=false; clearInterval(calmPoll); clearTimeout(silenceT);
-    const t=(pending+" "+lastInterim).trim(); pending=""; lastInterim="";
+    const t=turnText(); const pre=takeSpec(t);
+    pending=""; lastInterim="";
     try{ if(rec) rec.stop(); }catch(e){}
     setUI(false,HINT);
-    if(t) sendChat(t); /* no pierde lo dicho al apagar el micro */
+    if(t) sendChat(t, pre); /* no pierde lo dicho al apagar el micro */
   };
   const calmNow=()=>!chatBusy && speechPlaying===0;
   const whenCalm=cb=>{
@@ -2122,24 +2150,30 @@ $("btnEditName").onclick=()=>{ const r=$("nameRow"); const show=r.style.display=
       fin=fin.trim(); inter=inter.trim();
       if(fin) pending=(pending+" "+fin).trim();
       lastInterim=inter;
-      const shown=(pending+" "+inter).trim();
+      const shown=turnText();
       if(shown) $("chatHint").textContent="“"+shown.slice(-140)+"”";
-      /* cualquier sonido (final o interino) reinicia el contador: el gato solo
-         responde tras SILENCE_MS de silencio real */
-      clearTimeout(silenceT);
-      silenceT=setTimeout(flush,SILENCE_MS);
+      clearTimeout(silenceT); clearTimeout(specT);
+      /* texto nuevo: lo que ya se pidió por adelantado no responde a esta frase */
+      if(spec&&spec.text!==shown) dropSpec();
+      if(fin){
+        /* el reconocedor cerró la frase: el turno acaba pronto, y la petición sale por delante */
+        silenceT=setTimeout(flush,GAP_FINAL);
+        if(!spec) specT=setTimeout(startSpec,SPEC_MS);
+      }else{
+        silenceT=setTimeout(flush,GAP_PAUSE); /* sigue hablando: no cortarla a media frase */
+      }
     };
     rec.onerror=e=>{
       const err=(e&&e.error)||"";
       if(err==="not-allowed"||err==="service-not-allowed"){
-        micOn=false; clearInterval(calmPoll); clearTimeout(silenceT);
+        micOn=false; clearInterval(calmPoll); clearTimeout(silenceT); dropSpec();
         setUI(false,"El micro está bloqueado — permite el micrófono en el navegador y vuelve a tocar 🎤.");
       }
       /* no-speech / audio-capture / aborted: se reintenta solo vía onend */
     };
     rec.onend=()=>{
       clearTimeout(silenceT);
-      if(!micOn){ pending=""; lastInterim=""; setUI(false,HINT); return; }
+      if(!micOn){ pending=""; lastInterim=""; dropSpec(); setUI(false,HINT); return; }
       flush(); /* respeta la cola de eco: si aún se oye al gato, espera y reintenta */
       whenCalm(()=>{ if(micOn) listen(); });
     };
