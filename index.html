@@ -245,6 +245,7 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
       <div class="q" id="exQ"></div>
       <div class="opts" id="exOpts"></div>
       <div class="feedback" id="exFb"></div>
+      <button class="big" id="btnNextEx" style="display:none;width:100%;margin-top:6px">➡️ Siguiente</button>
       <div class="row" style="margin-top:8px">
         <button class="ghost" id="btnNew" style="flex:1">Nuevo ejercicio</button>
         <button class="ghost" id="btnBack" style="flex:1">Cambiar materia</button>
@@ -853,16 +854,24 @@ function startExercise(id){
   curSubj=id; exId++; exAnswered=false;
   $("subjects").parentElement.querySelector("#subjects").style.display="none";
   $("exercise").style.display="";
-  $("exSubj").textContent=SUBJECTS[id].em+" "+SUBJECTS[id].nm;
   showEx();
 }
 /* pinta un ejercicio y llama a after(ok) tras la primera respuesta */
 let exTimerIv=null;
 function stopExTimer(){ if(exTimerIv){ clearInterval(exTimerIv); exTimerIv=null; } }
+/* tras responder, a nena revisa a resposta correcta e decide cando pasar */
+let advGo=null, advTk=0;
+function exDeckHead(){ return deckLabel+" · "+(deckN-deckQ.length)+"/"+deckN; }
+function hideNext(){ advGo=null; const b=$("btnNextEx"); if(b) b.style.display="none"; }
+function showNext(go){
+  advTk=exToken; advGo=go;
+  if(deckTimer) $("exSubj").textContent=exDeckHead(); /* fora o reloxo conxelado */
+  $("btnNextEx").style.display="block";
+}
 function startExTimer(sec,box,after){
   stopExTimer();
   let t=sec;
-  const tick=()=>{ $("exSubj").textContent=deckLabel+" · "+(deckN-deckQ.length)+"/"+deckN+" · ⏱️ "+t+"s"; };
+  const tick=()=>{ $("exSubj").textContent=exDeckHead()+" · ⏱️ "+t+"s"; };
   tick();
   exTimerIv=setInterval(()=>{
     t--; tick();
@@ -876,6 +885,8 @@ function startExTimer(sec,box,after){
 function paintExercise(ex,after,timer){
   stopExTimer();
   exToken++; /* invalida qualquer avanço adiado do exercício anterior */
+  hideNext(); /* exercício novo: sen botón até responder */
+  deckTimer=timer||0; /* o reloxo é deste exercício (0 = práctica solta) */
   curEx=ex; exAnswered=false;
   $("exQ").textContent=ex.q; $("exFb").textContent=""; $("exFb").className="feedback";
   const box=$("exOpts"); box.innerHTML=""; box.className="opts";
@@ -894,8 +905,8 @@ function paintExercise(ex,after,timer){
       const ok=o===ex.a;
       b.className="opt "+(ok?"ok":"no");
       if(!ok){[...box.children].forEach(x=>{if(x.textContent===ex.a)x.className="opt ok";});}
-      const fb=$("exFb"); fb.textContent=ok?("¡Bien! +10 🪙"):("¡Ups! ¡Inténtalo otra vez!"); fb.className="feedback "+(ok?"good":"bad");
-      /* el gato lee la opción elegida; si está mal, dice la correcta — el avance espera a que termine de hablar */
+      const fb=$("exFb"); fb.textContent=ok?("¡Bien! +10 🪙"):("Casi… la correcta está en verde 👇"); fb.className="feedback "+(ok?"good":"bad");
+      /* el gato lee la opción elegida; si está mal, dice la correcta (el avance es con «Siguiente») */
       const say=o+(ok?". ¡Muy bien!":". La respuesta correcta es: "+ex.a);
       const p=registerResult(ok,say);
       if(after) after(ok,p);
@@ -1161,14 +1172,9 @@ function paintEscri(ex,box,after){
   try{ input.focus({preventScroll:true}); }catch(e){ try{ input.focus(); }catch(_){} }
 }
 function showEx(){
-  /* como no mazo: ao responder, o gato fala a resposta e então passa ao próximo;
-     se a voz travar, avança mesmo assim em até 5s (a fala nunca prende o exercício) */
-  paintExercise(SUBJECTS[curSubj].gen(),(ok,p)=>{
-    const tk=exToken; /* token do exercício respondido; se um novo pintar antes, o avanço é cancelado */
-    const wait=Promise.race([Promise.resolve(p),new Promise(r=>setTimeout(r,5000))]);
-    const adv=()=>setTimeout(()=>{ if(tk===exToken&&$("exercise").style.display!=="none") showEx(); },300);
-    wait.then(adv,adv); /* avança mesmo se a fala falhar: a voz nunca prende o exercício */
-  });
+  /* a nena revisa a resposta correcta; toca «Siguiente» cando estea lista */
+  $("exSubj").textContent=SUBJECTS[curSubj].em+" "+SUBJECTS[curSubj].nm;
+  paintExercise(SUBJECTS[curSubj].gen(),()=>showNext(showEx));
 }
 /* ======= Mazo: práctica (24) y revisión del examen ======= */
 let deckQ=[],deckN=0,deckLabel="",deckBonus=0,deckTimer=0;
@@ -1199,13 +1205,9 @@ function nextInDeck(){
     speak("¡Completaste "+deckLabel+"! +"+deckBonus+" monedas 🎉"); confetti();
     renderSubjects(); return;
   }
-  const ex=deckQ.shift(); const done=deckN-deckQ.length;
-  $("exSubj").textContent=deckLabel+" · "+done+"/"+deckN;
-  paintExercise(ex,(ok,p)=>{
-    const wait=Promise.race([Promise.resolve(p),new Promise(r=>setTimeout(r,5000))]);
-    const adv=()=>setTimeout(nextInDeck,300);
-    wait.then(adv,adv); /* avança mesmo se a fala falhar: a voz nunca prende o exercício */
-  },deckTimer||0);
+  const ex=deckQ.shift();
+  $("exSubj").textContent=exDeckHead();
+  paintExercise(ex,()=>showNext(nextInDeck),deckTimer||0);
 }
 function buildPractice(){
   const fotos=(state.custom||[]).filter(e=>e.tema==="da foto 📷");
@@ -2207,6 +2209,10 @@ function renderReport(){
   if(state.owned.some(id=>SHOP.find(i=>i.id===id&&i.hat))) bg.innerHTML+="<span class='badge'>👗 Cambió el visual</span>";
 }
 $("btnNew").onclick=()=>{ attempts=0; showEx(); };
+$("btnNextEx").onclick=()=>{
+  if(!advGo||advTk!==exToken) return; /* outro exercício xa pintou: ignora o toque atrasado */
+  const go=advGo; hideNext(); go();
+};
 $("btnBack").onclick=()=>{ deckQ=[]; stopExTimer(); $("btnNew").style.display=""; $("exercise").style.display="none"; $("subjects").style.display=""; };
 $("btnReset").onclick=()=>{ if(confirm("¿Empezar de nuevo? Borra monedas y desbloqueos.")){ state=defaultState(); save(); renderWallet(); renderShop(); renderReport(); renderAvatar(); } };
 
