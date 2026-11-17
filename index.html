@@ -477,7 +477,7 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
 <!-- MÍA: mascota 3D que flota libremente por la app -->
 <div id="mia" aria-label="Mía, tu amiga">
   <div class="mia-f">
-    <img id="miaImg" src="assets/mia/mia.webp" alt="" draggable="false">
+    <img id="miaImg" src="assets/mia/mia.webp" width="474" height="760" alt="" draggable="false">
     <video id="miaVid" muted loop playsinline preload="auto" src="assets/mia/mia-talk.webm"></video>
   </div>
   <button class="mia-tap" id="miaTap" type="button" aria-label="Hablar con Mía"></button>
@@ -828,7 +828,7 @@ const Mia=(()=>{
     const r=app?app.getBoundingClientRect():{left:0,right:innerWidth,top:0};
     const nh=nav?nav.getBoundingClientRect().height:0;
     const tb=top?top.getBoundingClientRect().bottom:0;
-    const w=box?box.offsetWidth:120, h=box?box.offsetHeight:190, m=6;
+    const w=(box&&box.offsetWidth)||120, h=(box&&box.offsetHeight)||190, m=6;
     let x0=Math.max(m,r.left+m), x1=Math.min(innerWidth-w-m,r.right-w-m);
     /* no tapa la cabecera (avatar + globo de voz) mientras se ve */
     let y0=Math.max(m,r.top+m/2, Math.min(tb+m, innerHeight*0.55)), y1=innerHeight-h-nh-m;
@@ -846,6 +846,7 @@ const Mia=(()=>{
     clearTimeout(timer);
     if(!ready||still.matches||document.hidden) return;
     const a=area(), d=Math.hypot(a.x1-a.x0,a.y1-a.y0);
+    x=Math.min(a.x1,Math.max(a.x0,x)); y=Math.min(a.y1,Math.max(a.y0,y));
     let nx=x,ny=y;
     for(let i=0;i<8;i++){                  /* garantiza un paso visible, no un temblor */
       if(Math.random()<0.55){
