@@ -175,6 +175,34 @@ h3{margin:0 0 6px;font-size:15px}
 .badge{background:#eef2ff;border-radius:999px;padding:5px 10px;font-weight:800;font-size:13px}
 hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
 .foot{font-size:12px;color:var(--mut);text-align:center}
+/* ===== MÍA: mascota 3D que flota por la app ===== */
+#mia{position:fixed;left:0;top:0;width:104px;width:clamp(80px,20vw,100px);z-index:26;pointer-events:none;
+  opacity:0;transform:translate3d(0,0,0);
+  transition:transform var(--mia-dur,7s) cubic-bezier(.45,.05,.55,.95),opacity .9s ease}
+#mia.in{opacity:1}
+#mia .mia-f{position:relative;transform-origin:50% 92%;
+  animation:miaBob 4.2s ease-in-out infinite;filter:drop-shadow(0 9px 11px rgba(28,35,51,.18))}
+#mia img{display:block;width:100%;height:auto;transition:opacity .3s ease;
+  user-select:none;-webkit-user-drag:none;pointer-events:none}
+#mia video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;
+  transition:opacity .3s ease;pointer-events:none}
+#mia.talk img{opacity:0}
+#mia.talk video{opacity:1}
+#mia .mia-tap{position:absolute;left:50%;top:3%;width:48%;height:46%;transform:translateX(-50%);
+  margin:0;padding:0;border:0;background:none;pointer-events:auto;border-radius:50%;
+  cursor:pointer;-webkit-tap-highlight-color:transparent}
+#mia .mia-tap:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+#mia.cheer .mia-f{animation:miaCheer .9s cubic-bezier(.2,.8,.3,1)}
+@keyframes miaBob{0%,100%{transform:translateY(0) rotate(-1.1deg)}50%{transform:translateY(-7px) rotate(1.1deg)}}
+@keyframes miaCheer{
+  0%{transform:translateY(0) scale(1) rotate(0)}
+  28%{transform:translateY(-18px) scale(1.09) rotate(6deg)}
+  58%{transform:translateY(-3px) scale(1.03) rotate(-4deg)}
+  100%{transform:translateY(0) scale(1) rotate(0)}}
+@media (prefers-reduced-motion:reduce){
+  #mia{transition:opacity .3s}
+  #mia .mia-f{animation:none}
+}
 </style>
 </head>
 <body>
@@ -445,6 +473,15 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
 
 </div>
 <div class="toast" id="toast"></div>
+
+<!-- MÍA: mascota 3D que flota libremente por la app -->
+<div id="mia" aria-label="Mía, tu amiga">
+  <div class="mia-f">
+    <img id="miaImg" src="assets/mia/mia.webp" alt="" draggable="false">
+    <video id="miaVid" muted loop playsinline preload="auto" src="assets/mia/mia-talk.webm"></video>
+  </div>
+  <button class="mia-tap" id="miaTap" type="button" aria-label="Hablar con Mía"></button>
+</div>
 
 <script>
 /* ============== ESTADO ============== */
@@ -773,6 +810,117 @@ function prefetchTTS(line){ ttsURL(line).catch(()=>{}); }
 const EMOJI_RE=/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{20E3}\u{200D}\u{1F1E6}-\u{1F1FF}]/gu;
 /* quita emojis del texto que va al TTS (si no, los "describe": "cara de gato"...) */
 function stripEmoji(s){ return String(s||"").replace(EMOJI_RE,"").replace(/[ \t]{2,}/g," ").trim(); }
+/* ===== MÍA: mascota 3D que flota libremente por la app =====
+   #mia es una capa fixed: vaga sola por el área de la app, se anima con el
+   clip de gestos mientras la app habla y celebra los aciertos. */
+const Mia=(()=>{
+  const LINES=["¡Hola! Soy Mía, tu amiga. ¡Vamos a aprender juntas!",
+               "¡Tú puedes! Yo estoy aquí contigo.",
+               "¡Qué bien lo estás haciendo!",
+               "¿Jugamos un poquito más?"];
+  const still=matchMedia("(prefers-reduced-motion: reduce)");
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  let el=null,box=null,vid=null,ready=false,canAnim=false,wantTalk=false,timer=0,ct=0,off=0,x=0,y=0;
+
+  /* zona por la que puede vagar: la columna de la app, por encima del menú */
+  function area(){
+    const app=document.getElementById("app"), nav=document.getElementById("nav"), top=document.querySelector(".top");
+    const r=app?app.getBoundingClientRect():{left:0,right:innerWidth,top:0};
+    const nh=nav?nav.getBoundingClientRect().height:0;
+    const tb=top?top.getBoundingClientRect().bottom:0;
+    const w=box?box.offsetWidth:120, h=box?box.offsetHeight:190, m=6;
+    let x0=Math.max(m,r.left+m), x1=Math.min(innerWidth-w-m,r.right-w-m);
+    /* no tapa la cabecera (avatar + globo de voz) mientras se ve */
+    let y0=Math.max(m,r.top+m/2, Math.min(tb+m, innerHeight*0.55)), y1=innerHeight-h-nh-m;
+    if(x1<x0){ x0=x1=Math.max(m,(innerWidth-w)/2); }
+    if(y1<y0){ y0=y1=Math.max(m,(innerHeight-h)/2); }
+    return {x0,y0,x1,y1};
+  }
+  function jump(nx,ny,ms){
+    x=nx; y=ny;
+    el.style.setProperty("--mia-dur",ms+"ms");
+    el.style.transform="translate3d("+Math.round(x)+"px,"+Math.round(y)+"px,0)";
+  }
+  /* pasos cortos la mayor parte del tiempo (flota cerca), de vez en cuando cruza */
+  function roam(){
+    clearTimeout(timer);
+    if(!ready||still.matches||document.hidden) return;
+    const a=area(), d=Math.hypot(a.x1-a.x0,a.y1-a.y0);
+    let nx=x,ny=y;
+    for(let i=0;i<8;i++){                  /* garantiza un paso visible, no un temblor */
+      if(Math.random()<0.55){
+        const sx=(a.x1-a.x0)*0.3, sy=(a.y1-a.y0)*0.3;
+        nx=Math.min(a.x1,Math.max(a.x0,x+rnd(-sx,sx)));
+        ny=Math.min(a.y1,Math.max(a.y0,y+rnd(-sy,sy)));
+      }else{ nx=rnd(a.x0,a.x1); ny=rnd(a.y0,a.y1); }
+      if(Math.hypot(nx-x,ny-y)>d*0.18) break;
+    }
+    const ms=Math.round(rnd(5000,8000));
+    jump(nx,ny,ms);
+    timer=setTimeout(roam,ms+rnd(1400,4200));
+  }
+  function apply(){
+    if(!ready||!canAnim) return;
+    const on=wantTalk && !document.hidden;
+    if(on && el.classList.contains("talk") && vid && !vid.paused) return;   /* ya está animando: no reinicia el clip */
+    el.classList.toggle("talk",on);
+    if(!vid) return;
+    try{
+      if(on){ vid.currentTime=0; const p=vid.play(); if(p&&p.catch) p.catch(()=>{}); }
+      else vid.pause();
+    }catch(e){}
+  }
+  /* apaga con 250 ms de gracia: entre dos frases seguidas no parpadea */
+  function talk(on){
+    wantTalk=!!on; clearTimeout(off);
+    if(wantTalk) apply(); else off=setTimeout(apply,250);
+  }
+  function cheer(ok){
+    if(!ready||!ok||still.matches) return;
+    el.classList.remove("cheer"); void el.offsetWidth; el.classList.add("cheer");
+    clearTimeout(ct); ct=setTimeout(()=>el.classList.remove("cheer"),950);
+  }
+  /* VP9 con alfa: si el navegador no lo pinta transparente, se queda la foto */
+  function alphaOK(){
+    try{
+      const c=document.createElement("canvas"); c.width=c.height=16;
+      const g=c.getContext("2d"); g.drawImage(vid,0,0,16,16);
+      return g.getImageData(0,0,1,1).data[3]<250; /* esquina superior izq. = fondo */
+    }catch(e){ return location.protocol==="file:"; } /* file:// tinta el canvas */
+  }
+  function init(){
+    el=document.getElementById("mia"); if(!el) return;
+    box=el.querySelector(".mia-f"); vid=document.getElementById("miaVid");
+    ready=true;
+    const a=area();
+    jump(a.x1,a.y1,1);                       /* entra abajo, junto al menú */
+    requestAnimationFrame(()=>el.classList.add("in"));
+    setTimeout(roam,2200);
+    if(vid){
+      const check=()=>{
+        canAnim=!still.matches && alphaOK();
+        if(!canAnim){ try{vid.remove();}catch(e){} vid=null; }
+        apply();
+      };
+      if(vid.readyState>=2) check(); else vid.addEventListener("loadeddata",check,{once:true});
+    }
+    const tap=document.getElementById("miaTap");
+    if(tap) tap.addEventListener("click",()=>{ if(!still.matches) speak(pick(LINES)); });
+    addEventListener("resize",()=>{
+      const b=area();
+      jump(Math.min(b.x1,Math.max(b.x0,x)),Math.min(b.y1,Math.max(b.y0,y)),350);
+    });
+    document.addEventListener("visibilitychange",()=>{
+      if(document.hidden){ clearTimeout(timer); try{ if(vid) vid.pause(); }catch(e){} }
+      else { roam(); apply(); }
+    });
+    if(still.addEventListener) still.addEventListener("change",()=>{
+      if(still.matches){ clearTimeout(timer); wantTalk=false; el.classList.remove("talk"); try{ if(vid) vid.pause(); }catch(e){} }
+      else roam();
+    });
+  }
+  return {init,talk,cheer};
+})();
 /* devuelve Promise que resuelve cuando el audio termina (o es interrumpido por otra fala) */
 let speechPlaying=0; /* >0 mientras suena la voz del gato (evita que el micro se escuche a sí mismo) */
 let catQuietUntil=0; /* ms absolutas: hasta cuándo se descarta lo que oye el micro (cola de eco tras hablar el gato) */
@@ -784,9 +932,10 @@ function speak(line){
   _spResolve=resolve;
   b.textContent=line; b.style.display="";
   if(svg) svg.classList.add("talking");
+  Mia.talk(true);
   const sayLine=stripEmoji(line);
   let stopped=false;
-  const stop=()=>{ if(stopped) return; stopped=true; speechPlaying=Math.max(0,speechPlaying-1); catQuietUntil=Date.now()+1500; /* cola de eco: el altavoz tarda un instante en callarse */ if(_spStop===stop) _spStop=null; if(svg) svg.classList.remove("talking"); b.style.display="none"; if(_spResolve===resolve) _spResolve=null; resolve(); };
+  const stop=()=>{ if(stopped) return; stopped=true; speechPlaying=Math.max(0,speechPlaying-1); catQuietUntil=Date.now()+1500; /* cola de eco: el altavoz tarda un instante en callarse */ if(_spStop===stop) _spStop=null; if(svg) svg.classList.remove("talking"); Mia.talk(false); b.style.display="none"; if(_spResolve===resolve) _spResolve=null; resolve(); };
   _spStop=stop;
   if(!sayLine){ stop(); return; } /* nada para falar (p.ex. opção só de emoji): não trava o avanço */
   const seq=++_spSeq;
@@ -1230,6 +1379,7 @@ function registerResult(ok,say){
   if(ok){ state.exRight++; earn(10,"ejercicio correcto"); p=speak(say||pick(LINES.good)); }
   else { p=speak(say||LINES.bad); }
   streakTouch(ok);
+  Mia.cheer(ok);
   save(); renderReport();
   return p;
 }
@@ -2360,6 +2510,7 @@ $("btnExamenRev2").onclick=()=>{ if(!state.examen2.length){toast("Genera primero
 
 renderWallet(); renderSubjects(); renderShop(); renderReport(); renderAvatar(); updateExamUI();
 renderBoard(); renderBoardBar(); initChat(); setTab("ex");
+Mia.init();
 speak("¡Hola, "+(state.name||"Maitê")+"! "+LINES.greet);
 </script>
 </body>
