@@ -850,10 +850,15 @@ const Mia=(()=>{
     let nx=x,ny=y;
     for(let i=0;i<8;i++){                  /* garantiza un paso visible, no un temblor */
       if(Math.random()<0.55){
-        const sx=(a.x1-a.x0)*0.3, sy=(a.y1-a.y0)*0.3;
+        const sx=(a.x1-a.x0)*0.22, sy=(a.y1-a.y0)*0.3;
         nx=Math.min(a.x1,Math.max(a.x0,x+rnd(-sx,sx)));
         ny=Math.min(a.y1,Math.max(a.y0,y+rnd(-sy,sy)));
-      }else{ nx=rnd(a.x0,a.x1); ny=rnd(a.y0,a.y1); }
+      }else{
+        /* prefire os lados: tapa menos texto que o centro das tarxetas */
+        const band=(a.x1-a.x0)*0.25;
+        nx=Math.random()<0.7 ? (Math.random()<0.5?rnd(a.x0,a.x0+band):rnd(a.x1-band,a.x1)) : rnd(a.x0,a.x1);
+        ny=rnd(a.y0,a.y1);
+      }
       if(Math.hypot(nx-x,ny-y)>d*0.18) break;
     }
     const ms=Math.round(rnd(5000,8000));
