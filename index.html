@@ -6,14 +6,29 @@
 <title>🐱 Estudio y Monedas — PWA offline</title>
 <meta name="theme-color" content="#4a7cff">
 <style>
+@font-face{font-family:"Fredoka";src:url("assets/fonts/fredoka-latin.woff2") format("woff2");font-weight:300 700;font-display:swap}
+@font-face{font-family:"Nunito";src:url("assets/fonts/nunito-latin.woff2") format("woff2");font-weight:300 900;font-display:swap}
 :root{
-  --bg:#f4f6ff; --card:#fff; --ink:#1c2333; --mut:#5c6577; --accent:#4a7cff;
-  --coin:#f5a623; --coin-bg:#fff6e3; --good:#22b573; --bad:#e74c3c;
-  --lock:#aab0c0; --shadow:0 2px 10px rgba(28,35,51,.08);
+  --paper:#fbf6ec; --paper-2:#f3eddf; --surface:#fff;
+  --ink:#2b1d2e; --muted:#675a6a; --line:#dfd5e1;
+  --accent:#be1945; --accent-soft:#ffdee0;
+  --gold:#ecb33c; --gold-soft:#ffecc5; --gold-ink:#724400;
+  --good:#007b3f; --good-ink:#005129; --good-soft:#d6f6e0;
+  --bad:#c52c2a; --bad-soft:#ffe7e4;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px;
+  --r1:12px; --r2:16px; --r3:18px; --r4:24px; --pill:999px;
+  --rim:0 0 0 1px var(--line),0 10px 22px -16px rgba(43,29,46,.55);
+  --font-display:"Fredoka",ui-rounded,"Segoe UI",system-ui,sans-serif;
+  --font-text:"Nunito",ui-rounded,"Segoe UI",system-ui,sans-serif;
+  /* aliases para que el resto de la app (minijuegos, cuadro, etc.) herede la paleta */
+  --bg:var(--paper); --card:var(--surface); --mut:var(--muted);
+  --coin:var(--gold); --coin-bg:var(--gold-soft); --lock:#aab0c0;
+  --shadow:0 2px 10px rgba(43,29,46,.08);
 }
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
-  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);
+  font-family:var(--font-text);-webkit-text-size-adjust:100%}
+svg{display:block}
 button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 .app{max-width:480px;margin:0 auto;padding:12px 12px 100px}
 /* header */
@@ -203,9 +218,197 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
   #mia{transition:opacity .3s}
   #mia .mia-f{animation:none}
 }
+/* ===================== DISEÑO v2 — cuaderno (papel, washi, iconos dibujados) ===================== */
+/* cuero de la app: papel punteado (herencia para minijuegos vía --bg/--card/--mut/--accent) */
+body{background:var(--paper)}
+.app{background-image:radial-gradient(circle at 1px 1px,rgba(43,29,46,.04) 1px,transparent 0);background-size:24px 24px}
+/* --- sprites: los iconos se dibujan en trazo 2px; los símbolos llevan los atributos de trazo --- */
+h2,h1{font-family:var(--font-display);letter-spacing:-.01em}
+/* --- cabecera --- */
+.app-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.top .avatar{width:60px;height:60px;font-size:26px;border:3px solid var(--surface);
+  box-shadow:0 0 0 1px var(--line),0 6px 14px -10px rgba(43,29,46,.8)}
+.who{min-width:0;line-height:1.15}
+.who b{display:block;font:500 19px/1.12 var(--font-display);letter-spacing:-.01em}
+.who span{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-top:3px}
+.wallet{display:inline-flex;align-items:center;gap:6px;margin-left:auto;background:var(--gold-soft);
+  border:1px solid #f0d9a8;color:var(--gold-ink);font-weight:800;font-size:15px;padding:7px 12px;
+  border-radius:var(--pill);font-variant-numeric:tabular-nums}
+.wallet svg{width:17px;height:17px;color:var(--gold-ink)}
+/* --- tarjetas: superficie con borde rim --- */
+.card{background:var(--surface);border-radius:var(--r3);box-shadow:var(--rim);padding:16px;margin-bottom:14px}
+/* --- aviso (washi con cinta) --- */
+.note{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r2) var(--r2) var(--r2) 4px;
+  padding:13px 15px;font-size:14.5px;line-height:1.4;box-shadow:0 2px 0 rgba(43,29,46,.04);margin:0 0 12px}
+.note b{color:var(--accent)}
+.tape{position:absolute;top:-8px;left:20px;width:62px;height:16px;border-radius:2px;background:rgba(236,179,60,.5);transform:rotate(-3deg)}
+.h2{font:600 24px/1.15 var(--font-display);margin:0 0 14px;letter-spacing:-.01em}
+.h2 mark{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'%3E%3Cpath d='M2 6Q26 2 50 5T98 4' fill='none' stroke='%23ecb33c' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom/100% 7px;color:inherit;padding:0 2px}
+/* --- materias --- */
+.grid-subj{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#subjects .subj,.grid-subj .subj{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  min-height:96px;padding:12px 8px;background:var(--surface);border:3px solid var(--surface);
+  border-radius:var(--r3);box-shadow:var(--rim);font-weight:800;font-size:15px;text-align:center;letter-spacing:-.01em}
+#subjects .subj:active,.grid-subj .subj:active{transform:scale(.97)}
+.subj .ico{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--tint);flex:0 0 auto}
+.subj .ico svg{width:26px;height:26px;color:var(--tint-ink)}
+.subj-wide{grid-column:1/-1;flex-direction:row;justify-content:flex-start;gap:13px;text-align:left;min-height:74px;padding:12px 14px}
+.subj-wide .ico{width:44px;height:44px}
+.subj-wide small,.subj small{display:block;font-weight:600;font-size:13px;color:var(--muted);margin-top:2px;line-height:1.25}
+.subj .n{display:block}
+.s-ingles{--tint:#d2ebff;--tint-ink:#054980}
+.s-mat{--tint:#ece2ff;--tint-ink:#523779}
+.s-cast{--tint:#ffdddb;--tint-ink:#78292e}
+.s-gal{--tint:#fae4c7;--tint-ink:#693c00}
+.s-nat{--tint:#d6f0d6;--tint-ink:#15561d}
+.s-soc{--tint:#c6f2f4;--tint-ink:#00585f}
+.s-foto{--tint:#f6dffb;--tint-ink:#61316c}
+/* --- atajos (práctica / relámpago / colorear) --- */
+.utils{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.util{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 6px;background:var(--surface);
+  border:1px solid var(--line);border-radius:14px;font-size:12px;font-weight:800;line-height:1.15;text-align:center}
+.util svg{width:22px;height:22px;color:var(--accent)}
+.util b{font-size:12px;color:var(--muted);font-weight:700}
+/* --- abas de navegación --- */
+.topbar{display:block}
+#nav{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;background:var(--paper);
+  border-top:1px solid var(--line);padding:6px 8px calc(8px + env(safe-area-inset-bottom))}
+#nav button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px;border-radius:13px;
+  font-size:12px;font-weight:800;color:var(--muted);background:transparent}
+#nav button .em{font-size:23px;filter:none;opacity:1}
+#nav svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#nav button.on,#nav button[aria-current="page"]{color:var(--accent);background:var(--accent-soft)}
+#nav button .em{font-size:22px;line-height:1;color:inherit}
+/* --- ejercicio --- */
+.card-ex-top{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.iconbtn{width:44px;height:44px;border-radius:14px;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;flex:0 0 auto}
+.iconbtn svg{width:22px;height:22px;color:var(--ink)}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:var(--pill);background:var(--surface);
+  border:1px solid var(--line);font-weight:800;font-size:13px}
+.chip .dot{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:var(--tint);font-size:14px}
+.chip .dot svg{width:16px;height:16px;color:var(--tint-ink)}
+.prog{margin-top:0}
+.prog-row{display:flex;align-items:baseline;justify-content:space-between;font-weight:800;font-size:13px;color:var(--muted);margin-bottom:6px}
+.prog-row b{color:var(--ink)}
+.prog-row .plus{display:inline-flex;align-items:center;gap:4px;color:var(--gold-ink);background:var(--gold-soft);border-radius:var(--pill);padding:2px 9px;font-size:12px}
+.prog-row .plus svg{width:13px;height:13px}
+.bar{height:10px;border-radius:var(--pill);background:var(--paper-2);overflow:hidden;box-shadow:inset 0 0 0 1px rgba(43,29,46,.05)}
+.bar i{display:block;height:100%;border-radius:var(--pill);background:var(--accent)}
+.q{font:600 34px/1.15 var(--font-display);letter-spacing:-.015em;margin:22px 0 20px}
+#exOpts,.opts{display:flex;flex-direction:column;gap:10px}
+.opts .opt{display:flex;align-items:center;justify-content:space-between;height:60px;padding:0 20px;border-radius:var(--r2);
+  background:var(--surface);border:2px solid var(--line);font-weight:800;font-size:19px;box-shadow:0 2px 0 rgba(43,29,46,.04);gap:12px}
+.opts .opt:active{transform:scale(.99)}
+.opts .opt.ok{border-color:var(--good);background:var(--good-soft)}
+.opts .opt.ok::after{content:"";width:24px;height:24px;flex:0 0 auto;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23067d3a' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.6l4.6 4.6L19 7.4'/%3E%3C/svg%3E") center/contain no-repeat}
+.opts .opt.no{opacity:.55;border-color:var(--line)}
+#feedback,.feedback{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:18px;padding:12px;border-radius:14px;font-weight:800;font-size:16px}
+#feedback.ok,.fb.ok,.feedback.good{background:var(--good-soft);color:var(--good-ink)}
+.feedback.bad{background:var(--bad-soft);color:#b1173f}
+.btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:56px;border-radius:var(--r2);
+  background:var(--accent);color:#fff;font-weight:800;font-size:17px;margin-top:14px;box-shadow:0 10px 22px -14px rgba(190,25,69,.9)}
+.btn-primary:active{transform:scale(.99)}
+.btn-primary:disabled{background:var(--paper-2);color:var(--muted);box-shadow:none}
+.btn-primary svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.link{width:100%;padding:14px 0 4px;font-weight:800;font-size:14px;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.foot{display:flex;gap:10px;margin-top:8px}
+/* --- tienda --- */
+.chips{display:flex;flex-wrap:nowrap;gap:4px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none}
+#cats button,.filtro{flex:0 0 auto;padding:9px 10px;border-radius:var(--pill);background:var(--surface);
+  border:1px solid var(--line);font-weight:800;font-size:12.5px;white-space:nowrap;color:var(--ink)}
+#cats button[aria-pressed="true"],.filtro[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.goal{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r3);background:var(--gold-soft);
+  border:1px solid #f0d9a8;margin:8px 0 16px}
+.goal .art{width:44px;height:44px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-size:25px;flex:0 0 auto}
+.goal b{display:block;font-size:14px}
+.goal span{display:block;font-size:12.5px;color:var(--gold-ink);font-weight:700;margin-top:1px}
+.goal .bar{height:9px;margin-top:7px}
+.goal .bar i{background:var(--gold)}
+.shop{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#items .item,.item{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 10px 10px;
+  background:var(--surface);border:3px solid var(--surface);border-radius:var(--r3);box-shadow:var(--rim);text-align:center;margin:0}
+#items .item.rare{background:#fffdf6}
+.item .em{display:grid;place-items:center;width:74px;height:74px;border-radius:50%;background:var(--paper-2);font-size:39px;line-height:1}
+.item .nm{font-weight:800;font-size:14px;line-height:1.2;letter-spacing:-.01em;display:block}
+.item .pr{display:flex;align-items:center;gap:4px;font-weight:800;font-size:13px;color:var(--gold-ink)}
+.item .pr svg{width:14px;height:14px}
+.item .tag{position:absolute;top:9px;right:9px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--gold-ink);background:var(--gold-soft);border:1px solid #f0d9a8;padding:3px 7px;border-radius:var(--pill)}
+.item .buy{width:100%;height:42px;border-radius:13px;background:var(--accent);color:#fff;font-weight:800;font-size:13px;
+  display:flex;align-items:center;justify-content:center;gap:5px}
+.item .buy:disabled{background:var(--paper-2);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+.item .buy.owned{background:var(--good-soft);color:var(--good-ink)}
+.category{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:800;margin:4px 0 12px;color:var(--ink)}
+/* --- gato --- */
+.chat{flex:1 1 auto}
+#chatLog{max-height:420px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:8px 4px 6px;background:var(--paper-2);border-radius:var(--r2);align-self:stretch}
+.chat .msg{display:flex;max-width:88%;padding:0;border:0;border-radius:0;line-height:1.4}
+#chatLog .msg{display:flex;max-width:88%;padding:0;border:0;border-radius:0;line-height:1.4;white-space:normal}
+#chatLog .msg.cat{align-self:flex-start;justify-content:flex-start;background:none;border:0;border-radius:0}
+#chatLog .msg.kid{align-self:flex-end;justify-content:flex-end;background:none;border:0;border-radius:0;color:inherit}
+.bubble{padding:11px 15px;border-radius:var(--r2);background:var(--surface);border:1px solid var(--line);font-size:15px;line-height:1.4;box-shadow:0 2px 0 rgba(43,29,46,.04)}
+#chatLog .msg.cat .bubble{border-bottom-left-radius:4px}
+#chatLog .msg.kid .bubble{background:var(--accent-soft);border-color:#f6c9d2;border-bottom-right-radius:4px;font-weight:600}
+#chatTyping{display:none;font-size:12.5px;color:var(--muted);font-style:italic;margin-top:6px}
+.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.quick button{padding:8px 13px;border-radius:var(--pill);background:var(--surface);border:1px solid var(--line);font-size:13px;font-weight:700}
+.composer{display:flex;gap:8px;align-items:center;padding:10px 0 2px;margin-top:8px}
+.composer input{flex:1;height:48px;border-radius:var(--pill);border:1px solid var(--line);background:var(--surface);
+  padding:0 16px;font:inherit;font-size:15px;color:var(--ink);min-width:0}
+.composer input::placeholder{color:var(--muted)}
+.send{width:48px;height:48px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;flex:0 0 auto}
+.send svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.send:disabled{background:var(--paper-2);color:var(--muted)}
+/* --- toast / otros heredados --- */
+.toast{position:fixed;left:50%;bottom:96px;transform:translate(-50%,10px);background:var(--ink);color:var(--paper);
+  font-size:13px;font-weight:700;padding:9px 14px;border-radius:var(--pill);opacity:0;pointer-events:none;transition:.18s;white-space:nowrap;z-index:90}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.mut{color:var(--muted)}
+/* socorros que quedan bonitos con la paleta nueva */
+.ghost{background:var(--surface);border:1px solid var(--line);border-radius:var(--r2);color:var(--ink);font-weight:800}
+.row{display:flex;gap:8px}
+.steps{display:flex;gap:4px;margin-top:8px}
+.steps i{flex:1;height:9px;border-radius:var(--pill);background:var(--paper-2)}
+.steps i.on{background:var(--accent)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* ===== FASE 2: alinear inputs y elementos heredadas (cámara, exame, repaso, minijuegos) ===== */
+input,textarea,select{width:100%;box-sizing:border-box;font-family:var(--font-text);
+  background:var(--paper-2);color:var(--ink);
+  border:2px solid var(--line)!important;border-radius:var(--r2)!important;
+  padding:11px 15px;font-size:15px}
+input::placeholder,textarea::placeholder{color:var(--muted);opacity:.85}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent)!important;background:var(--surface)}
+input[type=file]{padding:6px}
+.pbar{background:var(--paper-2)}
+.pbar>div{background:linear-gradient(90deg,var(--accent),var(--gold))}
 </style>
 </head>
 <body>
+<!-- sprite de iconos dibujados (diseño v2) -->
+<svg class="sprite" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+  <symbol id="i-bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 9h11l1.3 11h-13.6z"/><path d="M9 9V7a3 3 0 0 1 6 0v2"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22.5z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22.5z"/></symbol>
+  <symbol id="i-pack" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9.5A6 6 0 0 1 18 9.5V19a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><path d="M9 9.5V7a3 3 0 0 1 6 0v2.5"/><path d="M9.5 14h5"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h11a4 4 0 0 1 4 4v1"/><path d="M7 5 4 8l3 3"/><path d="M20 16H9a4 4 0 0 1-4-4v-1"/><path d="M17 13l3 3-3 3"/></symbol>
+  <symbol id="i-cat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h16v9.5H9l-5 4z"/><path d="M7.5 5.5 6.5 2.5l3.2 2"/><path d="M16.5 5.5l1-3-3.2 2"/></symbol>
+  <symbol id="i-people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="10" r="2.4"/><path d="M15 20a4.6 4.6 0 0 1 5.6-4.2"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.6 2.3 4 5.4 4 8.5s-1.4 6.2-4 8.5c-2.6-2.3-4-5.4-4-8.5s1.4-6.2 4-8.5z"/></symbol>
+  <symbol id="i-math" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 5.5v9"/><path d="M2.5 10h9"/><path d="M14.5 14.5l6 6"/><path d="M20.5 14.5l-6 6"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l3.2-.7L19 7.5a2.3 2.3 0 0 0-3.3-3.3L4 16.8z"/><path d="M14.3 5.9l3.8 3.8"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 21V4"/><path d="M6.5 4h11l-2.4 4 2.4 4h-11z"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19c0-8.5 4.6-12.7 14-13.5C20 14 15.4 19 5 19z"/><path d="M5 19c3-4.8 6.4-7.6 10.5-9.5"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14"/><path d="M15 6v14"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5h3l1.6-2.4h7.8L17.5 8.5h3v11h-17z"/><circle cx="12" cy="14" r="3.4"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 2.5 5.5 14H11l-1 7.5L18.5 10H13z"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.7 0 2.2-1.1 1.4-2.2-.7-1 .1-2.3 1.4-2.3H17a4 4 0 0 0 4-4c0-5.2-4-9.5-9-9.5z"/><circle cx="8" cy="10" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="7.6" r="1.1" fill="currentColor" stroke="none"/><circle cx="15.8" cy="10" r="1.1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.9l1.3 2.7 2.9.4-2.1 2 .5 2.9-2.6-1.4-2.6 1.4.5-2.9-2.1-2 2.9-.4z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.6l4.6 4.6L19 7.4"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12h14"/><path d="M13 6.5l5.5 5.5L13 17.5"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 6 9 12l5.5 6"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.4 20.5 4l-6.2 16.5-2.6-6.4z"/><path d="M11.7 14.1 20.5 4"/></symbol>
+  <symbol id="i-dumbbell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5v5"/><path d="M7 7v10"/><path d="M17 7v10"/><path d="M20 9.5v5"/><path d="M7 12h10"/></symbol>
+</svg>
 <div class="app" id="app">
 
   <!-- CABECERA -->
@@ -242,38 +445,41 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
       <span class="ove" id="eyeEmoji" style="display:none"></span>
       <span class="ovm" id="mouthEmoji" style="display:none"></span>
     </div>
-    <div>
-      <div style="font-weight:800;font-size:17px">Mi Clase</div>
-      <div class="mut" id="levelLine">Nivel 1 · 0 monedas ganadas</div>
+    <div class="who">
+      <b>Mi cuaderno</b>
+      <span id="levelLine">Nivel 1 · 0 monedas ganadas</span>
     </div>
-    <div class="wallet"><span class="c">🪙</span><span id="coins">0</span></div>
+    <div class="wallet"><svg><use href="#i-coin"/></svg><span id="coins">0</span></div>
   </div>
   <div id="speech" class="speech" style="display:none"></div>
 
   <!-- BARRA DE NAVEGACIÓN (abas) -->
   <nav id="nav" aria-label="Secciones">
-    <button data-tab="ex" class="on"><span class="em">🏫</span>Ejercicios</button>
-    <button data-tab="rev"><span class="em">📚</span>Repaso</button>
-    <button data-tab="chat"><span class="em">💬</span>Gato</button>
-    <button data-tab="shop"><span class="em">🛒</span>Tienda</button>
-    <button data-tab="pa"><span class="em">👪</span>Papás</button>
+    <button data-tab="ex" class="on"><svg><use href="#i-dumbbell"/></svg>Ejercicios</button>
+    <button data-tab="rev"><svg><use href="#i-book"/></svg>Repaso</button>
+    <button data-tab="chat"><svg><use href="#i-cat"/></svg>Gato</button>
+    <button data-tab="shop"><svg><use href="#i-bag"/></svg>Tienda</button>
+    <button data-tab="pa"><svg><use href="#i-people"/></svg>Papás</button>
   </nav>
 
   <!-- EJERCICIOS -->
   <div class="card" id="card-ex" data-tab="ex">
-    <h2>▶ Ejercicios (¡monedas!)</h2>
-    <div class="subj-grid" id="subjects"></div>
-    <div class="row" style="margin-top:8px">
-      <button class="ghost" id="btnPractice" style="flex:1">🏋️ Práctica de tus fotos (24)</button>
-      <button class="ghost" id="btnBlitz" style="flex:1">⚡ Relámpago (12)</button>
-      <button class="ghost" id="btnColor" style="flex:1">🎨 Colorear</button>
+    <div id="exIntro">
+      <aside class="note"><span class="tape"></span><b>¡Hola!</b> Elige una asignatura, responde bien y gana monedas para tu gatito 🐱</aside>
+      <h2 class="h2">¿Qué toca <mark>hoy</mark>?</h2>
+      <div class="grid-subj" id="subjects"></div>
+      <div class="utils">
+        <button class="util" id="btnPractice"><svg><use href="#i-repeat"/></svg><span>Práctica<b>tus fotos · 24</b></span></button>
+        <button class="util" id="btnBlitz"><svg><use href="#i-bolt"/></svg><span>Relámpago<b>12 preguntas</b></span></button>
+        <button class="util" id="btnColor"><svg><use href="#i-palette"/></svg><span>Colorear<b>tu cuaderno</b></span></button>
+      </div>
     </div>
     <div id="exercise" style="display:none">
-      <div class="mut" id="exSubj" style="font-weight:800;margin-top:10px"></div>
+      <div class="chip" id="exSubj" style="margin-bottom:4px"></div>
       <div class="q" id="exQ"></div>
       <div class="opts" id="exOpts"></div>
       <div class="feedback" id="exFb"></div>
-      <button class="big" id="btnNextEx" style="display:none;width:100%;margin-top:6px">➡️ Siguiente</button>
+      <button class="btn-primary" id="btnNextEx" style="display:none;margin-top:14px">Siguiente <svg><use href="#i-arrow"/></svg></button>
       <div class="row" style="margin-top:8px">
         <button class="ghost" id="btnNew" style="flex:1">Nuevo ejercicio</button>
         <button class="ghost" id="btnBack" style="flex:1">Cambiar materia</button>
@@ -327,10 +533,11 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
 
   <!-- TIENDA -->
   <div class="card" data-tab="shop">
-    <h2>🛍️ Tienda de recompensas</h2>
-    <div class="mut" style="font-size:13px;margin-bottom:8px">Gana monedas haciendo ejercicios. Cámbialas por cosas chulas — una vez desbloqueado, es tuyo para siempre.</div>
-    <div class="cat" id="cats"></div>
-    <div class="items" id="items"></div>
+    <h2 class="h2">Tienda de <mark>recompensas</mark></h2>
+    <div class="mut" style="font-size:13px;margin:0 0 8px">Gana monedas haciendo ejercicios. Cámbialas por cosas chulas — una vez desbloqueado, es tuyo para siempre.</div>
+    <div class="chips" id="cats"></div>
+    <div class="goal" id="goal" style="display:none"></div>
+    <div class="shop" id="items"></div>
   </div>
 
   <!-- MINIJUEGO DE MEMORIA -->
@@ -416,10 +623,10 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
     </div>
     <div id="chatLog"></div>
     <div id="chatTyping">Gatuno está pensando…</div>
-    <div class="row" style="margin-top:8px">
-      <button class="big" id="btnMic" style="flex:0 0 auto;padding:12px 16px" title="Hablar">🎤</button>
-      <input id="chatIn" placeholder="Escríbele a Gatuno…" style="flex:1" autocomplete="off">
-      <button class="big" id="btnChatSend" style="flex:0 0 auto;padding:12px 16px" title="Enviar">➤</button>
+    <div class="composer">
+      <button class="send" id="btnMic" title="Hablar" style="background:var(--paper-2);color:var(--ink)">🎤</button>
+      <input id="chatIn" placeholder="Escríbele a Gatuno…" autocomplete="off">
+      <button class="send" id="btnChatSend" title="Enviar"><svg><use href="#i-send"/></svg></button>
     </div>
   </div>
 
@@ -999,15 +1206,18 @@ function renderWallet(){
 function renderSubjects(){
   const g=$("subjects"); g.innerHTML="";
   Object.entries(SUBJECTS).forEach(([id,s])=>{
-    const b=document.createElement("button"); b.className="subj";
-    b.innerHTML="<div class='em'>"+s.em+"</div><div class='n'>"+s.nm+"</div>";
+    const b=document.createElement("button");
+    const IC={ingles:"globe",mat:"math",cast:"pen",gal:"flag",nat:"leaf",soc:"map",foto:"camera"};
+    const icon=IC[id]||"book";
+    b.className="subj s-"+id+(id==="foto"?" subj-wide":"");
+    b.innerHTML="<span class='ico'><svg><use href='#i-"+icon+"'/></svg></span><span>"+s.nm+(id==="foto"?"<small>Convierte tus deberes en ejercicios</small>":"")+"</span>";
     b.onclick=()=>{ if(id==="foto"&&!state.custom.length){ toast("Primero toma una foto en la sección Cámara 📷"); return; } startExercise(id); }; g.appendChild(b);
   });
 }
 let curSubj=null, curEx=null, exId=0, exAnswered=false, exToken=0; /* exToken: incrementa a cada exercício pintado; avanços adiados só disparam se ainda for o exercício atual */
 function startExercise(id){
   curSubj=id; exId++; exAnswered=false;
-  $("subjects").parentElement.querySelector("#subjects").style.display="none";
+  const ei=document.getElementById("exIntro"); if(ei) ei.style.display="none";
   $("exercise").style.display="";
   showEx();
 }
@@ -1347,6 +1557,7 @@ function interleaveDis(list){
 }
 function startDeck(list,label,bonus,timer){
   deckQ=timer?list.slice():interleaveDis(list); deckN=deckQ.length; deckLabel=label; deckBonus=bonus; deckTimer=timer||0;
+  const ei=document.getElementById("exIntro"); if(ei) ei.style.display="none";
   $("subjects").style.display="none"; $("exercise").style.display="";
   $("btnNew").style.display="none";
   setTab("ex"); $("exercise").scrollIntoView({behavior:"smooth",block:"start"});
@@ -1354,6 +1565,7 @@ function startDeck(list,label,bonus,timer){
 }
 function nextInDeck(){
   if(!deckQ.length){
+    const ei=document.getElementById("exIntro"); if(ei) ei.style.display="";
     $("exercise").style.display="none"; $("subjects").style.display="";
     $("btnNew").style.display="";
     earn(deckBonus,"colección terminada");
@@ -2110,6 +2322,7 @@ function coRender(id,modo){
 }
 function showColorear(id,modo){
   setTab("ex"); $("card-color").style.display=""; $("card-color").scrollIntoView({behavior:"smooth"});
+  const ei=document.getElementById("exIntro"); if(ei) ei.style.display="";
   $("exercise").style.display="none"; $("subjects").style.display=""; $("btnNew").style.display="";
   if(!$("coPick").dataset.built){
     CO_MODES.forEach(function(m){
@@ -2196,7 +2409,9 @@ function initChat(){
 }
 function addMsg(role,text){
   const log=$("chatLog"); const d=document.createElement("div");
-  d.className="msg "+(role==="cat"?"cat":"kid"); d.textContent=text;
+  d.className="msg "+(role==="cat"?"cat":"kid");
+  const b=document.createElement("div"); b.className="bubble"; b.textContent=text;
+  d.appendChild(b);
   log.appendChild(d); log.scrollTop=log.scrollHeight; return d;
 }
 /* pide a resposta ao gato. Separado de sendChat porque o micrófono pode lanzala por adiantado,
@@ -2369,7 +2584,7 @@ $("btnNextEx").onclick=()=>{
   if(!advGo||advTk!==exToken) return; /* outro exercício xa pintou: ignora o toque atrasado */
   const go=advGo; hideNext(); go();
 };
-$("btnBack").onclick=()=>{ deckQ=[]; stopExTimer(); $("btnNew").style.display=""; $("exercise").style.display="none"; $("subjects").style.display=""; };
+$("btnBack").onclick=()=>{ deckQ=[]; stopExTimer(); const ei=document.getElementById("exIntro"); if(ei) ei.style.display=""; $("btnNew").style.display=""; $("exercise").style.display="none"; $("subjects").style.display=""; };
 $("btnReset").onclick=()=>{ if(confirm("¿Empezar de nuevo? Borra monedas y desbloqueos.")){ state=defaultState(); save(); renderWallet(); renderShop(); renderReport(); renderAvatar(); } };
 
 /* ======= CÁMARA: foto → texto → ejercicios ======= */
