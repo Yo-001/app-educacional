@@ -46,3 +46,16 @@ questão e o gato animado disputava a autoria da voz.
 **Consequência:** `Mia.tutor(on)` vira a única fonte de verdade do modo, chamada por `syncTutor()`
 em `setTab`/`startExercise`/fim de coleção/`btnBack`; a mascote continua na cabecera como
 retrato com rótulo. Estados ricos da personagem ficam para PRC-02.
+
+## DEC-005 · Só entra no app o exercício que se pode corrigir (2026-11-18)
+
+**Decisão:** `escola_db.py export` grava `content/ejercicios-libro.json` só com exercícios que têm
+resposta. Se a resposta estiver entre ≥3 opções, o exercício entra como escolha múltipla; caso
+contrário entra como resposta escrita (`tipo:"escri"`, que o app já corrige com `answersMatch`).
+O app carrega esse ficheiro e usa-o em 2 de cada 3 perguntas, com o gerador da matéria como reserva
+(`SUBJECTS[k].gen` embrulhado uma vez no arranque).
+**Motivo:** a extração antiga gravava `answer=NULL` e `difficulty=1` fixos, por isso 138 exercícios
+nunca chegariam ao app; e sem opções inventadas não há como corrigir escolha múltipla.
+**Consequência:** a cobertura passa a ser medida em "corrigíveis" (143 de 232 hoje) e matérias sem
+resposta no texto (inglês, sociais) ficam de fora. Se o ficheiro não carregar, o app continua a
+funcionar com os geradores — nada depende da rede.

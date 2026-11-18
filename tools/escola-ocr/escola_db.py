@@ -5,6 +5,7 @@ Uso:
   python escola_db.py sync     # baixa os scans do Drive para extracao/
   python escola_db.py ocr      # OCR das paginas ainda sem texto (Windows OCR)
   python escola_db.py stats    # resumo do estado
+  python escola_db.py export   # exercícios corrigíveis -> ../content/ejercicios-libro.json
 """
 import hashlib
 import json
@@ -161,6 +162,44 @@ def cmd_ocr(limit=None):
         print("  ok  %-45s %5d chars" % (row["local_path"].split("extracao/")[-1], len(text)))
 
 
+APP_SLUG = {"mates": "mat", "castellano": "cast", "galego": "gal", "sociais": "soc", "ingles": "ingles"}
+CONTENT_OUT = os.path.join(ROOT, "..", "..", "content", "ejercicios-libro.json")
+TEMA = "do libro 📖"
+
+
+def cmd_export():
+    """Exercicios que o app consegue corrigir -> content/ejercicios-libro.json."""
+    con = init()
+    out = {}
+    for r in con.execute("SELECT s.slug, e.statement, e.answer, e.options, e.difficulty"
+                         " FROM exercises e JOIN subjects s ON s.id=e.subject_id"
+                         " WHERE e.answer IS NOT NULL AND trim(e.answer) <> ''"
+                         " ORDER BY s.slug, e.difficulty, e.id"):
+        key = APP_SLUG.get(r["slug"])
+        if not key:
+            continue
+        item = {"q": r["statement"].strip(), "a": r["answer"].strip(),
+                "tema": TEMA, "dif": r["difficulty"] or 1}
+        opts = [str(o).strip() for o in json.loads(r["options"] or "[]") if str(o).strip()]
+        if len(opts) >= 3 and item["a"] in opts:
+            item["opts"] = opts                      # escolha múltipla
+        else:
+            item["tipo"] = "escri"                   # resposta curta/cálculo: escreve-se
+        out.setdefault(key, []).append(item)
+    path = os.path.abspath(CONTENT_OUT)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump(out, fh, ensure_ascii=False, indent=1)
+        fh.write("\n")
+    print("escrito %s" % path)
+    for k in sorted(out):
+        mc = sum(1 for i in out[k] if "opts" in i)
+        print("  %-8s %3d exercicios (%d escolha, %d escrever)" % (k, len(out[k]), mc, len(out[k]) - mc))
+    print("  total: %d exercicios (de %d na base)" % (
+        sum(len(v) for v in out.values()),
+        con.execute("SELECT COUNT(*) c FROM exercises").fetchone()["c"]))
+
+
 def cmd_stats():
     con = init()
     for t in ("subjects", "documents", "pages", "page_text", "exercises"):
@@ -179,5 +218,7 @@ if __name__ == "__main__":
         cmd_sync()
     elif cmd == "ocr":
         cmd_ocr(int(sys.argv[2]) if len(sys.argv) > 2 else None)
+    elif cmd == "export":
+        cmd_export()
     else:
         cmd_stats()

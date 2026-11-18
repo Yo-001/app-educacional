@@ -17,6 +17,7 @@ Atualizado em 2026-11-18. Base: `029ca95` + `docs/`.
 | GAT-01 | hermes | Gatuno em colo do avatar da Mía enquanto fala, com balão de onomatopeias | commit de código desta rodada |
 | UNI-01 | hermes | `escola-ocr` unificado no repo do app em `tools/escola-ocr/` (código versionado; fotos, `state/` e `escola.db` fora do git); chave lida de `OPENROUTER_API_KEY` | `python escola_db.py stats` a partir do novo caminho: 5 matérias, 47 páginas, 97 exercícios |
 | PRC-01 | hermes (subagente interrompido no meio; CSS/cabeçalho aproveitados, JS feito na sessão) | Mía tutora falante, Gatuno mascote sem fala, textos/chat/cabeçalho | exercício real no navegador: `#mia.tutor`+`body.mia-tutor`, +10 moedas, «Siguiente» não avança sozinho, `#catSvg` reage (`cheer`) sem `talking`, vídeo da Mía para quando o áudio para, console vazio; screenshots em `História do app/` |
+| OSA-05 | hermes | Base do livro passa a alimentar o app: `respuesta`/`dificultad` guardados na extração (antes `answer=NULL` e `1` fixos), extração por matéria (`extract.py redo <matéria>`) e `escola_db.py export` → `content/ejercicios-libro.json` | 232 exercícios, **143 corrigíveis** (mates 96, castelhano 41, galego 6); no navegador, pergunta do livro em escolha múltipla («El prefijo 'des—' indica:» → «¡Muy bien!») e em resposta escrita (`6+6` → `12` → «¡Muy bien!») |
 
 ## Bloqueado
 

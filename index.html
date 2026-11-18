@@ -861,6 +861,22 @@ const SUBJECTS={
   foto:{em:"📷",nm:"Tareas foto",gen:genFoto},
 };
 const PRACTICE_N=24;
+/* ---------- exercícios do livro (content/ejercicios-libro.json, gerado por tools/escola-ocr) ----------
+   O ficheiro traz só o que se pode corrigir: escolha múltipla com resposta entre as opções, ou
+   resposta curta/cálculo (tipo "escri"). Entra primeiro e o gerador da matéria fica como reserva,
+   para a prática não perder variedade nem quebrar quando não há rede. */
+const BOOK={};
+const bookTurn={};
+function bookPick(k){ const a=BOOK[k]; return a&&a.length?a[Math.floor(Math.random()*a.length)]:null; }
+fetch("content/ejercicios-libro.json",{cache:"no-cache"}).then(r=>r.ok?r.json():null).then(d=>{
+  if(!d) return;
+  Object.keys(d).forEach(k=>{ if(SUBJECTS[k]&&d[k]&&d[k].length) BOOK[k]=d[k]; });
+  Object.keys(SUBJECTS).forEach(k=>{
+    if(!BOOK[k]) return;
+    const gen=SUBJECTS[k].gen;
+    SUBJECTS[k].gen=function(){ bookTurn[k]=(bookTurn[k]||0)+1; const b=bookPick(k); return (b&&bookTurn[k]%3)?b:gen(); };
+  });
+}).catch(()=>{});
 function genFoto(){const c=state.custom;return c.length?pick(c):{q:"¡Toma una foto primero! 📷",a:"📷",opts:["📷","🆗","⭐","🎈"]};}
 /* texto de la tarea → ejercicios de práctica (rellena-hueco + suma/resta) */
 function extractExercises(text){

@@ -25,7 +25,7 @@ DB = os.path.join(ROOT, "escola.db")
 ENV = os.environ.get("ESCOLA_OCR_ENV") or os.path.join(
     os.path.expanduser("~"), "AppData", "Local", "hermes", ".env")
 
-MODELS = ["deepseek/deepseek-v4-flash-0731"]   # free Gemma em 429 persistente; pago autorizado (18/11)   # free primeiro, pago como ultimo recurso (autorizado nov. 2026)
+MODELS = ["google/gemini-2.5-flash", "deepseek/deepseek-v4-flash-0731"]   # free Gemma em 429 persistente; pago autorizado (18/11)
 MAX_CHARS = 7000          # ~2k tokens de OCR; as paginas tem <=3.3k chars
 TIMEOUT = 180
 TRIES = 2
@@ -64,7 +64,18 @@ Tareas:
    ejercicios que uno inventado.
 
 Devuelve SOLO este JSON:
-{{"texto_corregido": "...", "ejercicios": [{{"enunciado": "...", "tipo": "escolha_multipla|resposta_curta|calculo|aberta", "opciones": [], "topic": "...", "unit": "..."}}]}}
+{{"texto_corregido": "...", "ejercicios": [{{"enunciado": "...", "tipo": "escolha_multipla|resposta_curta|calculo|aberta", "opciones": [], "respuesta": "...", "dificultad": 1, "topic": "...", "unit": "..."}}]}}
+
+Reglas de "respuesta", "opciones" y "dificultad":
+- "respuesta": la solucion correcta y corta, como en una hoja de soluciones. En
+  "calculo", solo el resultado (por ejemplo "24"). Si el tipo es "escolha_multipla",
+  debe coincidir palabra por palabra con una de "opciones". Si el enunciado es
+  redaccion libre ("aberta") o no se puede resolver con el texto de la pagina, usa "".
+- "opciones": exactamente 4 alternativas cortas y solo en "escolha_multipla"; en los
+  demas tipos, [].
+- "dificultad": 1 = facil (reconocer, completar), 2 = medio (aplicar), 3 = dificil
+  (razonar o varios pasos).
+Nunca inventes la respuesta: si no sale del texto, usa "" y no opciones.
 
 Si no hay ejercicios, "ejercicios": []."""
 
@@ -126,7 +137,7 @@ def ensure(con):
     con.commit()
 
 
-def pending(con, limit=None):
+def pending(con, subject=None, limit=None):
     sql = """
     SELECT p.id, s.slug, d.origin, COALESCE(d.page_class,'impressa'), pt.text
     FROM pages p
@@ -135,19 +146,34 @@ def pending(con, limit=None):
     JOIN page_text pt ON pt.page_id = p.id
     LEFT JOIN page_extract pe ON pe.page_id = p.id
     WHERE d.usable = 1 AND pe.page_id IS NULL AND length(trim(pt.text)) > 40
-    ORDER BY s.slug, p.id
     """
+    args = []
+    if subject:
+        sql += " AND s.slug = ?"
+        args.append(subject)
+    sql += " ORDER BY s.slug, p.id"
     if limit:
         sql += " LIMIT %d" % int(limit)
-    return con.execute(sql).fetchall()
+    return con.execute(sql, args).fetchall()
 
 
-def run(limit=None):
+def redo(con, subject):
+    """Apaga o extrato e os exercicios de uma materia para extrair de novo."""
+    pages = "SELECT p.id FROM pages p JOIN documents d ON d.id=p.document_id" \
+            " JOIN subjects s ON s.id=d.subject_id WHERE s.slug=?"
+    con.execute("DELETE FROM page_extract WHERE page_id IN (%s)" % pages, (subject,))
+    con.execute("DELETE FROM exercises WHERE subject_id="
+                "(SELECT id FROM subjects WHERE slug=?)", (subject,))
+    con.commit()
+    print("refeito: %s (extrato e exercicios apagados)" % subject)
+
+
+def run(subject=None, limit=None):
     key = api_key()
     con = sqlite3.connect(DB)
     ensure(con)
-    rows = pending(con, limit)
-    print("paginas pendentes: %d" % len(rows))
+    rows = pending(con, subject, limit)
+    print("paginas pendentes%s: %d" % (" em " + subject if subject else "", len(rows)))
     ok = err = total_ex = 0
     for pid, slug, origin, cls, ocr in rows:
         prompt = PROMPT.format(subject=slug, origin=origin, cls=cls, ocr=ocr[:MAX_CHARS])
@@ -174,14 +200,22 @@ def run(limit=None):
             st = (ex.get("enunciado") or "").strip()
             if len(st) < 8:
                 continue
-            opts = ex.get("opciones") or []
+            opts = [o for o in (ex.get("opciones") or []) if str(o).strip()]
+            ans = str(ex.get("respuesta") or "").strip()
+            # resposta de escolha_multipla tem de existir entre as opcoes; senao nao corrige
+            if opts and ans and ans not in opts:
+                ans = ""
+            try:
+                dif = max(1, min(3, int(ex.get("dificultad"))))
+            except (TypeError, ValueError):
+                dif = 1
             con.execute(
                 "INSERT INTO exercises (subject_id, page_id, unit, topic, kind, statement, answer,"
                 " options, difficulty, lang, source, created_at)"
                 " VALUES ((SELECT subject_id FROM documents d JOIN pages p ON p.document_id=d.id"
-                " WHERE p.id=?), ?, ?, ?, ?, ?, NULL, ?, 1, ?, 'ocr+llm', ?)",
+                " WHERE p.id=?), ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ocr+llm', ?)",
                 (pid, pid, ex.get("unit"), ex.get("topic"), ex.get("tipo") or "aberta", st,
-                 json.dumps(opts, ensure_ascii=False) if opts else None, lang, now))
+                 ans or None, json.dumps(opts, ensure_ascii=False) if opts else None, dif, lang, now))
         con.execute("INSERT OR REPLACE INTO page_extract (page_id, model, corrected, raw, n_exercises, created_at)"
                     " VALUES (?,?,?,?,?,?)",
                     (pid, used, data.get("texto_corregido"), json.dumps(data, ensure_ascii=False),
@@ -209,5 +243,12 @@ if __name__ == "__main__":
     arg = sys.argv[1] if len(sys.argv) > 1 else ""
     if arg == "stats":
         stats()
-    else:
-        run(int(arg) if arg.isdigit() else None)
+    elif arg == "redo":                     # python extract.py redo sociais
+        con = sqlite3.connect(DB)
+        ensure(con)
+        redo(con, sys.argv[2])
+        run(sys.argv[2])
+    else:                                   # python extract.py [materia] [limite]
+        rest = sys.argv[1:]
+        subject = rest.pop(0) if rest and not rest[0].isdigit() else None
+        run(subject, int(rest[0]) if rest and rest[0].isdigit() else None)
