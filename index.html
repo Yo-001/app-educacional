@@ -58,10 +58,10 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 #nav button.on{background:#eef1ff;color:#2a2f55}
 #nav button.on .em{filter:none;opacity:1}
 body{padding-bottom:78px}
-/* ===== chat do gato ===== */
+/* ===== chat con la princesa ===== */
 #chatLog{max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:10px;background:#f6f8ff;border-radius:12px;border:1px solid #e6e9f5}
 .msg{max-width:85%;padding:8px 12px;border-radius:14px;font-size:14.5px;line-height:1.35;white-space:pre-wrap;word-break:break-word}
-.msg.cat{align-self:flex-start;background:#fff;border:1px solid #e6e9f5;border-bottom-left-radius:4px}
+.msg.mia{align-self:flex-start;background:#fff;border:1px solid #e6e9f5;border-bottom-left-radius:4px}
 .msg.kid{align-self:flex-end;background:#4a7cff;color:#fff;border-bottom-right-radius:4px}
 #chatTyping{display:none;font-size:12.5px;color:#5a6080;font-style:italic;margin-top:6px}
 /* ===== colorear ===== */
@@ -101,8 +101,10 @@ body{padding-bottom:78px}
 .earR{transform-box:fill-box;transform-origin:bottom left;animation:twitchR 6.5s infinite 2s}
 @keyframes twitchR{0%,88%,100%{transform:rotate(0)}90%,94%{transform:rotate(8deg)}}
 #mouthOpen{transform-box:fill-box;transform-origin:center;display:none}
-#catSvg.talking #mouthOpen{display:block;animation:chomp .16s infinite alternate}
-#catSvg.talking #mouthW{display:none}
+/* la mascota ya no es el que habla: la boca se mueve solo como reacción */
+#catSvg.cheer #mouthOpen{display:block;animation:chomp .16s infinite alternate}
+#catSvg.cheer #mouthW{display:none}
+#catSvg.cheer{animation:bob .26s ease-in-out 4}
 @keyframes chomp{from{transform:scaleY(.35)}to{transform:scaleY(1.15)}}
 .speech{position:relative;background:#fff;border-radius:14px;padding:10px 14px;margin:0 0 12px;
   box-shadow:var(--shadow);font-weight:700;font-size:14px;line-height:1.3}
@@ -208,6 +210,11 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
   cursor:pointer;-webkit-tap-highlight-color:transparent}
 #mia .mia-tap:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
 #mia.cheer .mia-f{animation:miaCheer .9s cubic-bezier(.2,.8,.3,1)}
+/* tutora: durante un ejercicio no vaga — se queda plantada abajo a la derecha,
+   más grande, y la página reserva hueco para que nada quede atrapado debajo */
+#mia.tutor{width:clamp(104px,27vw,126px);z-index:27}
+#mia.tutor .mia-tap{display:none}
+body.mia-tutor .app{padding-bottom:290px}
 @keyframes miaBob{0%,100%{transform:translateY(0) rotate(-1.1deg)}50%{transform:translateY(-7px) rotate(1.1deg)}}
 @keyframes miaCheer{
   0%{transform:translateY(0) scale(1) rotate(0)}
@@ -228,6 +235,10 @@ h2,h1{font-family:var(--font-display);letter-spacing:-.01em}
 .app-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .top .avatar{width:60px;height:60px;font-size:26px;border:3px solid var(--surface);
   box-shadow:0 0 0 1px var(--line),0 6px 14px -10px rgba(43,29,46,.8)}
+/* el retrato pequeño de la mascota, con su cartel */
+.mascot{display:flex;flex-direction:column;align-items:center;gap:3px;flex:0 0 auto}
+.mascot .avatar{width:52px;height:52px;font-size:23px}
+.mascot-cap{max-width:82px;text-align:center;font-size:9.5px;line-height:1.15;font-weight:800;color:var(--muted)}
 .who{min-width:0;line-height:1.15}
 .who b{display:block;font:500 19px/1.12 var(--font-display);letter-spacing:-.01em}
 .who span{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-top:3px}
@@ -345,10 +356,15 @@ h2,h1{font-family:var(--font-display);letter-spacing:-.01em}
 #chatLog{max-height:420px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:8px 4px 6px;background:var(--paper-2);border-radius:var(--r2);align-self:stretch}
 .chat .msg{display:flex;max-width:88%;padding:0;border:0;border-radius:0;line-height:1.4}
 #chatLog .msg{display:flex;max-width:88%;padding:0;border:0;border-radius:0;line-height:1.4;white-space:normal}
-#chatLog .msg.cat{align-self:flex-start;justify-content:flex-start;background:none;border:0;border-radius:0}
+#chatLog .msg.mia{align-self:flex-start;justify-content:flex-start;background:none;border:0;border-radius:0;align-items:flex-end;gap:8px}
 #chatLog .msg.kid{align-self:flex-end;justify-content:flex-end;background:none;border:0;border-radius:0;color:inherit}
 .bubble{padding:11px 15px;border-radius:var(--r2);background:var(--surface);border:1px solid var(--line);font-size:15px;line-height:1.4;box-shadow:0 2px 0 rgba(43,29,46,.04)}
-#chatLog .msg.cat .bubble{border-bottom-left-radius:4px}
+#chatLog .msg.mia .bubble{border-bottom-left-radius:4px}
+/* la firma de la princesa en su balón: retrato real + nombre */
+.msg-av{width:34px;height:34px;flex:0 0 auto;border-radius:50%;object-fit:cover;object-position:50% 18%;
+  background:var(--accent-soft);border:2px solid var(--surface);box-shadow:0 0 0 1px var(--line)}
+.msg-bw{display:flex;flex-direction:column;gap:2px;min-width:0}
+.msg-nm{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);padding-left:5px}
 #chatLog .msg.kid .bubble{background:var(--accent-soft);border-color:#f6c9d2;border-bottom-right-radius:4px;font-weight:600}
 #chatTyping{display:none;font-size:12.5px;color:var(--muted);font-style:italic;margin-top:6px}
 .quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
@@ -413,7 +429,8 @@ input[type=file]{padding:6px}
 
   <!-- CABECERA -->
   <div class="top">
-    <div class="avatar" id="avatar" title="El gatito">
+    <div class="mascot">
+    <div class="avatar" id="avatar" title="Gatuno, la mascota de la princesa">
       <svg id="catSvg" viewBox="0 0 220 200" aria-hidden="true">
         <defs>
           <radialGradient id="fur" cx="42%" cy="34%" r="82%">
@@ -445,6 +462,8 @@ input[type=file]{padding:6px}
       <span class="ove" id="eyeEmoji" style="display:none"></span>
       <span class="ovm" id="mouthEmoji" style="display:none"></span>
     </div>
+    <span class="mascot-cap">Gatuno, la mascota de la princesa</span>
+    </div>
     <div class="who">
       <b>Mi cuaderno</b>
       <span id="levelLine">Nivel 1 · 0 monedas ganadas</span>
@@ -457,7 +476,7 @@ input[type=file]{padding:6px}
   <nav id="nav" aria-label="Secciones">
     <button data-tab="ex" class="on"><svg><use href="#i-dumbbell"/></svg>Ejercicios</button>
     <button data-tab="rev"><svg><use href="#i-book"/></svg>Repaso</button>
-    <button data-tab="chat"><svg><use href="#i-cat"/></svg>Gato</button>
+    <button data-tab="chat"><svg><use href="#i-send"/></svg>Mía</button>
     <button data-tab="shop"><svg><use href="#i-bag"/></svg>Tienda</button>
     <button data-tab="pa"><svg><use href="#i-people"/></svg>Papás</button>
   </nav>
@@ -465,7 +484,7 @@ input[type=file]{padding:6px}
   <!-- EJERCICIOS -->
   <div class="card" id="card-ex" data-tab="ex">
     <div id="exIntro">
-      <aside class="note"><span class="tape"></span><b>¡Hola!</b> Elige una asignatura, responde bien y gana monedas para tu gatito 🐱</aside>
+      <aside class="note"><span class="tape"></span><b>¡Hola!</b> Soy Mía, la princesa. Elige una asignatura, responde bien y gana monedas para tus premios 👑</aside>
       <h2 class="h2">¿Qué toca <mark>hoy</mark>?</h2>
       <div class="grid-subj" id="subjects"></div>
       <div class="utils">
@@ -616,16 +635,16 @@ input[type=file]{padding:6px}
 
   <!-- CHAT DO GATO (IA) -->
   <div class="card" id="card-chat" data-tab="chat">
-    <h2>💬 Habla con Gatuno <button id="btnEditName" title="Cambiar el nombre" style="background:none;border:none;cursor:pointer;font-size:15px;vertical-align:1px;opacity:.75">✏️</button></h2>
-    <div class="mut" style="font-size:13px;margin-bottom:8px" id="chatHint">Tu gato tutor te escucha 🎤 — toca el micro y habla con calma, a tu ritmo.</div>
+    <h2>💬 Habla con Mía <button id="btnEditName" title="Cambiar el nombre" style="background:none;border:none;cursor:pointer;font-size:15px;vertical-align:1px;opacity:.75">✏️</button></h2>
+    <div class="mut" style="font-size:13px;margin-bottom:8px" id="chatHint">La princesa te escucha 🎤 — toca el micro y habla con calma, a tu ritmo.</div>
     <div class="row" id="nameRow" style="margin-bottom:8px">
       <input id="chatName" placeholder="¿Cómo te llamas? Escribe aquí…" style="flex:1">
     </div>
     <div id="chatLog"></div>
-    <div id="chatTyping">Gatuno está pensando…</div>
+    <div id="chatTyping">Mía está pensando…</div>
     <div class="composer">
       <button class="send" id="btnMic" title="Hablar" style="background:var(--paper-2);color:var(--ink)">🎤</button>
-      <input id="chatIn" placeholder="Escríbele a Gatuno…" autocomplete="off">
+      <input id="chatIn" placeholder="Escríbele a Mía…" autocomplete="off">
       <button class="send" id="btnChatSend" title="Enviar"><svg><use href="#i-send"/></svg></button>
     </div>
   </div>
@@ -952,12 +971,12 @@ const CATS=["Todos","Juegos","Pegatinas","Ropa","Accesorios"];
 const wearOf=it=>it.wear||(it.hat?"hat":null);
 let curCat="Todos";
 
-/* ============== GATITO: frases + boca animada ============== */
+/* ============== LA PRINCESA: frases + reacción de la mascota ============== */
 const LINES={
-  greet:"¡Miau! Soy Gatuno, tu gato tutor. ¡Elige una materia y a aprender juntos!",
-  good:["¡Muy bien! +10 monedas!","¡Eso, genial!","¡Correcto! ¡Bien!"],
-  bad:"¡Casi! Sin prisa — ¡inténtalo otra vez.",
-  buy:"¡Qué bien! ¡Lo desbloqueaste! 🎉"
+  greet:"¡Hola! Soy Mía, la princesa. Elige una materia y aprendemos juntas.",
+  good:["¡Muy bien! +10 monedas.","¡Eso es, genial!","¡Correcto! ¡Bien hecho!"],
+  bad:"¡Casi! Sin prisa, inténtalo otra vez.",
+  buy:"¡Qué bien! Ya lo desbloqueaste."
 };
 let speechTimer=null;
 let esVoiceCache=null;
@@ -1027,7 +1046,7 @@ const Mia=(()=>{
                "¿Jugamos un poquito más?"];
   const still=matchMedia("(prefers-reduced-motion: reduce)");
   const rnd=(a,b)=>a+Math.random()*(b-a);
-  let el=null,box=null,vid=null,ready=false,canAnim=false,wantTalk=false,timer=0,ct=0,off=0,x=0,y=0;
+  let el=null,box=null,vid=null,ready=false,canAnim=false,wantTalk=false,timer=0,ct=0,off=0,x=0,y=0,tutorMode=false;
 
   /* zona por la que puede vagar: la columna de la app, por encima del menú */
   function area(){
@@ -1051,7 +1070,7 @@ const Mia=(()=>{
   /* pasos cortos la mayor parte del tiempo (flota cerca), de vez en cuando cruza */
   function roam(){
     clearTimeout(timer);
-    if(!ready||still.matches||document.hidden) return;
+    if(!ready||still.matches||document.hidden||tutorMode) return;
     const a=area(), d=Math.hypot(a.x1-a.x0,a.y1-a.y0);
     x=Math.min(a.x1,Math.max(a.x0,x)); y=Math.min(a.y1,Math.max(a.y0,y));
     let nx=x,ny=y;
@@ -1093,6 +1112,17 @@ const Mia=(()=>{
     el.classList.remove("cheer"); void el.offsetWidth; el.classList.add("cheer");
     clearTimeout(ct); ct=setTimeout(()=>el.classList.remove("cheer"),950);
   }
+  /* modo tutora: con un ejercicio abierto se planta abajo a la derecha y deja de
+     vagar (ya no se cruza sobre la pregunta); al salir, vuelve a flotar */
+  function tutor(on){
+    on=!!on; if(!ready||on===tutorMode) return;
+    tutorMode=on;
+    el.classList.toggle("tutor",on);
+    document.body.classList.toggle("mia-tutor",on);
+    clearTimeout(timer);
+    if(on){ const a=area(); jump(a.x1,a.y1,520); }
+    else roam();
+  }
   /* VP9 con alfa: si el navegador no lo pinta transparente, se queda la foto */
   function alphaOK(){
     try{
@@ -1132,23 +1162,22 @@ const Mia=(()=>{
       else roam();
     });
   }
-  return {init,talk,cheer};
+  return {init,talk,cheer,tutor};
 })();
 /* devuelve Promise que resuelve cuando el audio termina (o es interrumpido por otra fala) */
 let speechPlaying=0; /* >0 mientras suena la voz del gato (evita que el micro se escuche a sí mismo) */
 let catQuietUntil=0; /* ms absolutas: hasta cuándo se descarta lo que oye el micro (cola de eco tras hablar el gato) */
 function speak(line){
   return new Promise(resolve=>{
-  const b=$("speech"), svg=$("catSvg");
+  const b=$("speech");
   if(!b||!line){ resolve(); return; }
   if(_spStop){ const s=_spStop; _spStop=null; try{ s(); }catch(e){} } // interrompe a fala anterior (via stop dela)
   _spResolve=resolve;
   b.textContent=line; b.style.display="";
-  if(svg) svg.classList.add("talking");
-  Mia.talk(true);
+  Mia.talk(true); /* la que habla es la princesa: la boca de la mascota ya no es el rostro de la voz */
   const sayLine=stripEmoji(line);
   let stopped=false;
-  const stop=()=>{ if(stopped) return; stopped=true; speechPlaying=Math.max(0,speechPlaying-1); catQuietUntil=Date.now()+1500; /* cola de eco: el altavoz tarda un instante en callarse */ if(_spStop===stop) _spStop=null; if(svg) svg.classList.remove("talking"); Mia.talk(false); b.style.display="none"; if(_spResolve===resolve) _spResolve=null; resolve(); };
+  const stop=()=>{ if(stopped) return; stopped=true; speechPlaying=Math.max(0,speechPlaying-1); catQuietUntil=Date.now()+1500; /* cola de eco: el altavoz tarda un instante en callarse */ if(_spStop===stop) _spStop=null; Mia.talk(false); b.style.display="none"; if(_spResolve===resolve) _spResolve=null; resolve(); };
   _spStop=stop;
   if(!sayLine){ stop(); return; } /* nada para falar (p.ex. opção só de emoji): não trava o avanço */
   const seq=++_spSeq;
@@ -1195,7 +1224,15 @@ function setTab(id){
     c.style.display=(c.dataset.tab===id)?"":"none";
   });
   if(id==="chat") initChat();
+  syncTutor();
   window.scrollTo({top:0});
+}
+/* la princesa se planta como tutora mientras hay un ejercicio abierto en la pestaña
+   Ejercicios; en cualquier otra pantalla vuelve a flotar. Única fuente de verdad. */
+function syncTutor(){
+  const ex=$("exercise");
+  const on = !!ex && ex.style.display!=="none" && document.body.dataset.tab==="ex";
+  Mia.tutor(on);
 }
 [...document.querySelectorAll("#nav button")].forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
 function renderWallet(){
@@ -1220,6 +1257,7 @@ function startExercise(id){
   const ei=document.getElementById("exIntro"); if(ei) ei.style.display="none";
   $("exercise").style.display="";
   showEx();
+  syncTutor();
 }
 /* pinta un ejercicio y llama a after(ok) tras la primera respuesta */
 let exTimerIv=null;
@@ -1570,7 +1608,7 @@ function nextInDeck(){
     $("btnNew").style.display="";
     earn(deckBonus,"colección terminada");
     speak("¡Completaste "+deckLabel+"! +"+deckBonus+" monedas 🎉"); confetti();
-    renderSubjects(); return;
+    renderSubjects(); syncTutor(); return;
   }
   const ex=deckQ.shift();
   $("exSubj").textContent=exDeckHead();
@@ -1590,6 +1628,13 @@ function buildPractice(){
 }
 /* regla de recompensa: 1er intento acertar = 10 (nunca la respuesta directa) */
 let attempts=0;
+/* la mascota ya no habla: reacciona abriendo la boca un instante cuando hay resultado */
+let _catCheerT=0;
+function catCheer(){
+  const svg=$("catSvg"); if(!svg) return;
+  svg.classList.remove("cheer"); void svg.offsetWidth; svg.classList.add("cheer");
+  clearTimeout(_catCheerT); _catCheerT=setTimeout(()=>svg.classList.remove("cheer"),1100);
+}
 function registerResult(ok,say){
   attempts=0; // nuevo ejercicio (showEx)
   state.exDone++;
@@ -1597,7 +1642,7 @@ function registerResult(ok,say){
   if(ok){ state.exRight++; earn(10,"ejercicio correcto"); p=speak(say||pick(LINES.good)); }
   else { p=speak(say||LINES.bad); }
   streakTouch(ok);
-  Mia.cheer(ok);
+  Mia.cheer(ok); catCheer();
   save(); renderReport();
   return p;
 }
@@ -2402,16 +2447,26 @@ function initChat(){
   $("nameRow").style.display=state.name?"none":"";
   if(!chatHist.length){
     const g=(state.name?("¡Hola, "+state.name+"!"):"¡Hola!")+
-      " Soy Gatuno, tu gato tutor 🐱 ¿Quieres jugar, un chiste, o repasar la escuela?";
+      " Soy Mía, la princesa. ¿Quieres jugar, un chiste, o repasar la escuela?";
     chatHist.push({role:"assistant",content:g}); /* sembrado: el modelo no se re-presenta ni inventa otro saludo */
     addMsg("cat",g);
   }
 }
 function addMsg(role,text){
   const log=$("chatLog"); const d=document.createElement("div");
-  d.className="msg "+(role==="cat"?"cat":"kid");
-  const b=document.createElement("div"); b.className="bubble"; b.textContent=text;
-  d.appendChild(b);
+  const mine=(role==="mia"||role==="cat");   /* "cat" viene del código viejo: el que habla ya es la princesa */
+  d.className="msg "+(mine?"mia":"kid");
+  if(mine){
+    const av=document.createElement("img");
+    av.className="msg-av"; av.src="assets/mia/mia.webp"; av.alt=""; av.draggable=false;
+    const w=document.createElement("div"); w.className="msg-bw";
+    const nm=document.createElement("span"); nm.className="msg-nm"; nm.textContent="Mía";
+    const b=document.createElement("div"); b.className="bubble"; b.textContent=text;
+    w.appendChild(nm); w.appendChild(b); d.appendChild(av); d.appendChild(w);
+  }else{
+    const b=document.createElement("div"); b.className="bubble"; b.textContent=text;
+    d.appendChild(b);
+  }
   log.appendChild(d); log.scrollTop=log.scrollHeight; return d;
 }
 /* pide a resposta ao gato. Separado de sendChat porque o micrófono pode lanzala por adiantado,
@@ -2435,7 +2490,7 @@ async function sendChat(text, pre){
     chatHist.push({role:"user",content:text},{role:"assistant",content:reply});
     if(chatHist.length>16) chatHist=chatHist.slice(-16);
     addMsg("cat",reply); speak(reply);
-  }catch(e){ addMsg("cat","¡Miau! No llegué a internet… inténtalo otra vez 🐾"); }
+  }catch(e){ addMsg("mia","¡Uy! No llegué a internet… inténtalo otra vez."); }
   chatBusy=false; $("chatTyping").style.display="none"; $("btnChatSend").disabled=false;
 }
 $("btnChatSend").onclick=()=>sendChat($("chatIn").value);
@@ -2444,8 +2499,8 @@ $("chatName").addEventListener("keydown",e=>{
   if(e.key!=="Enter") return;
   const v=$("chatName").value.trim(); if(!v) return;
   state.name=v.slice(0,24); save(); $("nameRow").style.display="none"; $("chatName").value="";
-  addMsg("cat","¡Encantada de conocerte, "+state.name+"! 🐾 ¿Qué hacemos hoy? Juegos, chistes o escuela.");
-  speak("¡Hola "+state.name+"! Soy Gatuno");
+  addMsg("mia","¡Encantada de conocerte, "+state.name+"! ¿Qué hacemos hoy? Juegos, chistes o escuela.");
+  speak("¡Hola "+state.name+"! Soy Mía, la princesa");
 });
 $("btnEditName").onclick=()=>{ const r=$("nameRow"); const show=r.style.display==="none"; r.style.display=show?"":"none"; if(show){ $("chatName").value=state.name||""; $("chatName").focus(); } };
 /* micrófono continuo: toca 🎤 una vez y la niña habla con el gato; el micro sigue encendido hasta
@@ -2584,7 +2639,7 @@ $("btnNextEx").onclick=()=>{
   if(!advGo||advTk!==exToken) return; /* outro exercício xa pintou: ignora o toque atrasado */
   const go=advGo; hideNext(); go();
 };
-$("btnBack").onclick=()=>{ deckQ=[]; stopExTimer(); const ei=document.getElementById("exIntro"); if(ei) ei.style.display=""; $("btnNew").style.display=""; $("exercise").style.display="none"; $("subjects").style.display=""; };
+$("btnBack").onclick=()=>{ deckQ=[]; stopExTimer(); const ei=document.getElementById("exIntro"); if(ei) ei.style.display=""; $("btnNew").style.display=""; $("exercise").style.display="none"; $("subjects").style.display=""; syncTutor(); };
 $("btnReset").onclick=()=>{ if(confirm("¿Empezar de nuevo? Borra monedas y desbloqueos.")){ state=defaultState(); save(); renderWallet(); renderShop(); renderReport(); renderAvatar(); } };
 
 /* ======= CÁMARA: foto → texto → ejercicios ======= */

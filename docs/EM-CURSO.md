@@ -6,8 +6,13 @@ Atualizado em 2026-11-18. Base: `029ca95` + `docs/`.
 
 | ID | Quem | Faz o quê | Começou | Onde ver |
 |---|---|---|---|---|
-| PRC-01 | Peter | Mía → tutora falante; Gatuno → mascote; textos, `LINES`, chat e cabeçalho | 18/11 | commit em `index.html` + `História do app/` |
 | NIV-00 | Homem-Formiga | Mapa do conteúdo atual para o modelo de níveis | 18/11 | `docs/CONTEUDO-MAPA.md` |
+
+## Fechado nesta rodada
+
+| ID | Quem | Resultado | Prova |
+|---|---|---|---|
+| PRC-01 | hermes (subagente interrompido no meio; CSS/cabeçalho aproveitados, JS feito na sessão) | Mía tutora falante, Gatuno mascote sem fala, textos/chat/cabeçalho | exercício real no navegador: `#mia.tutor`+`body.mia-tutor`, +10 moedas, «Siguiente» não avança sozinho, `#catSvg` reage (`cheer`) sem `talking`, vídeo da Mía para quando o áudio para, console vazio; screenshots em `História do app/` |
 
 ## Bloqueado
 
@@ -18,10 +23,9 @@ Atualizado em 2026-11-18. Base: `029ca95` + `docs/`.
 
 ## Próximo na fila (ordem decidida)
 
-1. **PRC-01** fecha → verificação com Máquina de Combate (browser: fala, mascote, fluxo de exercício, console limpo) → `feito` com commit.
-2. **NIV-00** fecha → revisão do mapa → **NIV-01** (JSON piloto + loader + validador).
-3. **PRC-02/03** em paralelo a NIV-01 (não tocam o mesmo trecho: estados da personagem vs. loader de conteúdo) — só depois de PRC-01 fechar, porque as duas mexem em `index.html`.
-4. **OSA-05** (testes de estado) antes de NIV-02, para o desbloqueio não virar regressão silenciosa.
+1. **NIV-00** fecha → revisão do mapa → **NIV-01** (JSON piloto + loader + validador).
+2. **PRC-02/03** em paralelo a NIV-01 (não tocam o mesmo trecho: estados da personagem vs. loader de conteúdo) — só depois de PRC-01 fechar, porque as duas mexem em `index.html`.
+3. **OSA-05** (testes de estado) antes de NIV-02, para o desbloqueio não virar regressão silenciosa.
 
 ## Não começar sem decisão do Leonardo
 

@@ -33,3 +33,16 @@ registro mestre do produto (pesquisa Buddy.ai/TalkPal, arquitetura ampla) e apon
 **Motivo:** acompanhamento preciso exige estado versionado junto do código que ele descreve;
 documento em pasta solta (`Documents/`) desincroniza do HEAD sem ninguém notar.
 **Consequência:** tarefa não registrada não existe; `feito` exige commit + prova.
+
+## DEC-004 · Com exercício aberto, a princesa se planta (não vagueia) e a mascote reage em vez de falar (2026-11-18)
+
+**Decisão:** enquanto há exercício aberto na aba *Ejercicios*, `#mia` recebe `.tutor` +
+`body.mia-tutor`: fica fixa embaixo à direita, num tamanho maior, e a página reserva 290px
+embaixo para ela não cobrir pergunta nem opções; fora dali volta a flutuar. A boca do
+`#catSvg` deixa de ser o rosto da fala (`speak()` não usa mais `.talking`) e passa a ser
+reação: `catCheer()` abre e fecha por 1,1s após cada resultado.
+**Motivo:** a fala precisa de um rosto único (a princesa); o vagar aleatório cruzava sobre a
+questão e o gato animado disputava a autoria da voz.
+**Consequência:** `Mia.tutor(on)` vira a única fonte de verdade do modo, chamada por `syncTutor()`
+em `setTab`/`startExercise`/fim de coleção/`btnBack`; a mascote continua na cabecera como
+retrato com rótulo. Estados ricos da personagem ficam para PRC-02.

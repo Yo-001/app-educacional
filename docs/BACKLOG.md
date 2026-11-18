@@ -7,7 +7,7 @@ Toda tarefa `feito` registra o commit. Prioridade: `P0` (destrava o produto) →
 
 | ID | Tarefa | Pri | Dono | Estado | Evidência |
 |---|---|---|---|---|---|
-| PRC-01 | Mía promovida a tutora falante; Gatuno vira mascote (sem fala) | P0 | Peter | em processo | — |
+| PRC-01 | Mía promovida a tutora falante; Gatuno vira mascote (sem fala) | P0 | Peter → hermes | feito | `index.html` (LINES, `Mia.tutor/cheer`, `catCheer`, `addMsg`, textos) + screenshots `História do app/2026-11-18-mia-tutora-*.png`; prova: exercício aberto → `#mia.tutor` + `body.mia-tutor`, resposta certa +10, «Siguiente» manual, console limpo |
 | PRC-02 | Máquina de estados da Mía (idle/talking/cheer/wait), entrada em cena, reduced-motion, tap→chat contextual | P1 | — | planejado | — |
 | PRC-03 | Voz única de princesa no backend (`/tts` com voz fixa), prefetch das falas da lição, barge-in | P1 | — | planejado | — |
 
