@@ -168,7 +168,11 @@ TEMA = "do libro 📖"
 
 
 def cmd_export():
-    """Exercicios que o app consegue corrigir -> content/ejercicios-libro.json."""
+    """Exercicios que o app consegue corrigir -> content/ejercicios-libro.json.
+
+    O app compara UMA resposta curta, por isso aqui ficam só invariantes objetivas: tem resposta,
+    a resposta tem letra ou número (corta restos como ". . . ." ou "-") e não é uma lista longa.
+    """
     con = init()
     out = {}
     for r in con.execute("SELECT s.slug, e.statement, e.answer, e.options, e.difficulty"
@@ -176,7 +180,8 @@ def cmd_export():
                          " WHERE e.answer IS NOT NULL AND trim(e.answer) <> ''"
                          " ORDER BY s.slug, e.difficulty, e.id"):
         key = APP_SLUG.get(r["slug"])
-        if not key:
+        st, ans = r["statement"].strip(), r["answer"].strip()
+        if not key or len(st) < 15 or len(ans) > 60 or not re.search(r"[0-9a-záéíóúñü]", ans, re.I):
             continue
         item = {"q": r["statement"].strip(), "a": r["answer"].strip(),
                 "tema": TEMA, "dif": r["difficulty"] or 1}

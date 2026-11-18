@@ -37,11 +37,11 @@ Chave do OpenRouter: `OPENROUTER_API_KEY` no ambiente, ou no `.env` do Hermes
 
 ## Estado atual (18/11/2026)
 
-- 5 matérias, 47 páginas com texto OCR, **232 exercícios** extraídos, **143 corrigíveis** (com resposta).
+- 5 matérias, 47 páginas com texto OCR, **269 exercícios** extraídos, **121 corrigíveis** (com resposta).
 - O app lê `content/ejercicios-libro.json` (gerado por `escola_db.py export`): escolha múltipla quando
   a resposta está entre ≥3 opções; nos restantes casos entra como resposta escrita (`tipo:"escri"`).
   Só entram exercícios com resposta — o que não se pode corrigir não se mostra.
-- Por matéria corrigível: mates 96, castellano 41, galego 6; inglês e sociais 0 (páginas de atividades
+- Por matéria corrigível: mates 78, castellano 38, galego 5; inglês e sociais 0 (páginas de atividades
   visuais, sem resposta no texto).
 
 ## O que NÃO vai para o git

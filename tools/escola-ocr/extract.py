@@ -77,6 +77,16 @@ Reglas de "respuesta", "opciones" y "dificultad":
   (razonar o varios pasos).
 Nunca inventes la respuesta: si no sale del texto, usa "" y no opciones.
 
+Que NO es un ejercicio corregible (marca "aberta" y respuesta ""):
+- actividades de relacionar, unir con flechas, ordenar, colorear, dibujar, recortar, pegar,
+  tachar o rodear;
+- las que piden varias respuestas a la vez ("escribe tres...", "completa la tabla", "inventa
+  dos frases", "copia las palabras");
+- las que solo se resuelven mirando un dibujo que no esta en el texto.
+La "respuesta" es UNA sola cosa (un numero, una palabra o una frase corta), nunca una lista ni
+varios huecos. El "enunciado" debe traer el hueco concreto y no solo la orden general: escribe
+"9+2=2+__" en vez de "Cambia el orden de los sumandos y completa".
+
 Si no hay ejercicios, "ejercicios": []."""
 
 

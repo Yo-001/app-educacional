@@ -56,6 +56,8 @@ O app carrega esse ficheiro e usa-o em 2 de cada 3 perguntas, com o gerador da m
 (`SUBJECTS[k].gen` embrulhado uma vez no arranque).
 **Motivo:** a extração antiga gravava `answer=NULL` e `difficulty=1` fixos, por isso 138 exercícios
 nunca chegariam ao app; e sem opções inventadas não há como corrigir escolha múltipla.
-**Consequência:** a cobertura passa a ser medida em "corrigíveis" (143 de 232 hoje) e matérias sem
-resposta no texto (inglês, sociais) ficam de fora. Se o ficheiro não carregar, o app continua a
-funcionar com os geradores — nada depende da rede.
+**Consequência:** a cobertura passa a ser medida em "corrigíveis" (121 de 269 hoje) e matérias sem
+resposta no texto (inglês, sociais) ficam de fora. O export também exige resposta curta (≤60 caracteres)
+com letra ou número, porque o app compara uma resposta só; atividade de relacionar/colorear entra como
+"aberta" e não chega ao app. Se o ficheiro não carregar, o app continua a funcionar com os geradores —
+nada depende da rede.
