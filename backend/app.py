@@ -200,8 +200,8 @@ def call_chat(messages, name, text):
 
 TTS_VOICE = "gl-ES-SabelaNeural"          # voz galega: os exercicios lense en galego
 TTS_VOICE_FALLBACK = "es-ES-ElviraNeural"  # se o servizo non ten a voz galega
-TTS_PITCH = "+35Hz"                        # un chisco máis agudo: soa a nena, non a locutora
-TTS_SPEED = "+10%"                         # ritmo máis vivo (a voz neutra soaba plana)
+TTS_PITCH = "+50Hz"                        # un chisco máis agudo e ritmo máis vivo: a nena empolgada
+TTS_SPEED = "+15%"                         # ritmo máis vivo (a voz neutra soaba plana)
 _tts_cache = {}
 
 
