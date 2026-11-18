@@ -14,7 +14,7 @@ na máquina, a partir de foto/texto.
 A lista de matérias é um objeto só, o `SUBJECTS`, em `index.html:854-862`.
 São **7 matérias** (6 fixas + 1 especial):
 
-| Matéria | Nome na tela | Néon | Como o exercício nasce | Linha |
+| Matéria | Nome na tela | Ícone | Como o exercício nasce | Linha |
 |---|---|---|---|---|
 | `ingles` | Inglês | 🟦 | sorteia de uma lista fixa de 12 palavras | 855 |
 | `mat` | Matemáticas | ➕ | conta inventada na hora (somar, subtrair, multiplicar) | 856 |
@@ -22,7 +22,7 @@ São **7 matérias** (6 fixas + 1 especial):
 | `gal` | Gallego | 🟨 | lista fixa de 10 palavras | 858 |
 | `nat` | Naturales | 🌿 | lista fixa de 5 perguntas | 859 |
 | `soc` | Sociales | 🗺️ | lista fixa de 5 perguntas | 860 |
-| `foto` | Tareas foto | 📷 | os exercícios das fotos do caderno/livro | 861 |
+| `foto` | Tareas foto | 📷 | exercícios das fotos do caderno/livro, mais os 56 fixos | 861 |
 
 A matéria `foto` é a única que usa conteúdo "de verdade" (o material da escola). As
 outras seis são minis: 5 a 12 itens cada, para treinar variedade, não para ensinar.
@@ -43,14 +43,20 @@ deste mapa.
 | Sociales | 5 perguntas | `index.html:923` | 5 perguntas possíveis |
 | Tareas foto | **56 autorados** + os das fotos | `index.html:725-784` | 40 em `FOTO_EX` + 16 em `FOTO_EXTRA`; `state.custom` soma os gerados |
 
-Somando o que está escrito à mão no arquivo: **118 itens** (76 exercícios completos +
-42 pares de palavra) para 6 matérias, e **zero** para Matemáticas. Isso é o inventário
-inteiro do app.
+Somando o que está escrito à mão no arquivo: **118 itens**, assim divididos:
+
+- 56 exercícios completos de Ciências (`FOTO_EX` + `FOTO_EXTRA`) → matéria **Tareas foto**
+- 20 exercícios completos de repaso (`REVIEW1` + `REVIEW2`) → não pertencem a nenhuma
+  matéria; são a fila de revisão
+- 42 pares de palavra/pergunta → **Inglês** (12), **Castellano** (10), **Gallego** (10),
+  **Naturales** (5), **Sociales** (5)
+
+E **zero** item de Matemáticas. Esse é o inventário inteiro do app.
 
 ### Os pools autorados, um por um
 
 **`FOTO_EX` — `index.html:725-766` · 40 exercícios**
-39 de选项 múltipla (4 alternativas) + 1 de ordenar (etapas da reprodução da planta,
+39 de múltipla escolha (4 alternativas) + 1 de ordenar (etapas da reprodução da planta,
 linha 765). Todos com `tema:"da foto 📷"`. Assunto: seres vivos, célula, funções vitais,
 reinos, plantas, flor, fotossíntese, reprodução.
 
@@ -62,7 +68,7 @@ mesmos dos seres vivos e plantas, reforçando.
 Todos de múltipla escolha. É o "repaso" leve: mistura seres vivos, plantas e animais.
 
 **`REVIEW2` — `index.html:798-809` · 10 exercícios**
-8 de múltipla escolha + 2 verdadeiro/falso. Rep[:]se o mesmo assunto com outras palavras.
+8 de múltipla escolha + 2 verdadeiro/falso. Repete o mesmo assunto com outras palavras.
 
 Os quatro pools acima são **sempre os mesmos** — não mudam de conteúdo entre sessões.
 Isso é importante: é o único material do app que dá para virar lição de verdade.
@@ -123,7 +129,7 @@ O mesmo caminho, com outro botão, gera os exercícios do exame:
 (`backend/app.py:412-429`), com a mesma função de gerar exercícios, e um limite de uso
 próprio (`EXAM_RATE`, `backend/app.py:38`). Procurando no `index.html`, **nenhuma linha
 chama `/exam`** — o app usa `/generate`. Ou seja: `/exam` existe no servidor e está
-sobrando, sem quem chame. Só o茜z existir para o OSA-04 (cota de uso) fazer sentido, e
+sobrando, sem quem chame. Só faz sentido existir para o OSA-04 (cota de uso), e
 isso é assunto de outra tarefa; aqui fica só o registro.
 
 ### Resumo da origem
@@ -151,7 +157,8 @@ caminho, todo em `index.html`:
 3. `paintExercise(ex, ...)` — linha 1288. Pinta a pergunta. Escolhe o desenho conforme
    o tipo: ordenar (1321), parejas (1341), discursiva (1298-1299), ou múltipla escolha.
 4. A criança responde → `registerResult(ok)` — linha 1638. Aí sim: +10 moedas se acertou,
-   conta acertos, atualiza o ofensivo dia, e a Mía reage.
+   conta os acertos, marca o dia de hoje como dia de estudo (`streakTouch`, linha 1649),
+   e a Mía reage.
 5. Avanço é **manual**: só passa quando ela toca "Siguiente" (`showNext`, linha 1269).
 6. Quando a pilha esvazia, `nextInDeck` (linha 1604) paga o bônus e volta para a tela
    de matérias.
@@ -245,12 +252,24 @@ Vira uma matéria "extra", fora da trilha de níveis, alimentada por `state.cust
 
 ---
 
-## 6. Depências e dúvidas em aberto
+## 6. Dúvidas em aberto
 
 - **Quem escreve o conteúdo de Matemáticas?** Sem isso, a matéria fica de fora.
 - **Os 76 autorados saem do `index.html` ou ficam duplicados?** Tirar é mais limpo, mas
-  mexe no arquivo onde o Peter está trabalhando agora.
+  mexe no arquivo onde outra frente está trabalhando agora (a regra do backlog é uma
+  pessoa por vez no `index.html`).
 - **`/exam` no servidor**: existe, ninguém chama. Registrar e deixar para o OSA-04.
 - **`tema:"da foto 📷"`** (725-809): é uma etiqueta interna, não aparece na tela. Serve
   para o `buildPractice` (1618) separar o que é "das fotos" do resto. No JSON isso vira
   o campo `curso`/`unidad`, e a etiqueta deixa de ser necessária.
+
+---
+
+## 7. Como este mapa foi conferido
+
+- Contagem dos pools feita por linha, não por leitura: `FOTO_EX` 725-766 = 40 itens;
+  `FOTO_EXTRA` 767-784 = 16; `REVIEW1` 786-797 = 10; `REVIEW2` 798-809 = 10.
+- Pares de palavra: `LEX` 12, `ES` 10, `GL` 10, `NAT` 5, `SOC` 5.
+- Nenhuma linha do `index.html` chama `/exam` (busca por `/exam` no arquivo: zero
+  resultados). O app chama `/generate` (`index.html:2746`) e `/ocr` (2676).
+- O "nível" da tela é `1 + Math.floor(state.totalEarned/100)` — `index.html:1240`.
