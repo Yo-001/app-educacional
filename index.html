@@ -1194,7 +1194,7 @@ function speak(line){
   Mia.talk(true); /* la que habla es la princesa: la boca de la mascota ya no es el rostro de la voz */
   const sayLine=stripEmoji(line);
   let stopped=false;
-  const stop=()=>{ if(stopped) return; stopped=true; speechPlaying=Math.max(0,speechPlaying-1); catQuietUntil=Date.now()+1500; /* cola de eco: el altavoz tarda un instante en callarse */ if(_spStop===stop) _spStop=null; Mia.talk(false); b.style.display="none"; if(_spResolve===resolve) _spResolve=null; resolve(); };
+  const stop=()=>{ if(stopped) return; stopped=true; speechPlaying=Math.max(0,speechPlaying-1); catQuietUntil=Date.now()+700; /* cola de eco curta: o altavoz cala rápido e a nena non espera */ if(_spStop===stop) _spStop=null; Mia.talk(false); b.style.display="none"; if(_spResolve===resolve) _spResolve=null; resolve(); };
   _spStop=stop;
   if(!sayLine){ stop(); return; } /* nada para falar (p.ex. opção só de emoji): não trava o avanço */
   const seq=++_spSeq;
@@ -2527,9 +2527,9 @@ $("btnEditName").onclick=()=>{ const r=$("nameRow"); const show=r.style.display=
 (function(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){ $("btnMic").style.display="none"; return; }
-  const GAP_FINAL=1300; /* margen de silencio tras un resultado final: cierra el turno de la niña */
-  const GAP_PAUSE=2600; /* solo hay resultados interinos (sigue hablando): tope de espera */
-  const SPEC_MS=550;    /* petición adelantada: el gato piensa mientras acaba el silencio */
+  const GAP_FINAL=800;   /* margen de silencio tras un resultado final: cierra el turno de la niña */
+  const GAP_PAUSE=1700;  /* solo hay resultados interinos (sigue hablando): tope de espera */
+  const SPEC_MS=350;     /* petición adelantada: el gato piensa mientras acaba el silencio */
   const HINT="Tu gato tutor te escucha 🎤 — tómate tu tiempo, espera a que termines de hablar.";
   const btn=$("btnMic");
   let micOn=false, rec=null, calmPoll=0, silenceT=0, specT=0, pending="", lastInterim="", spec=null;
@@ -2578,7 +2578,7 @@ $("btnEditName").onclick=()=>{ const r=$("nameRow"); const show=r.style.display=
   const calmNow=()=>!chatBusy && speechPlaying===0;
   const whenCalm=cb=>{
     clearInterval(calmPoll);
-    calmPoll=setInterval(()=>{ if(!micOn){ clearInterval(calmPoll); return; } if(calmNow()){ clearInterval(calmPoll); cb(); } },300);
+    calmPoll=setInterval(()=>{ if(!micOn){ clearInterval(calmPoll); return; } if(calmNow()){ clearInterval(calmPoll); cb(); } },120);
   };
   function listen(){
     if(!micOn) return;

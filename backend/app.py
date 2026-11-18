@@ -200,7 +200,8 @@ def call_chat(messages, name, text):
 
 TTS_VOICE = "gl-ES-SabelaNeural"          # voz galega: os exercicios lense en galego
 TTS_VOICE_FALLBACK = "es-ES-ElviraNeural"  # se o servizo non ten a voz galega
-TTS_PITCH = "+30Hz"
+TTS_PITCH = "+35Hz"                        # un chisco máis agudo: soa a nena, non a locutora
+TTS_SPEED = "+10%"                         # ritmo máis vivo (a voz neutra soaba plana)
 _tts_cache = {}
 
 
@@ -211,7 +212,7 @@ def _synth_tts(text):
     import edge_tts
 
     async def _go(voice):
-        c = edge_tts.Communicate(text, voice, pitch=TTS_PITCH)
+        c = edge_tts.Communicate(text, voice, rate=TTS_SPEED, pitch=TTS_PITCH)
         buf = bytearray()
         async for chunk in c.stream():
             if chunk.get("type") == "audio":
