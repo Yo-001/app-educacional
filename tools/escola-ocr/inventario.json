@@ -1,0 +1,40 @@
+{
+  "status": "BLOQUEADO",
+  "gerado_em": "2026-11-18",
+  "fonte": "Google Drive API v3 (somente leitura)",
+  "pasta_escolhida": null,
+  "pastas_candidatas": [],
+  "total_arquivos": 0,
+  "por_tipo": {},
+  "arquivos": [],
+  "imagens_para_ocr": 0,
+  "suspeitos": {
+    "duplicados_nome_tamanho": [],
+    "ilegiveis_menores_20kb": [],
+    "nao_imagem": []
+  },
+  "bloqueio": {
+    "tipo": "credencial_invalida",
+    "erro_exato": "HTTP 400 {\"error\": \"invalid_grant\", \"error_description\": \"Token has been expired or revoked.\"}",
+    "origem": "POST https://oauth2.googleapis.com/token (refresh_token grant) usando AppData/Local/hermes/google_token.json",
+    "escopos_ja_concedidos_nao_e_o_problema": [
+      "https://www.googleapis.com/auth/drive"
+    ],
+    "diagnostico": "Refresh token revogado/expirado; nao e falha de escopo nem de permissao. Token emitido em 2026-11-10 e expirado em 2026-11-16T18:16Z; app OAuth em status Testing expira refresh tokens em 7 dias.",
+    "verificacoes_realizadas": [
+      "setup.py --check => TOKEN_REVOKED (invalid_grant)",
+      "refresh_token direto contra oauth2.googleapis.com => HTTP 400 invalid_grant",
+      "nenhum google_token.json alternativo em profiles/* nem ~/.hermes",
+      "gws CLI nao instalado (sem store de credenciais proprio)",
+      "navegador local (perfil Chromium) nao autenticado: drive.google.com redireciona para accounts.google.com signin",
+      "nenhum login salvo no vault",
+      "nenhum mount local do Google Drive (Drive para Desktop ausente)"
+    ],
+    "acao_necessaria": "Reautorizar OAuth do usuario (setup.py --auth-url / --auth-code) e publicar o app OAuth como Production (ou reautorizar a cada <7 dias) para o refresh token nao expirar.",
+    "sem_dados_coletados": true
+  },
+  "hipotese_nao_verificada": {
+    "nome_pasta": "Estudo Te",
+    "evidencia": "citada em conversa anterior como alvo da extracao; NAO confirmada nesta execucao - nenhum metadado de Drive foi lido"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "voice": {
+    "engine": "edge-tts",
+    "name": "es-ES-XimenaNeural",
+    "label": "Ximena infantil",
+    "pitch": "+25Hz",
+    "rate": "+8%",
+    "lang": "es-ES",
+    "sample": "C:/Users/leona/AppData/Local/hermes/cache/scratch/vozes_es/4_ximena_infantil.mp3"
+  },
+  "source_folder": "Estudo tê",
+  "drive_root": "1x82SETDWyx7xqvbVWvkun9yYZ-RDqUfL"
+}

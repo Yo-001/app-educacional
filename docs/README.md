@@ -26,6 +26,8 @@ Estado só conta se estiver escrito. Trabalho não registrado = trabalho que nã
 - `BACKLOG.md` — todas as tarefas com ID, dono, prioridade e estado.
 - `EM-CURSO.md` — quadro do agora: em processo, bloqueado, próximo.
 - `DECISOES.md` — decisões fechadas, com motivo e data.
+- `OSA-04-EXAM-RATE-LIMIT.md` — cota de IA por IP no `/exam`: desenho, config, teste e monitorização.
+- `../tools/escola-ocr/README.md` — pipeline das fotos do livro → exercícios (base SQLite local).
 
 ## Contexto técnico em uma linha
 

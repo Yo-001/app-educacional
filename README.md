@@ -12,6 +12,9 @@ Alvo: 3.º de Primaria no sistema espanhol (CEIP Plurilingüe Xosé Fernández L
 - **Exercícios**: escolha múltipla, verdadeiro/falso, ordenar, pares — corrigidos no próprio dispositivo.
 - **Exame por foto**: fotografa-se o livro/caderno, o backend faz OCR e a IA gera 16 exercícios no
   formato do app (`/ocr` → `/generate` ou `/exam`).
+- **Banco de exercícios reais**: `tools/escola-ocr/` converte as fotos do livro em exercícios
+  estruturados numa base SQLite local (47 páginas, 97 exercícios hoje). Ver
+  [`tools/escola-ocr/README.md`](tools/escola-ocr/README.md).
 - **Chat com o mascote** (`/chat`): conversa curta com a Mía/Gatuno; o gato só fala em onomatopeias.
 - **Voz** (`/tts`): leitura em voz alta das perguntas; as frases também podem ser ouvidas em modo offline.
 - **Modo offline**: se o backend não responde, o app cai em `extractExercises` local e continua a funcionar.
@@ -62,6 +65,7 @@ Enquanto não for corrigido, a voz não tem cota.
 index.html                    app completo (front)
 backend/app.py                servidor stdlib (IA, OCR, chat, TTS, exame)
 backend/Dockerfile            imagem do Cloud Run
+tools/escola-ocr/             pipeline das fotos do livro -> exercícios (SQLite local)
 docs/                          documentação operacional (ver docs/README.md)
 test_exam_rate_limit.py        prova do rate limit do /exam
 test_simple_rate_limit.py      prova do rate limit do /generate

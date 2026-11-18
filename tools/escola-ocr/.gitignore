@@ -1,0 +1,7 @@
+# Dados locais — nunca versionados (fotos do livro + dados da criança)
+extracao/
+state/
+escola.db
+escola.db-journal
+__pycache__/
+*.pyc
