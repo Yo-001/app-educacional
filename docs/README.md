@@ -29,6 +29,6 @@ Estado só conta se estiver escrito. Trabalho não registrado = trabalho que nã
 
 ## Contexto técnico em uma linha
 
-`index.html` único (HTML+CSS+JS vanilla, PWA, ~2.7k linhas) publicado no GitHub Pages;
-`backend/app.py` (Flask, Cloud Run `estudo-exames`, `europe-west1`) só para TTS, chat e exame
-por foto. HEAD de referência desta documentação: `029ca95`.
+`index.html` único (HTML+CSS+JS vanilla, PWA, ~2.8k linhas) publicado no GitHub Pages;
+`backend/app.py` (Python stdlib, `ThreadingHTTPServer`; Cloud Run `estudo-exames`, `europe-west1`)
+só para TTS, chat, exercícios e exame por foto/OCR.

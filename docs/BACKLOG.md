@@ -27,7 +27,7 @@ Toda tarefa `feito` registra o commit. Prioridade: `P0` (destrava o produto) →
 | OSA-01 | Barra de progresso por OCR do caderno | P1 | — | bloqueado (token Google revogado) |
 | OSA-02 | Consolidador do guidebook por lição | P1 | — | planejado |
 | OSA-03 | Relatório do pai (semanal) | P2 | — | planejado |
-| OSA-04 | Cota de IA no servidor (anti-abuso do `/exam`) | P1 | — | planejado |
+| OSA-04 | Cota de IA no servidor (anti-abuso do `/exam`) | P1 | hermes | feito (bc43200) — ver `docs/OSA-04-EXAM-RATE-LIMIT.md` |
 | OSA-05 | Testes automatizados de estado (save/restore, double-click, interleave) | P1 | — | planejado |
 | OSA-06 | Lint/bundle de `android/app/src/main/assets/public/` fora do build web | P2 | — | planejado |
 

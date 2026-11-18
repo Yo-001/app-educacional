@@ -12,6 +12,9 @@ Atualizado em 2026-11-18. Base: `029ca95` + `docs/`.
 
 | ID | Quem | Resultado | Prova |
 |---|---|---|---|
+| OSA-04 | hermes | Cota de IA por IP no `/exam` (30/h, mesmo mecanismo do `/generate`); docs de desenho/teste/monitorização | `test_exam_rate_limit.py` (200 → 429); commit `bc43200` |
+| — | hermes | README raiz do repositório + `docs/README.md` corrigido (o backend é stdlib, não Flask); doc duplicado do OSA-04 consolidado em `docs/` | commit de docs desta rodada |
+| GAT-01 | hermes | Gatuno em colo do avatar da Mía enquanto fala, com balão de onomatopeias | commit de código desta rodada |
 | PRC-01 | hermes (subagente interrompido no meio; CSS/cabeçalho aproveitados, JS feito na sessão) | Mía tutora falante, Gatuno mascote sem fala, textos/chat/cabeçalho | exercício real no navegador: `#mia.tutor`+`body.mia-tutor`, +10 moedas, «Siguiente» não avança sozinho, `#catSvg` reage (`cheer`) sem `talking`, vídeo da Mía para quando o áudio para, console vazio; screenshots em `História do app/` |
 
 ## Bloqueado
