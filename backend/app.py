@@ -35,6 +35,7 @@ MAX_BODY_OCR = 8_000_000  # fotos comprimidas chegan a ~1 MB cada
 RATE_LIMIT = 30   # /generate e /ocr, por hora por IP
 CHAT_RATE = 120   # /chat, por hora por IP
 TTS_RATE = 300    # /tts, por hora por IP
+EXAM_RATE = 30    # /exam, por hora por IP
 WINDOW = 3600
 _hits = {}
 
@@ -320,12 +321,12 @@ class H(BaseHTTPRequestHandler):
         self.wfile.write(mp3)
 
     def do_POST(self):
-        if self.path not in ("/generate", "/ocr", "/chat"):
+        if self.path not in ("/generate", "/ocr", "/chat", "/exam"):
             return self._json(404, {"error": "no encontrado"})
         ip = self.headers.get("X-Forwarded-For", "desconocido").split(",")[-1].strip()
         now = time.time()
         key = ip + "|" + self.path
-        lim = CHAT_RATE if self.path == "/chat" else RATE_LIMIT
+        lim = CHAT_RATE if self.path == "/chat" else (TTS_RATE if self.path == "/tts" else (EXAM_RATE if self.path == "/exam" else RATE_LIMIT))
         hist = [t for t in _hits.get(key, []) if now - t < WINDOW]
         if len(hist) >= lim:
             return self._json(429, {"error": "demasiadas peticiones, prueba en unos minutos"})
@@ -346,6 +347,8 @@ class H(BaseHTTPRequestHandler):
             return self._do_ocr(reqj)
         if self.path == "/chat":
             return self._do_chat(reqj)
+        if self.path == "/exam":
+            return self._do_exam(reqj)
         self._do_generate(reqj)
 
     def _do_chat(self, reqj):
@@ -391,7 +394,7 @@ class H(BaseHTTPRequestHandler):
     def _do_generate(self, reqj):
         text = clean_str(reqj.get("text", ""), 12000)
         if len(text) < 80:
-            return self._json(400, {"error": "Texto muy corto: sube fotos del libro/cuaderno o escribe el contenido."})
+            return self._json(400, {"error": "Texto muito curto: suba fotos do livro/cuaderno ou escreva o conteúdo."})
         if not API_KEY:
             return self._json(503, {"error": "generador no configurado"})
         try:
@@ -400,11 +403,30 @@ class H(BaseHTTPRequestHandler):
             body = e.read().decode("utf-8", "ignore")[:300]
             return self._json(502, {"error": "OpenRouter " + str(e.code), "detalle": body})
         except Exception as e:
-            return self._json(502, {"error": "fallo del generador: " + type(e).__name__})
+            return self._json(502, {"error": "fallo do generador: " + type(e).__name__})
         valid = validate(items)
         if not valid:
             return self._json(502, {"error": "sin ejercicios válidos"})
-        self._json(200, {"ejercicios": valid})
+        return self._json(200, {"ejercicios": valid})
+
+    def _do_exam(self, reqj):
+        """Gera exercícios via IA com rate limit por IP e dia."""
+        text = clean_str(reqj.get("text", ""), 12000)
+        if len(text) < 80:
+            return self._json(400, {"error": "Texto muito curto: suba fotos do livro/cuaderno ou escreva o conteúdo."})
+        if not API_KEY:
+            return self._json(503, {"error": "generador no configurado"})
+        try:
+            items = call_model(text, clean_str(reqj.get("topics", ""), 2000))
+        except urllib.error.HTTPError as e:
+            body = e.read().decode("utf-8", "ignore")[:300]
+            return self._json(502, {"error": "OpenRouter " + str(e.code), "detalle": body})
+        except Exception as e:
+            return self._json(502, {"error": "fallo do generador: " + type(e).__name__})
+        valid = validate(items)
+        if not valid:
+            return self._json(502, {"error": "sin ejercicios válidos"})
+        return self._json(200, {"ejercicios": valid})
 
 
 def main():
