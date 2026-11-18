@@ -1,2 +1,4 @@
 backend/secrets.json
 __pycache__/
+*.backup
+tmpfile
