@@ -23,6 +23,8 @@ Estado só conta se estiver escrito. Trabalho não registrado = trabalho que nã
 
 - `PLANO-PRINCESA.md` — Mía (a princesa) como personagem falante; Gatuno vira a mascote dela.
 - `PLANO-NIVEIS.md` — organização do conteúdo por níveis: curso → unidade → lição → exercício, com SRS.
+- `PLANO-ANDROID.md` — transição para APK instalável (Capacitor, distribuição privada, sem modo offline).
+  Registado a 18/11/2026; **não executar sem o Leonardo pedir**.
 - `BACKLOG.md` — todas as tarefas com ID, dono, prioridade e estado.
 - `EM-CURSO.md` — quadro do agora: em processo, bloqueado, próximo.
 - `DECISOES.md` — decisões fechadas, com motivo e data.

@@ -24,6 +24,7 @@ Atualizado em 2026-11-18. Base: `029ca95` + `docs/`.
 |---|---|---|---|
 | Pipeline OCR do caderno (OSA-01, escola-ocr) | Refresh token do Google revogado (`400 invalid_grant`) | `POST oauth2.googleapis.com/token` com `google_token.json` | Leonardo aprovar a tela de consentimento + publicar o app OAuth (em *Testing* o token morre em 7 dias) |
 | "Organização por níveis" completa (NIV-01+) | Falta o mapa do conteúdo (NIV-00) | Nenhum `curriculum.json`; conteúdo nasce no pool local + IA | NIV-00 entregue |
+| APK Android (AND-01) | Plano escrito, execução não autorizada | `docs/PLANO-ANDROID.md` (plano do Hulk, revisto) | Leonardo mandar começar; antes disso, fechar as 5 decisões do §3 do plano |
 
 ## Próximo na fila (ordem decidida)
 
