@@ -200,8 +200,8 @@ def call_chat(messages, name, text):
 
 TTS_VOICE = "gl-ES-SabelaNeural"          # voz galega: os exercicios lense en galego
 TTS_VOICE_FALLBACK = "es-ES-ElviraNeural"  # se o servizo non ten a voz galega
-TTS_PITCH = "+50Hz"                        # un chisco máis agudo e ritmo máis vivo: a nena empolgada
-TTS_SPEED = "+15%"                         # ritmo máis vivo (a voz neutra soaba plana)
+TTS_PITCH = "+20Hz"                        # agudo contido: empolgar polo ritmo, non subindo o ton
+TTS_SPEED = "+8%"                          # ritmo vivo mais natural (suxestión do Hulk)
 _tts_cache = {}
 
 
@@ -299,7 +299,7 @@ class H(BaseHTTPRequestHandler):
         text = clean_str((qs.get("text") or [""])[0], 400)
         if not text:
             return self._json(400, {"error": "falta el texto"})
-        h = hashlib.sha1(text.encode("utf-8")).digest()
+        h = hashlib.sha1((text + TTS_SPEED + TTS_PITCH).encode("utf-8")).digest()
         if h in _tts_cache:
             return self._send_audio(_tts_cache[h])
         try:
