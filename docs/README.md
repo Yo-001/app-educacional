@@ -1,0 +1,34 @@
+# Documentação de projeto — estudo-moedas
+
+Fonte de verdade do **estado** do trabalho neste app: o que está planejado, o que está em
+processo, o que está travado e por quê. O registro mestre do *produto* (Buddy.ai + TalkPal +
+decisões de arquitetura ampla) continua em `C:/Users/leona/Documents/APP Educacional.md`;
+aqui vive o acompanhamento operacional do repositório.
+
+## Regra de manutenção (invariante)
+
+Qualquer commit que mude comportamento, plano ou bloqueio **atualiza os docs neste mesmo commit**:
+
+| Situação | Onde atualizar |
+|---|---|
+| Começou a trabalhar em algo | `EM-CURSO.md` (mover o ID para "Em processo") |
+| Terminou / entregou | `EM-CURSO.md` (sai da lista) + `BACKLOG.md` (estado `feito`, com commit) |
+| Descobriu bloqueio | `EM-CURSO.md` → "Bloqueado", com a evidência e o que desbloqueia |
+| Mudou uma decisão de produto/técnica | `DECISOES.md` (nova entrada `DEC-00N`, não editar a antiga) |
+| Mudou o plano de uma frente | o `PLANO-*.md` correspondente |
+
+Estado só conta se estiver escrito. Trabalho não registrado = trabalho que não existe.
+
+## Índice
+
+- `PLANO-PRINCESA.md` — Mía (a princesa) como personagem falante; Gatuno vira a mascote dela.
+- `PLANO-NIVEIS.md` — organização do conteúdo por níveis: curso → unidade → lição → exercício, com SRS.
+- `BACKLOG.md` — todas as tarefas com ID, dono, prioridade e estado.
+- `EM-CURSO.md` — quadro do agora: em processo, bloqueado, próximo.
+- `DECISOES.md` — decisões fechadas, com motivo e data.
+
+## Contexto técnico em uma linha
+
+`index.html` único (HTML+CSS+JS vanilla, PWA, ~2.7k linhas) publicado no GitHub Pages;
+`backend/app.py` (Flask, Cloud Run `estudo-exames`, `europe-west1`) só para TTS, chat e exame
+por foto. HEAD de referência desta documentação: `029ca95`.
