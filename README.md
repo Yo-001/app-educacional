@@ -55,9 +55,9 @@ Notas de segurança: corpo máximo 200 KB (8 MB no `/ocr`), CORS restrito ao
 `https://yo-001.github.io`, rate limit em memória por IP em janela de 1 hora. Os limites estão no
 topo de `backend/app.py` (`RATE_LIMIT`, `EXAM_RATE`, `CHAT_RATE`, `TTS_RATE`).
 
-Pendência conhecida: `TTS_RATE` (300/h) está definida mas **não é aplicada** — o `/tts` é servido no
-`do_GET` e o único ponto que a lê está no `do_POST`, onde `/tts` não passa na lista de rotas aceites.
-Enquanto não for corrigido, a voz não tem cota.
+Cotas aplicadas hoje: `/generate`, `/exam`, `/chat` e `/tts` contam pedidos por IP numa janela de 1 hora
+(`RATE_LIMIT`, `EXAM_RATE`, `CHAT_RATE`, `TTS_RATE` em `backend/app.py`); acima do limite a resposta é
+429 `demasiadas peticiones`.
 
 ## Estrutura
 
