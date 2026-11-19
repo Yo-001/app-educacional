@@ -4,21 +4,21 @@
    "q": "¿Qué dos cosas llevaba Nora en su maleta?",
    "a": "Un libro de animales y una bufanda.",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "¿En qué consistía el juego del abuelo?",
    "a": "Describir un animal sin decir su nombre.",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "¿Por qué se puso la bufanda al llegar?",
    "a": "Las montañas estaban cubiertas de nieve.",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
@@ -73,84 +73,84 @@
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'sofá'.",
    "a": "A",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'canción'.",
    "a": "A",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'reloj'.",
    "a": "A",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'compás'.",
    "a": "A",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'lápiz'.",
    "a": "L",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'ventana'.",
    "a": "L",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'música'.",
    "a": "E",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'teléfono'.",
    "a": "E",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'pájaro'.",
    "a": "E",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'brújula'.",
    "a": "E",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'camino'.",
    "a": "L",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'árbol'.",
    "a": "L",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
@@ -255,35 +255,35 @@
    "q": "Escribe bien la palabra 'avion'. Pon tilde solo si la necesita.",
    "a": "avión",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "Escribe bien la palabra 'sabado'. Pon tilde solo si la necesita.",
    "a": "sábado",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "Escribe bien la palabra 'reloj'. Pon tilde solo si la necesita.",
    "a": "reloj",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "Escribe bien la palabra 'cafe'. Pon tilde solo si la necesita.",
    "a": "café",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "Tengo hojas y no soy árbol;\ncuento historias y no tengo voz.\nSoy:",
    "a": "Un libro",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 3,
    "tipo": "escri"
   }
  ],
@@ -325,7 +325,7 @@
    "q": "1. Escribe I, N ou D segundo a parte do conto.\nA muller retira a rede e a ave volve ao mar.",
    "a": "D",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 3,
    "tipo": "escri"
   }
  ],
@@ -369,7 +369,7 @@
    "q": "Ana tiene una colección de 178 cromos de motos y Javier tiene una colección de 245 cromos de animales.\n¿Cuántos cromos tienen en total?\n2. Piensa qué hay que hacer.",
    "a": "una suma.",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "opts": [
     "una suma.",
     "una multiplicación.",
@@ -381,7 +381,7 @@
    "q": "En la estantería del salón hay colocados 127 libros de historia y 76 libros de cuentos.\n¿Cuántos libros hay en la estantería?\n2. Piensa qué hay que hacer.",
    "a": "una suma.",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "opts": [
     "una suma.",
     "una multiplicación.",
@@ -491,70 +491,70 @@
    "q": "1. Completa las dos descomposiciones de cada número.\n3862\nPosición:",
    "a": "3 UM + 8 C + 6 D + 2 U",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "1. Completa las dos descomposiciones de cada número.\n3862\nValor:",
    "a": "3000 + 800 + 60 + 2",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "1. Completa las dos descomposiciones de cada número.\n5047\nPosición:",
    "a": "5 UM + 0 C + 4 D + 7 U",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "1. Completa las dos descomposiciones de cada número.\n5047\nValor:",
    "a": "5000 + 0 + 40 + 7",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "1. Completa las dos descomposiciones de cada número.\n7219\nPosición:",
    "a": "7 UM + 2 C + 1 D + 9 U",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "1. Completa las dos descomposiciones de cada número.\n7219\nValor:",
    "a": "7000 + 200 + 10 + 9",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "1. Completa las dos descomposiciones de cada número.\n9405\nPosición:",
    "a": "9 UM + 4 C + 0 D + 5 U",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "1. Completa las dos descomposiciones de cada número.\n9405\nValor:",
    "a": "9000 + 400 + 0 + 5",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "1. Completa las dos descomposiciones de cada número.\n1680\nPosición:",
    "a": "1 UM + 6 C + 8 D + 0 U",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "1. Completa las dos descomposiciones de cada número.\n1680\nValor:",
    "a": "1000 + 600 + 80 + 0",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
@@ -575,224 +575,224 @@
    "q": "Descompón como en el ejemplo. Incluye los ceros.\n2.581 =",
    "a": "2.000 + 500 + 80 + 1",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "Descompón como en el ejemplo. Incluye los ceros.\n4.306 =",
    "a": "4.000 + 300 + 0 + 6",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "Descompón como en el ejemplo. Incluye los ceros.\n6.070 =",
    "a": "6.000 + 0 + 70 + 0",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "Descompón como en el ejemplo. Incluye los ceros.\n8.009 =",
    "a": "8.000 + 0 + 0 + 9",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "Reúne las piezas y escribe el número.\n5.000 + 200 + 30 + 8 =",
    "a": "5.238",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "Reúne las piezas y escribe el número.\n7 + 0 + 60 + 4 =",
    "a": "71",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "Escribe con letra el número 1.245.",
    "a": "mil doscientos cuarenta y cinco",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe con letra el número 3.608.",
    "a": "tres mil seiscientos ocho",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe con letra el número 5.070.",
    "a": "cinco mil setenta",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe con letra el número 8.019.",
    "a": "ocho mil diecinueve",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe con cifras el número Dos mil trescientos dieciséis.",
    "a": "2.316",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe con cifras el número Cuatro mil noventa.",
    "a": "4.090",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe con cifras el número Seis mil setecientos cinco.",
    "a": "6.705",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe con cifras el número Nueve mil ocho.",
    "a": "9.008",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Completa la siguiente serie: 1.000 1.100 1.200 __ 1.400 1.600 1.800",
    "a": "1.300",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Completa la siguiente serie: 1.000 2.000 3.000 __",
    "a": "4.000",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Completa la siguiente serie: 5.900 5.800 5.700 __",
    "a": "5.600",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe el número: cuatro mil trescientos cuatro",
    "a": "4.304",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe el número: tres mil noventa y ocho",
    "a": "3.098",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe el número: cinco mil setecientos noventa",
    "a": "5.790",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe el número: nueve mil setecientos setenta y nueve",
    "a": "9.779",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe cómo se lee el número: 3.617",
    "a": "tres mil seiscientos diecisiete",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe cómo se lee el número: 9.909",
    "a": "nueve mil novecientos nueve",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe cómo se lee el número: 5.010",
    "a": "cinco mil diez",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "ochocientos ochenta y uno se lee: ____________",
    "a": "881",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "quinientos quince se lee: ____________",
    "a": "515",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "novecientos noventa se lee: ____________",
    "a": "990",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "setecientos cinco se lee: ____________",
    "a": "705",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "¿Cuántos hay? Completa.\n3 centenas 5 decenas se lee: ____________",
    "a": "trescientos cincuenta",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "¿Cuántos hay? Completa.\n8 centenas 9 decenas 3 unidades se lee: ____________",
    "a": "ochocientos noventa y tres",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "¿Cuántos hay? Completa.\n3 centenas 5 unidades se lee: ____________",
    "a": "trescientos cinco",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "¿Cuántos hay? Completa.\n7 centenas 6 decenas 9 unidades se lee: ____________",
    "a": "setecientos sesenta y nueve",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 3,
    "tipo": "escri"
   },
   {
@@ -806,28 +806,28 @@
    "q": "Escribe cómo se lee cada número:\n909",
    "a": "novecientos nueve",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe cómo se lee cada número:\n330",
    "a": "trescientos treinta",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe cómo se lee cada número:\n612",
    "a": "seiscientos doce",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe cómo se lee cada número:\n878",
    "a": "ochocientos setenta y ocho",
    "tema": "do libro 📖",
-   "dif": 1,
+   "dif": 2,
    "tipo": "escri"
   },
   {
@@ -841,14 +841,14 @@
    "q": "Ana tiene una colección de 178 cromos de motos y Javier tiene una colección de 245 cromos de animales.\n¿Cuántos cromos tienen en total?\n3. Calcula.\nRespuesta:",
    "a": "423",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "En la estantería del salón hay colocados 127 libros de historia y 76 libros de cuentos.\n¿Cuántos libros hay en la estantería?\n3. Calcula.\nRespuesta:",
    "a": "203",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 3,
    "tipo": "escri"
   },
   {
@@ -862,28 +862,28 @@
    "q": "En una carrera, Ana va 4.ª y adelanta a quien va 3.º. ¿Qué posición ocupa ahora Ana?",
    "a": "3.ª",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "En una tienda había 2.475 postales. Han recibido 1.368 postales más. ¿Cuántas postales hay ahora?",
    "a": "3843",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "Un museo tenía 5.000 entradas. Se han vendido 2.746. ¿Cuántas entradas quedan por vender?",
    "a": "2254",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 3,
    "tipo": "escri"
   },
   {
    "q": "Una familia recorre 1.285 km en una etapa y 1.476 km en otra. ¿Cuántos kilómetros recorre en total?",
    "a": "2761",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 3,
    "tipo": "escri"
   }
  ]
