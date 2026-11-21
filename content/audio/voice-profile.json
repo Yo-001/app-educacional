@@ -43,6 +43,46 @@
     "missao_nova": {
       "file": "content/audio/fx/missao_nova.mp3",
       "text": "¡Nova misión lista! ¡Imos aló!"
+    },
+    "saudacao": {
+      "file": "content/audio/fx/saudacao.mp3",
+      "text": "¡Hola! Soy Mía, la princesa. Elige una materia y aprendemos juntas."
+    },
+    "saudacao_2": {
+      "file": "content/audio/fx/saudacao_2.mp3",
+      "text": "¡Hola! ¡Qué ganas de aprender jugando juntos!"
+    },
+    "animar_1": {
+      "file": "content/audio/fx/animar_1.mp3",
+      "text": "¡Hola! Soy Mía, tu amiga. ¡Vamos a aprender juntas!"
+    },
+    "animar_2": {
+      "file": "content/audio/fx/animar_2.mp3",
+      "text": "¡Tú puedes! Yo estoy aquí contigo."
+    },
+    "animar_3": {
+      "file": "content/audio/fx/animar_3.mp3",
+      "text": "¡Qué bien lo estás haciendo!"
+    },
+    "animar_4": {
+      "file": "content/audio/fx/animar_4.mp3",
+      "text": "¿Jugamos un poquito más?"
+    },
+    "visual_ok": {
+      "file": "content/audio/fx/visual_ok.mp3",
+      "text": "¡Me encanta!"
+    },
+    "visual_off": {
+      "file": "content/audio/fx/visual_off.mp3",
+      "text": "Ya no lo llevo."
+    },
+    "vitoria": {
+      "file": "content/audio/fx/vitoria.mp3",
+      "text": "¡Ganaste! ¡Qué bien!"
+    },
+    "completado": {
+      "file": "content/audio/fx/completado.mp3",
+      "text": "¡Completado! ¡Bien hecho!"
     }
   }
 }

@@ -432,10 +432,7 @@ input[type=file]{padding:6px}
 
   <!-- CABECERA -->
   <div class="top">
-    <div class="mascot">
-    <div class="mascot-pair">
-    <div class="mia-mini" aria-hidden="true"></div>
-    <div class="avatar" id="avatar" title="Gatuno, la mascota de la princesa">
+    <div style="display:none;position:absolute" aria-hidden="true">
       <svg id="catSvg" viewBox="0 0 240 240" aria-hidden="true">
         <defs>
           <radialGradient id="g3dHead" cx="38%" cy="30%" r="70%">
@@ -605,9 +602,6 @@ input[type=file]{padding:6px}
       <span class="hat" id="hatEmoji" style="display:none">🧢</span>
       <span class="ove" id="eyeEmoji" style="display:none"></span>
       <span class="ovm" id="mouthEmoji" style="display:none"></span>
-    </div>
-    </div>
-    <span class="mascot-cap">Mía y Gatuno</span>
     </div>
     <div class="who">
       <b>Mi cuaderno</b>
@@ -1214,16 +1208,36 @@ const FX_AUDIO={
   acerto_3:{src:"content/audio/fx/acerto_3.mp3",text:"¡Uau! ¡Tesouro desbloqueado!"},
   moedas:{src:"content/audio/fx/moedas.mp3",text:"¡Gañaches cinco moedas máis!"},
   erro_1:{src:"content/audio/fx/erro_1.mp3",text:"Non pasa nada, tentalo outra vez."},
-  missao_nova:{src:"content/audio/fx/missao_nova.mp3",text:"¡Nova misión lista! ¡Imos aló!"}
+  missao_nova:{src:"content/audio/fx/missao_nova.mp3",text:"¡Nova misión lista! ¡Imos aló!"},
+  saudacao:{src:"content/audio/fx/saudacao.mp3",text:"¡Hola! Soy Mía, la princesa. Elige una materia y aprendemos juntas."},
+  saudacao_2:{src:"content/audio/fx/saudacao_2.mp3",text:"¡Hola! ¡Qué ganas de aprender jugando juntos!"},
+  animar_1:{src:"content/audio/fx/animar_1.mp3",text:"¡Hola! Soy Mía, tu amiga. ¡Vamos a aprender juntas!"},
+  animar_2:{src:"content/audio/fx/animar_2.mp3",text:"¡Tú puedes! Yo estoy aquí contigo."},
+  animar_3:{src:"content/audio/fx/animar_3.mp3",text:"¡Qué bien lo estás haciendo!"},
+  animar_4:{src:"content/audio/fx/animar_4.mp3",text:"¿Jugamos un poquito más?"},
+  visual_ok:{src:"content/audio/fx/visual_ok.mp3",text:"¡Me encanta!"},
+  visual_off:{src:"content/audio/fx/visual_off.mp3",text:"Ya no lo llevo."},
+  vitoria:{src:"content/audio/fx/vitoria.mp3",text:"¡Ganaste! ¡Qué bien!"},
+  completado:{src:"content/audio/fx/completado.mp3",text:"¡Completado! ¡Bien hecho!"}
 };
 const FX_BY_TEXT=new Map(Object.values(FX_AUDIO).map(f=>[f.text.toLowerCase(),f.src]));
 const FX_RULES=[
+  {re:/qué ganas de aprender jugando/i,src:FX_AUDIO.saudacao_2.src},
+  {re:/soy mía,\s*tu amiga|vamos a aprender juntas/i,src:FX_AUDIO.animar_1.src},
+  {re:/tú puedes|estoy aquí contigo/i,src:FX_AUDIO.animar_2.src},
+  {re:/qué bien lo estás haciendo/i,src:FX_AUDIO.animar_3.src},
+  {re:/jugamos un poquito más/i,src:FX_AUDIO.animar_4.src},
+  {re:/hola.*(soy mía|princesa|aprendemos)/i,src:FX_AUDIO.saudacao.src},
+  {re:/me encanta/i,src:FX_AUDIO.visual_ok.src},
+  {re:/ya no lo llevo/i,src:FX_AUDIO.visual_off.src},
   {re:/moed|moned|fruta|ronda|puntos|ganaste \d+/i,src:FX_AUDIO.moedas.src},
   {re:/tesouro|desbloquead|ahora lo llevo|visual actualizado|2048/i,src:FX_AUDIO.acerto_3.src},
-  {re:/xenial|acertaches|ganaste|increíble|genio|lo estás haciendo|completad/i,src:FX_AUDIO.acerto_2.src},
-  {re:/moi ben|muy bien|qué bien|qué bonito|qué guapo|bien hecho|ben feito|campo limpo/i,src:FX_AUDIO.acerto_1.src},
-  {re:/non pasa nada|no pasa nada|tentalo|inténtalo|ya no lo llevo|respuesta correcta/i,src:FX_AUDIO.erro_1.src},
-  {re:/hola|soy mía|aprendemos|jugamos|tú puedes|nova misión|imos aló|empezamos|princesa/i,src:FX_AUDIO.missao_nova.src}
+  {re:/ganaste|llegaste a 2048|increíble/i,src:FX_AUDIO.vitoria.src},
+  {re:/xenial|acertaches|genio/i,src:FX_AUDIO.acerto_2.src},
+  {re:/palabra completada|sumas completadas|completad|campo limpo|ben feito|bien hecho/i,src:FX_AUDIO.completado.src},
+  {re:/moi ben|muy bien|qué bien|qué bonito|qué guapo/i,src:FX_AUDIO.acerto_1.src},
+  {re:/non pasa nada|no pasa nada|tentalo|inténtalo/i,src:FX_AUDIO.erro_1.src},
+  {re:/nova misión|imos aló|empezamos/i,src:FX_AUDIO.missao_nova.src}
 ];
 function matchFxFallback(line){
   const s=String(line||"").trim().toLowerCase();
@@ -1247,13 +1261,18 @@ function esVoice(){
   return esVoiceCache;
 }
 try{ window.speechSynthesis.onvoiceschanged=()=>{esVoiceCache=null;}; }catch(e){}
-/* Voz de Mía: perfil Amostra 2 (OmniVoice/VoiceStudio en /tts) + fallback local fx/ + navegador */
+/* Voz de Mía: perfil Amostra 2 (MP3 locales en fx/ + OmniVoice en /tts) */
 let _aud=null, _spSeq=0, _spResolve=null, _spStop=null, _audioOK=false, _pendingGreet=null;
 /* desbloqueia a reprodução de áudio no tablet: o play() chamado após o
    fetch do MP3 costuma cair na política de autoplay (NotAllowedError) e o
-   gato fica mudo; um play() mudo no 1º toque libera o canal */
+   gato fica mudo; no 1º toque libera o canal e toca a saudação Amostra 2 */
 function unlockAudio(){
   if(_audioOK) return;
+  if(_pendingGreet){
+    const g=_pendingGreet; _pendingGreet=null;
+    _audioOK=true;
+    if(_spSeq<=1 && g.directUrl){ speak(g.line,g.directUrl); return; }
+  }
   try{
     const n=2205, sr=22050, dv=new DataView(new ArrayBuffer(44+n*2));
     const w=(o,s)=>{ for(let i=0;i<s.length;i++) dv.setUint8(o+i,s.charCodeAt(i)); };
@@ -1275,11 +1294,10 @@ function stopAudio(){
   if(_aud){try{_aud.pause();}catch(e){}} _aud=null;
   try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
 }
-/* cache de TTS: as falas previsíveis são pré-carregadas ao pintar a questão,
-   assim o feedback sai na hora do toque, sem esperar o backend gerar o MP3 */
+/* cache de TTS: saudações, incentivos e falas conhecidas resolvem direto para MP3 local (Amostra 2) */
 const _ttsCache=new Map(); const TTS_CACHE_MAX=80;
 function ttsURL(line){
-  const fx=FX_BY_TEXT.get(String(line||"").trim().toLowerCase());
+  const fx=matchFxFallback(line);
   if(fx) return Promise.resolve(fx);
   const hit=_ttsCache.get(line);
   if(hit) return Promise.resolve(hit); /* hit é Promise (fetch em curso) ou string (blob já pronto) — speak() sempre recebe uma Promise */
@@ -1302,60 +1320,154 @@ function speakFX(keyOrLine){
 const EMOJI_RE=/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{20E3}\u{200D}\u{1F1E6}-\u{1F1FF}]/gu;
 /* quita emojis del texto que va al TTS (si no, los "describe": "cara de gato"...) */
 function stripEmoji(s){ return String(s||"").replace(EMOJI_RE,"").replace(/[ \t]{2,}/g," ").trim(); }
-/* ===== MÍA: mascota 3D que flota libremente por la app =====
-   #mia es una capa fixed: vaga sola por el área de la app, se anima con el
-   clip de gestos mientras la app habla y celebra los aciertos. */
+/* ===== MÍA: mascota 3D que flota libremente por la app sin tapar texto =====
+   #mia es una capa fixed: calcula bounding boxes de texto/cards activos y solo
+   se detiene o vaga por zonas seguras (márgenes laterales externos o rodapé). */
 const Mia=(()=>{
   const LINES=["¡Hola! Soy Mía, tu amiga. ¡Vamos a aprender juntas!",
                "¡Tú puedes! Yo estoy aquí contigo.",
                "¡Qué bien lo estás haciendo!",
-               "¿Jugamos un poquito más?"];
+               "¿Jugamos un poquito más?",
+               "¡Hola! ¡Qué ganas de aprender jugando juntos!"];
+  const OBS_SEL=".top,#speech,.note,.h2,.q,.opts,.feedback,#btnNextEx,#exercise .row,.grid-subj,.utils,#chatLog,.composer,#chatTyping,#card-rev .row,#cats,#goal,#items,#board,#stkBar,#card-cam textarea,#card-cam input,#card-examen textarea,.rep,.verdict,.co-art,.mem,.fallbox,.simon,.tres,.aho,.keys,.g2048,.mines,[role='dialog'],.modal,.toast.on";
   const still=matchMedia("(prefers-reduced-motion: reduce)");
   const rnd=(a,b)=>a+Math.random()*(b-a);
   let el=null,box=null,vid=null,ready=false,canAnim=false,wantTalk=false,timer=0,ct=0,off=0,x=0,y=0,tutorMode=false;
 
-  /* zona por la que puede vagar: la columna de la app, por encima del menú */
+  /* área segura na viewport: incluye márxenes laterais externas en pantallas anchas */
   function area(){
     const app=document.getElementById("app"), nav=document.getElementById("nav"), top=document.querySelector(".top");
     const r=app?app.getBoundingClientRect():{left:0,right:innerWidth,top:0};
     const nh=nav?nav.getBoundingClientRect().height:0;
     const tb=top?top.getBoundingClientRect().bottom:0;
-    const w=(box&&box.offsetWidth)||120, h=(box&&box.offsetHeight)||190, m=6, petPad=74;
-    let x0=Math.max(m+petPad,r.left+m+petPad), x1=Math.min(innerWidth-w-m,r.right-w-m);
-    /* no tapa la cabecera (avatar + globo de voz) mientras se ve */
-    let y0=Math.max(m,r.top+m/2, Math.min(tb+m, innerHeight*0.55)), y1=innerHeight-h-nh-m;
+    const w=(box&&box.offsetWidth)||96, h=(box&&box.offsetHeight)||154, m=8, petPad=48;
+    let x0=m+petPad, x1=innerWidth-w-m;
+    let y0=Math.max(m,tb+m), y1=innerHeight-h-nh-m;
     if(x1<x0){ x0=x1=Math.max(m,(innerWidth-w)/2); }
     if(y1<y0){ y0=y1=Math.max(m,(innerHeight-h)/2); }
-    return {x0,y0,x1,y1};
+    return {x0,y0,x1,y1,w,h,petPad,appRect:r};
+  }
+  function rectsFor(sel){
+    const out=[];
+    document.querySelectorAll(sel).forEach(node=>{
+      if(!node || (node.offsetParent===null && getComputedStyle(node).position!=="fixed")) return;
+      const rc=node.getBoundingClientRect();
+      if(rc.width>2 && rc.height>2 && rc.bottom>0 && rc.top<innerHeight && rc.right>0 && rc.left<innerWidth){
+        out.push(rc);
+      }
+    });
+    return out;
+  }
+  function overlap(px,py,a,rects,pad){
+    const p=pad||0;
+    const x0=px-a.petPad-p, y0=py-p, x1=px+a.w+p, y1=py+a.h+p;
+    let sum=0;
+    for(let i=0;i<rects.length;i++){
+      const r=rects[i];
+      const ox=Math.max(0,Math.min(x1,r.right)-Math.max(x0,r.left));
+      if(!ox) continue;
+      const oy=Math.max(0,Math.min(y1,r.bottom)-Math.max(y0,r.top));
+      sum+=ox*oy;
+    }
+    return sum;
+  }
+  function scoreAt(px,py,a,textRects,cardRects){
+    return overlap(px,py,a,textRects,8)*1000 + overlap(px,py,a,cardRects,6);
+  }
+  function safePos(prefX,prefY,a,textRects,cardRects){
+    const tr=textRects||rectsFor(OBS_SEL), cr=cardRects||rectsFor(".card");
+    const clampX=v=>Math.min(a.x1,Math.max(a.x0,v));
+    const clampY=v=>Math.min(a.y1,Math.max(a.y0,v));
+    const cands=[];
+    const add=(cx,cy)=>cands.push({x:clampX(cx),y:clampY(cy)});
+    /* márxenes laterais externas se a pantalla é larga */
+    if(a.appRect.right+a.petPad+14<=a.x1){
+      const rx=Math.min(a.x1,a.appRect.right+a.petPad+18);
+      add(rx,a.y1); add(rx,(a.y0+a.y1)*0.55); add(rx,a.y0+20);
+    }
+    if(a.appRect.left-a.w-14>=a.x0){
+      const lx=Math.max(a.x0,a.appRect.left-a.w-18);
+      add(lx,a.y1); add(lx,(a.y0+a.y1)*0.55); add(lx,a.y0+20);
+    }
+    /* cantos inferiores e rodapé fóra dos cards */
+    add(a.x1,a.y1); add(a.x0,a.y1);
+    let maxCardBottom=0;
+    cr.forEach(r=>{ if(r.bottom>maxCardBottom) maxCardBottom=r.bottom; });
+    if(maxCardBottom>0 && maxCardBottom+10<=a.y1){
+      add(a.x1,maxCardBottom+10); add((a.x0+a.x1)/2,maxCardBottom+10); add(a.x0,maxCardBottom+10);
+    }
+    for(let c=0;c<5;c++){
+      for(let r=0;r<5;r++){
+        add(a.x0+(a.x1-a.x0)*(c/4), a.y0+(a.y1-a.y0)*(r/4));
+      }
+    }
+    let best=cands[0], bestScore=Infinity;
+    for(let i=0;i<cands.length;i++){
+      const p=cands[i];
+      const sc=scoreAt(p.x,p.y,a,tr,cr);
+      const dist=Math.hypot(p.x-prefX,p.y-prefY)*0.01;
+      const tot=sc+dist;
+      if(tot<bestScore){ bestScore=tot; best=p; }
+    }
+    return best;
   }
   function jump(nx,ny,ms){
-    x=nx; y=ny;
+    const a=area();
+    let tx=Math.min(a.x1,Math.max(a.x0,nx)), ty=Math.min(a.y1,Math.max(a.y0,ny));
+    if(ready && box){
+      const tr=rectsFor(OBS_SEL), cr=rectsFor(".card");
+      if(overlap(tx,ty,a,tr,6)>0){
+        const sp=safePos(tx,ty,a,tr,cr);
+        if(scoreAt(sp.x,sp.y,a,tr,cr)<scoreAt(tx,ty,a,tr,cr)){ tx=sp.x; ty=sp.y; }
+      }
+    }
+    x=tx; y=ty;
     el.style.setProperty("--mia-dur",ms+"ms");
     el.style.transform="translate3d("+Math.round(x)+"px,"+Math.round(y)+"px,0)";
   }
-  /* pasos cortos la mayor parte del tiempo (flota cerca), de vez en cuando cruza */
+  function avoidText(ms){
+    if(!ready) return;
+    const a=area(), tr=rectsFor(OBS_SEL), cr=rectsFor(".card");
+    const wide=(a.appRect.right+a.petPad+14<=a.x1)||(a.appRect.left-a.w-14>=a.x0);
+    if(overlap(x,y,a,tr,8)>0 || (wide && overlap(x,y,a,cr,6)>0) || tutorMode){
+      const sp=safePos(a.x1,a.y1,a,tr,cr);
+      jump(sp.x,sp.y,ms||520);
+    }
+  }
+  /* pasos polas zonas libres sen pisar texto nin cards activos */
   function roam(){
     clearTimeout(timer);
     if(!ready||still.matches||document.hidden||tutorMode) return;
     const a=area(), d=Math.hypot(a.x1-a.x0,a.y1-a.y0);
+    const tr=rectsFor(OBS_SEL), cr=rectsFor(".card");
     x=Math.min(a.x1,Math.max(a.x0,x)); y=Math.min(a.y1,Math.max(a.y0,y));
-    let nx=x,ny=y;
-    for(let i=0;i<8;i++){                  /* garantiza un paso visible, no un temblor */
-      if(Math.random()<0.55){
-        const sx=(a.x1-a.x0)*0.22, sy=(a.y1-a.y0)*0.3;
-        nx=Math.min(a.x1,Math.max(a.x0,x+rnd(-sx,sx)));
-        ny=Math.min(a.y1,Math.max(a.y0,y+rnd(-sy,sy)));
+    const hasRight=a.appRect.right+a.petPad+14<=a.x1;
+    const hasLeft=a.appRect.left-a.w-14>=a.x0;
+    let chosen=null, bestSc=Infinity;
+    for(let i=0;i<18;i++){
+      let cx,cy;
+      if(hasRight || hasLeft){
+        if(hasRight && (!hasLeft || Math.random()<0.6)){
+          cx=rnd(Math.min(a.x1,a.appRect.right+a.petPad+14), a.x1);
+        }else{
+          cx=rnd(a.x0, Math.max(a.x0,a.appRect.left-a.w-14));
+        }
+        cy=rnd(a.y0,a.y1);
       }else{
-        /* prefire os lados: tapa menos texto que o centro das tarxetas */
-        const band=(a.x1-a.x0)*0.25;
-        nx=Math.random()<0.7 ? (Math.random()<0.5?rnd(a.x0,a.x0+band):rnd(a.x1-band,a.x1)) : rnd(a.x0,a.x1);
-        ny=rnd(a.y0,a.y1);
+        const band=(a.x1-a.x0)*0.24;
+        cx=Math.random()<0.75 ? (Math.random()<0.4?rnd(a.x0,a.x0+band):rnd(a.x1-band,a.x1)) : rnd(a.x0,a.x1);
+        cy=rnd(a.y0,a.y1);
       }
-      if(Math.hypot(nx-x,ny-y)>d*0.18) break;
+      const sc=scoreAt(cx,cy,a,tr,cr);
+      if(sc===0 && Math.hypot(cx-x,cy-y)>d*0.14){ chosen={x:cx,y:cy}; break; }
+      if(sc<bestSc){ bestSc=sc; chosen={x:cx,y:cy}; }
+    }
+    if(!chosen || scoreAt(chosen.x,chosen.y,a,tr,cr)>0){
+      chosen=safePos(a.x1,a.y1,a,tr,cr);
     }
     const ms=Math.round(rnd(5000,8000));
-    jump(nx,ny,ms);
-    timer=setTimeout(roam,ms+rnd(1400,4200));
+    jump(chosen.x,chosen.y,ms);
+    timer=setTimeout(roam,ms+rnd(1600,4200));
   }
   function apply(){
     if(!ready||!canAnim) return;
@@ -1378,15 +1490,14 @@ const Mia=(()=>{
     el.classList.remove("cheer"); void el.offsetWidth; el.classList.add("cheer");
     clearTimeout(ct); ct=setTimeout(()=>el.classList.remove("cheer"),950);
   }
-  /* modo tutora: con un ejercicio abierto se planta abajo a la derecha y deja de
-     vagar (ya no se cruza sobre la pregunta); al salir, vuelve a flotar */
+  /* modo tutora: con un ejercicio abierto se planta na zona segura (lateral externo ou canto inferior dereito) */
   function tutor(on){
     on=!!on; if(!ready||on===tutorMode) return;
     tutorMode=on;
     el.classList.toggle("tutor",on);
     document.body.classList.toggle("mia-tutor",on);
     clearTimeout(timer);
-    if(on){ const a=area(); jump(a.x1,a.y1,520); }
+    if(on){ const a=area(), sp=safePos(a.x1,a.y1,a); jump(sp.x,sp.y,520); }
     else roam();
   }
   /* VP9 con alfa: si el navegador no lo pinta transparente, se queda la foto */
@@ -1401,8 +1512,8 @@ const Mia=(()=>{
     el=document.getElementById("mia"); if(!el) return;
     box=el.querySelector(".mia-f"); vid=document.getElementById("miaVid");
     ready=true;
-    const a=area();
-    jump(a.x1,a.y1,1);                       /* entra abajo, junto al menú */
+    const a=area(), sp=safePos(a.x1,a.y1,a);
+    jump(sp.x,sp.y,1);                       /* entra na zona segura */
     requestAnimationFrame(()=>el.classList.add("in"));
     setTimeout(roam,2200);
     if(vid){
@@ -1416,8 +1527,8 @@ const Mia=(()=>{
     const tap=document.getElementById("miaTap");
     if(tap) tap.addEventListener("click",()=>{ if(!still.matches) speak(pick(LINES)); });
     addEventListener("resize",()=>{
-      const b=area();
-      jump(Math.min(b.x1,Math.max(b.x0,x)),Math.min(b.y1,Math.max(b.y0,y)),350);
+      const b=area(), sp2=safePos(x,y,b);
+      jump(sp2.x,sp2.y,350);
     });
     document.addEventListener("visibilitychange",()=>{
       if(document.hidden){ clearTimeout(timer); try{ if(vid) vid.pause(); }catch(e){} }
@@ -1428,7 +1539,7 @@ const Mia=(()=>{
       else roam();
     });
   }
-  return {init,talk,cheer,tutor};
+  return {init,talk,cheer,tutor,avoidText};
 })();
 /* devuelve Promise que resuelve cuando el audio termina (o es interrumpido por otra fala) */
 let speechPlaying=0; /* >0 mientras suena la voz del gato (evita que el micro se escuche a sí mismo) */
@@ -1441,6 +1552,7 @@ function speak(line,directUrl){
   if(_spStop){ const s=_spStop; _spStop=null; try{ s(); }catch(e){} } // interrompe a fala anterior (via stop dela)
   _spResolve=resolve;
   b.textContent=line; b.style.display="";
+  if(Mia && Mia.avoidText) requestAnimationFrame(()=>Mia.avoidText(420));
   Mia.talk(true); /* la que habla es la princesa: la boca de la mascota ya no es el rostro de la voz */
   const sayLine=stripEmoji(line);
   let stopped=false;
@@ -1460,7 +1572,11 @@ function speak(line,directUrl){
     audio.onerror=()=>{ if(seq===_spSeq) fallbackSpeak(sayLine,stop,seq); };
     audio.play().catch(err=>{
       if(seq!==_spSeq) return;
-      if(!_audioOK && err && err.name==="NotAllowedError" && seq===1){ _pendingGreet={line,directUrl}; }
+      if(err && err.name==="NotAllowedError"){
+        if(!_audioOK && seq===1){ _pendingGreet={line,directUrl:url}; }
+        stop();
+        return;
+      }
       fallbackSpeak(sayLine,stop,seq);
     });
   }).catch(()=>{ if(seq===_spSeq) fallbackSpeak(sayLine,stop,seq); });
@@ -1473,11 +1589,16 @@ function fallbackSpeak(line,stop,seq){
       const audio=new Audio(fxSrc);
       _aud=audio;
       audio.onended=()=>{ if(seq===_spSeq) stop(); };
-      audio.onerror=()=>{ if(seq===_spSeq) synthFallback(line,stop,seq); };
-      audio.play().catch(()=>{ if(seq===_spSeq) synthFallback(line,stop,seq); });
+      audio.onerror=()=>{ if(seq===_spSeq) stop(); };
+      audio.play().catch(err=>{
+        if(seq!==_spSeq) return;
+        if(err && err.name==="NotAllowedError" && !_audioOK && seq===1){ _pendingGreet={line,directUrl:fxSrc}; }
+        stop();
+      });
       return;
     }catch(e){}
   }
+  if(!_audioOK){ if(seq===_spSeq) stop(); return; }
   synthFallback(line,stop,seq);
 }
 function synthFallback(line,stop,seq){
@@ -1512,6 +1633,7 @@ function setTab(id){
   if(id==="chat") initChat();
   syncTutor();
   window.scrollTo({top:0});
+  if(Mia && Mia.avoidText) requestAnimationFrame(()=>Mia.avoidText(520));
 }
 /* la princesa se planta como tutora mientras hay un ejercicio abierto en la pestaña
    Ejercicios; en cualquier otra pantalla vuelve a flotar. Única fuente de verdad. */
@@ -1580,6 +1702,7 @@ function paintExercise(ex,after,timer){
   curEx=ex; exAnswered=false;
   $("exQ").textContent=ex.q; $("exFb").textContent=""; $("exFb").className="feedback";
   const box=$("exOpts"); box.innerHTML=""; box.className="opts";
+  if(Mia && Mia.avoidText) requestAnimationFrame(()=>Mia.avoidText(520));
   if(ex.tipo==="ordenar") return paintOrdenar(ex,box,after);
   if(ex.tipo==="parejas") return paintParejas(ex,box,after);
   if(ex.tipo==="dis"){ paintDis(ex,box,after); if(timer) startExTimer(timer,box,after); return; }
@@ -3116,14 +3239,14 @@ $("btnExamenRev2").onclick=()=>{ if(!state.examen2.length){toast("Genera primero
 renderWallet(); renderSubjects(); renderShop(); renderReport(); renderAvatar(); updateExamUI();
 renderBoard(); renderBoardBar(); initChat(); setTab("ex");
 Mia.init();
-speak("¡Hola, "+(state.name||"Maitê")+"! "+LINES.greet);
+speak("¡Hola, "+(state.name||"Maitê")+"! "+LINES.greet, FX_AUDIO.saudacao.src);
 </script>
 <style>
 .mascot .avatar{background:linear-gradient(145deg,#ffe9b0,#ffd166);overflow:visible}
-#mia .gato-pet{position:absolute;left:-66px;bottom:0;width:84px;height:84px;aspect-ratio:1/1;z-index:10;cursor:pointer;
+#mia .gato-pet{position:absolute;left:-46px;bottom:0;width:56px;height:56px;aspect-ratio:1/1;z-index:10;cursor:pointer;
   opacity:1;pointer-events:auto;user-select:none;-webkit-tap-highlight-color:transparent;
   transform-origin:bottom center;transition:transform .45s cubic-bezier(.2,.9,.3,1.3)}
-#mia.tutor .gato-pet{left:-72px;width:90px;height:90px}
+#mia.tutor .gato-pet{left:-46px;width:62px;height:62px}
 #mia .gato-pet svg{width:100%;height:100%;display:block;opacity:1;overflow:visible;
   filter:drop-shadow(0 4px 6px rgba(34,18,6,.28))}
 #mia .gato-pet .gato-mouth-open{display:none;transform-box:fill-box;transform-origin:center}
@@ -3135,7 +3258,7 @@ speak("¡Hola, "+(state.name||"Maitê")+"! "+LINES.greet);
 #mia .gato-pet .gato-eye{transform-box:fill-box;transform-origin:center;animation:gatoPisca 4.2s infinite}
 #mia .gato-pet .gato-ear-l{transform-box:fill-box;transform-origin:78% 82%;animation:gatoOrelhaL 5.6s infinite}
 #mia .gato-pet .gato-ear-r{transform-box:fill-box;transform-origin:22% 82%;animation:gatoOrelhaR 6.9s infinite 1.8s}
-#mia .gato-pet.en-colo{transform:translate(72px,-58%) rotate(-6deg) scale(.86)}
+#mia .gato-pet.en-colo{transform:translate(56px,-58%) rotate(-6deg) scale(.86)}
 #mia .gato-pet.feliz,#mia .gato-pet.cheer{animation:gatoPula .9s cubic-bezier(.25,.9,.35,1)}
 #mia .gato-pet.feliz .gato-tail,#mia .gato-pet.cheer .gato-tail{animation:gatoRabo .42s ease-in-out 4}
 #mia .gato-pet.esfrega{animation:gatoEsfrega 1.5s ease-in-out}
