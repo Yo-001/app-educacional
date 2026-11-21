@@ -4,21 +4,21 @@
    "q": "¿Qué dos cosas llevaba Nora en su maleta?",
    "a": "Un libro de animales y una bufanda.",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "¿En qué consistía el juego del abuelo?",
    "a": "Describir un animal sin decir su nombre.",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "¿Por qué se puso la bufanda al llegar?",
    "a": "Las montañas estaban cubiertas de nieve.",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
@@ -73,84 +73,84 @@
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'sofá'.",
    "a": "A",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'canción'.",
    "a": "A",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'reloj'.",
    "a": "A",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'compás'.",
    "a": "A",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'lápiz'.",
    "a": "L",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'ventana'.",
    "a": "L",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'música'.",
    "a": "E",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'teléfono'.",
    "a": "E",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'pájaro'.",
    "a": "E",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'brújula'.",
    "a": "E",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'camino'.",
    "a": "L",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe A (aguda), L (llana) o E (esdrújula) para la palabra 'árbol'.",
    "a": "L",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
@@ -210,6 +210,169 @@
    "tipo": "escri"
   },
   {
+   "q": "Completa la palabra con m o n: «ca___pana».",
+   "a": "m",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "escri"
+  },
+  {
+   "q": "¿Cuántas sílabas tiene la palabra «mariposa»?",
+   "a": "4",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "4",
+    "3",
+    "5",
+    "2"
+   ]
+  },
+  {
+   "q": "¿Cuál es el antónimo de «subir»?",
+   "a": "bajar",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "bajar",
+    "trepar",
+    "saltar",
+    "correr"
+   ]
+  },
+  {
+   "q": "Une cada palabra con su antónimo:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Alto",
+     "Bajo"
+    ],
+    [
+     "Rápido",
+     "Lento"
+    ],
+    [
+     "Día",
+     "Noche"
+    ],
+    [
+     "Lleno",
+     "Vacío"
+    ]
+   ],
+   "a": "Alto-Rápido-Día-Lleno",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Empareja cada sustantivo con su artículo determinado:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "casa",
+     "la"
+    ],
+    [
+     "árbol",
+     "el"
+    ],
+    [
+     "flores",
+     "las"
+    ],
+    [
+     "libros",
+     "los"
+    ]
+   ],
+   "a": "casa-árbol-flores-libros",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Ordena estas palabras alfabéticamente:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Avión",
+    "Barco",
+    "Casa",
+    "Dado"
+   ],
+   "a": "Avión → Barco → Casa → Dado",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Ordena las palabras para formar una oración con sentido:",
+   "tipo": "ordenar",
+   "pasos": [
+    "El perro",
+    "corre",
+    "por el",
+    "parque"
+   ],
+   "a": "El perro → corre → por el → parque",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Di en voz alta un sinónimo de la palabra «contento».",
+   "a": "alegre",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Escribe el plural de la palabra «pez».",
+   "a": "peces",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "escri"
+  },
+  {
+   "q": "Escribe la palabra primitiva de la familia: «panadero, panadería, empanada».",
+   "a": "pan",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "escri"
+  },
+  {
+   "q": "Los nombres propios de personas y ciudades se escriben siempre con mayúscula inicial.",
+   "a": "Verdadero",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "vf",
+   "opts": [
+    "Verdadero",
+    "Falso"
+   ]
+  },
+  {
+   "q": "La palabra «sol» tiene dos sílabas.",
+   "a": "Falso",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "vf",
+   "opts": [
+    "Verdadero",
+    "Falso"
+   ]
+  },
+  {
+   "q": "¿Cuál de estas palabras es un sustantivo propio?",
+   "a": "Madrid",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "Madrid",
+    "ciudad",
+    "montaña",
+    "río"
+   ]
+  },
+  {
    "q": "Escribe la palabra 'timón' en su grupo (Agudas, Llanas, Esdrújulas).",
    "a": "AGUDAS",
    "tema": "do libro 📖",
@@ -255,36 +418,368 @@
    "q": "Escribe bien la palabra 'avion'. Pon tilde solo si la necesita.",
    "a": "avión",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe bien la palabra 'sabado'. Pon tilde solo si la necesita.",
    "a": "sábado",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe bien la palabra 'reloj'. Pon tilde solo si la necesita.",
    "a": "reloj",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Escribe bien la palabra 'cafe'. Pon tilde solo si la necesita.",
    "a": "café",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Tengo hojas y no soy árbol;\ncuento historias y no tengo voz.\nSoy:",
    "a": "Un libro",
    "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "¿Cuál es un sinónimo de la palabra «veloz»?",
+   "a": "rápido",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "rápido",
+    "lento",
+    "pesado",
+    "antiguo"
+   ]
+  },
+  {
+   "q": "En la frase «El perro negro corre», ¿qué palabra es un adjetivo?",
+   "a": "negro",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "negro",
+    "perro",
+    "corre",
+    "El"
+   ]
+  },
+  {
+   "q": "Según su sílaba tónica, ¿qué tipo de palabra es «árbol»?",
+   "a": "Llana",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "Llana",
+    "Aguda",
+    "Esdrújula",
+    "Monosílaba"
+   ]
+  },
+  {
+   "q": "¿Qué prefijo añadimos a «posible» para formar su antónimo?",
+   "a": "im-",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "im-",
+    "re-",
+    "sub-",
+    "pre-"
+   ]
+  },
+  {
+   "q": "Une cada palabra con su diminutivo:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Perro",
+     "Perrito"
+    ],
+    [
+     "Flor",
+     "Florecita"
+    ],
+    [
+     "Mesa",
+     "Mesita"
+    ],
+    [
+     "Árbol",
+     "Arbolito"
+    ]
+   ],
+   "a": "Perro-Flor-Mesa-Árbol",
+   "tema": "do libro 📖",
+   "dif": 2
+  },
+  {
+   "q": "Empareja cada palabra con su categoría gramatical:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Saltar",
+     "Verbo"
+    ],
+    [
+     "Bonito",
+     "Adjetivo"
+    ],
+    [
+     "Nosotros",
+     "Pronombre"
+    ],
+    [
+     "Mochila",
+     "Sustantivo"
+    ]
+   ],
+   "a": "Saltar-Bonito-Nosotros-Mochila",
+   "tema": "do libro 📖",
+   "dif": 2
+  },
+  {
+   "q": "Ordena las partes de una carta de principio a fin:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Fecha y lugar",
+    "Saludo",
+    "Cuerpo del texto",
+    "Despedida y firma"
+   ],
+   "a": "Fecha y lugar → Saludo → Cuerpo del texto → Despedida y firma",
+   "tema": "do libro 📖",
+   "dif": 2
+  },
+  {
+   "q": "Di en voz alta el tiempo verbal (pasado, presente o futuro) de «mañana estudiaré».",
+   "a": "futuro",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Di en voz alta si la palabra «canción» es aguda, llana o esdrújula.",
+   "a": "aguda",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Completa correctamente la palabra «ca__pana» escribiendo la palabra entera.",
+   "a": "campana",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "Añade el prefijo «des-» a «ordenar» y escribe la nueva palabra.",
+   "a": "desordenar",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "Las palabras que empiezan por «hie-» o «hue-» se escriben con h.",
+   "a": "Verdadero",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "vf",
+   "opts": [
+    "Verdadero",
+    "Falso"
+   ]
+  },
+  {
+   "q": "En la frase «La gata blanca duerme», ¿qué palabra es el adjetivo?",
+   "a": "blanca",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "blanca",
+    "gata",
+    "duerme",
+    "la"
+   ]
+  },
+  {
+   "q": "¿Qué palabra está escrita correctamente?",
+   "a": "alrededor",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "alrededor",
+    "alrrededor",
+    "harededor",
+    "alrededorr"
+   ]
+  },
+  {
+   "q": "¿En qué tiempo verbal está la forma «cantaré»?",
+   "a": "Futuro",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "Futuro",
+    "Pasado",
+    "Presente",
+    "Infinitivo"
+   ]
+  },
+  {
+   "q": "¿Qué palabra está escrita correctamente en castellano?",
+   "a": "estaba",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "estaba",
+    "estava",
+    "hestaba",
+    "estabha"
+   ]
+  },
+  {
+   "q": "¿Cuál de estas palabras es esdrújula y lleva tilde siempre?",
+   "a": "pájaro",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "pájaro",
+    "reloj",
+    "mesa",
+    "camión"
+   ]
+  },
+  {
+   "q": "Une cada palabra con su tipo según la sílaba tónica:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Reloj",
+     "Aguda"
+    ],
+    [
+     "Árbol",
+     "Llana"
+    ],
+    [
+     "Brújula",
+     "Esdrújula"
+    ],
+    [
+     "Sofá",
+     "Aguda con tilde"
+    ]
+   ],
+   "a": "Reloj-Árbol-Brújula-Sofá",
+   "tema": "do libro 📖",
+   "dif": 3
+  },
+  {
+   "q": "Ordena las partes de un cuento clásico:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Introducción",
+    "Nudo o conflicto",
+    "Clímax",
+    "Desenlace"
+   ],
+   "a": "Introducción → Nudo o conflicto → Clímax → Desenlace",
+   "tema": "do libro 📖",
+   "dif": 3
+  },
+  {
+   "q": "Ordena alfabéticamente estas palabras que empiezan igual:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Casa",
+    "Cascada",
+    "Casco",
+    "Castillo"
+   ],
+   "a": "Casa → Cascada → Casco → Castillo",
+   "tema": "do libro 📖",
+   "dif": 3
+  },
+  {
+   "q": "En «Los niños juegan en el patio», di en voz alta cuál es el verbo.",
+   "a": "juegan",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Di en voz alta la palabra compuesta formada por «para» y «aguas».",
+   "a": "paraguas",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Escribe el gentilicio de una persona nacida en Galicia (masculino singular).",
+   "a": "gallego",
+   "tema": "do libro 📖",
    "dif": 3,
    "tipo": "escri"
+  },
+  {
+   "q": "Todas las palabras esdrújulas en castellano llevan tilde.",
+   "a": "Verdadero",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "vf",
+   "opts": [
+    "Verdadero",
+    "Falso"
+   ]
+  },
+  {
+   "q": "La palabra «vosotros» es un pronombre personal de primera persona.",
+   "a": "Falso",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "vf",
+   "opts": [
+    "Verdadero",
+    "Falso"
+   ]
+  },
+  {
+   "q": "¿Cuál de estas palabras es polisémica porque tiene varios significados (instrumento, animal, parte del cuerpo)?",
+   "a": "gato",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "gato",
+    "hipopótamo",
+    "martillo",
+    "semáforo"
+   ]
+  },
+  {
+   "q": "¿Qué forma verbal está escrita correctamente?",
+   "a": "caminaba",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "caminaba",
+    "caminava",
+    "kaminaba",
+    "camynaba"
+   ]
   }
  ],
  "gal": [
@@ -308,6 +803,193 @@
    ]
   },
   {
+   "q": "Como se chama en galego a cría da vaca?",
+   "a": "becerro",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "becerro",
+    "cordeiro",
+    "poldro",
+    "leitón"
+   ]
+  },
+  {
+   "q": "Cal é o primeiro día da semana despois do domingo?",
+   "a": "luns",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "luns",
+    "martes",
+    "mércores",
+    "venres"
+   ]
+  },
+  {
+   "q": "Completa co artigo correcto: «___ árbore do xardín é moi alta».",
+   "a": "A",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "A",
+    "O",
+    "Os",
+    "Un"
+   ]
+  },
+  {
+   "q": "Cal é o antónimo da palabra «quente» en galego?",
+   "a": "frío",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "frío",
+    "morna",
+    "ardente",
+    "seco"
+   ]
+  },
+  {
+   "q": "Como se chama en galego o primeiro mes do ano?",
+   "a": "xaneiro",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "escri"
+  },
+  {
+   "q": "Une cada obxecto coa súa cor habitual en galego:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Limón",
+     "Amarelo"
+    ],
+    [
+     "Herba",
+     "Verde"
+    ],
+    [
+     "Ceo",
+     "Azul"
+    ],
+    [
+     "Neve",
+     "Branco"
+    ]
+   ],
+   "a": "Limón-Herba-Ceo-Neve",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Emparella cada membro da familia en galego co seu par:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Pai",
+     "Nai"
+    ],
+    [
+     "Avó",
+     "Avoa"
+    ],
+    [
+     "Irmán",
+     "Irmá"
+    ],
+    [
+     "Tío",
+     "Tía"
+    ]
+   ],
+   "a": "Pai-Avó-Irmán-Tío",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Ordena as catro estacións do ano comezando pola primavera:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Primavera",
+    "Verán",
+    "Outono",
+    "Inverno"
+   ],
+   "a": "Primavera → Verán → Outono → Inverno",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Toca en orde os catro primeiros días laborables da semana:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Luns",
+    "Martes",
+    "Mércores",
+    "Xoves"
+   ],
+   "a": "Luns → Martes → Mércores → Xoves",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Di en voz alta como se chama en galego o animal que fai «miau».",
+   "a": "gato",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Escribe como se di en galego «Buenos días».",
+   "a": "Bos días",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "escri"
+  },
+  {
+   "q": "Escribe o artigo feminino plural en galego para acompañar a «estrelas».",
+   "a": "as",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "escri"
+  },
+  {
+   "q": "En galego, a palabra «outono» refírese á estación na que caen as follas.",
+   "a": "Verdadeiro",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "vf",
+   "opts": [
+    "Verdadeiro",
+    "Falso"
+   ]
+  },
+  {
+   "q": "A letra «ñ» forma parte do alfabeto galego.",
+   "a": "Verdadeiro",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "vf",
+   "opts": [
+    "Verdadeiro",
+    "Falso"
+   ]
+  },
+  {
+   "q": "Como se chama en galego o obxecto que usamos para borrar o lapis?",
+   "a": "goma",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "goma",
+    "caderno",
+    "tesoiras",
+    "regra"
+   ]
+  },
+  {
    "q": "1. Escribe I, N ou D segundo a parte do conto.\nElín descobre unha rede na pata da ave.",
    "a": "N",
    "tema": "do libro 📖",
@@ -325,8 +1007,899 @@
    "q": "1. Escribe I, N ou D segundo a parte do conto.\nA muller retira a rede e a ave volve ao mar.",
    "a": "D",
    "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "Que palabra está escrita correctamente en galego?",
+   "a": "avó",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "avó",
+    "abó",
+    "avoo",
+    "habó"
+   ]
+  },
+  {
+   "q": "Escribe o plural da palabra galega «can».",
+   "a": "cans",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "Cal é o plural correcto da palabra «xornal»?",
+   "a": "xornais",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "xornais",
+    "xornales",
+    "xornals",
+    "xornás"
+   ]
+  },
+  {
+   "q": "Que palabra galega leva «ll» e significa parte da planta?",
+   "a": "folla",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "folla",
+    "foya",
+    "fola",
+    "follia"
+   ]
+  },
+  {
+   "q": "Cal é un sinónimo de «ledicia» en galego?",
+   "a": "alegría",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "alegría",
+    "tristeza",
+    "medo",
+    "rabia"
+   ]
+  },
+  {
+   "q": "Cal é o feminino de «rei» en galego?",
+   "a": "raíña",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "raíña",
+    "reia",
+    "princesa",
+    "duquesa"
+   ]
+  },
+  {
+   "q": "Une cada suma de preposición e artigo coa súa contracción galega:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "de + o",
+     "do"
+    ],
+    [
+     "en + a",
+     "na"
+    ],
+    [
+     "con + o",
+     "co"
+    ],
+    [
+     "por + a",
+     "pola"
+    ]
+   ],
+   "a": "de + o-en + a-con + o-por + a",
+   "tema": "do libro 📖",
+   "dif": 2
+  },
+  {
+   "q": "Emparella cada palabra galega co seu antónimo:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Grande",
+     "Pequeno"
+    ],
+    [
+     "Novo",
+     "Vello"
+    ],
+    [
+     "Claro",
+     "Escuro"
+    ],
+    [
+     "Doce",
+     "Amargo"
+    ]
+   ],
+   "a": "Grande-Novo-Claro-Doce",
+   "tema": "do libro 📖",
+   "dif": 2
+  },
+  {
+   "q": "Ordena alfabeticamente estas palabras galegas:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Auga",
+    "Bote",
+    "Camiño",
+    "Dente"
+   ],
+   "a": "Auga → Bote → Camiño → Dente",
+   "tema": "do libro 📖",
+   "dif": 2
+  },
+  {
+   "q": "Di en voz alta como se chama en galego a árbore que dá mazás.",
+   "a": "maceira",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Di en voz alta como se di o número 12 en galego.",
+   "a": "doce",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Escribe en galego o nome do líquido branco que sae das vacas.",
+   "a": "leite",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "Escribe o plural correcto en galego da palabra «irmán».",
+   "a": "irmáns",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "En galego, a palabra «ponte» é de xénero feminino («a ponte»).",
+   "a": "Verdadeiro",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "vf",
+   "opts": [
+    "Verdadeiro",
+    "Falso"
+   ]
+  },
+  {
+   "q": "Quen traballa no mar pescando peixes e marisco?",
+   "a": "mariñeiro",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "mariñeiro",
+    "panadeiro",
+    "carpinteiro",
+    "xardineiro"
+   ]
+  },
+  {
+   "q": "Que palabra galega está ben escrita co dígrafo «nh»?",
+   "a": "unha",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "unha",
+    "uña",
+    "unlla",
+    "una"
+   ]
+  },
+  {
+   "q": "Completa co verbo correcto: «Onte nós ___ ao museo».",
+   "a": "fomos",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "fomos",
+    "imos",
+    "iremos",
+    "vamos"
+   ]
+  },
+  {
+   "q": "Cal destas palabras é esdrúxula en galego?",
+   "a": "lámpara",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "lámpara",
+    "camión",
+    "xardín",
+    "caderno"
+   ]
+  },
+  {
+   "q": "Como se chama en galego a auga que cae das nubes en forma de pequenas bólas de xeo?",
+   "a": "sarabia",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "sarabia",
+    "orballo",
+    "néboa",
+    "brétema"
+   ]
+  },
+  {
+   "q": "Une cada árbore galega co seu froito:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Castiñeiro",
+     "Castaña"
+    ],
+    [
+     "Carballo",
+     "Landra"
+    ],
+    [
+     "Cerqueiro",
+     "Cereixa"
+    ],
+    [
+     "Nogueira",
+     "Noz"
+    ]
+   ],
+   "a": "Castiñeiro-Carballo-Cerqueiro-Nogueira",
+   "tema": "do libro 📖",
+   "dif": 3
+  },
+  {
+   "q": "Ordena os fragmentos para formar unha oración correcta en galego:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Os rapaces",
+    "leron un",
+    "conto moi",
+    "divertido"
+   ],
+   "a": "Os rapaces → leron un → conto moi → divertido",
+   "tema": "do libro 📖",
+   "dif": 3
+  },
+  {
+   "q": "Ordena os meses desde xuño ata setembro:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Xuño",
+    "Xullo",
+    "Agosto",
+    "Setembro"
+   ],
+   "a": "Xuño → Xullo → Agosto → Setembro",
+   "tema": "do libro 📖",
+   "dif": 3
+  },
+  {
+   "q": "Di en voz alta como se chama en galego a choiva moi fina e suave.",
+   "a": "orballo",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Di en voz alta o infinitivo do verbo na frase «mañá cantaremos unha canción».",
+   "a": "cantar",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Escribe con til diacrítico a palabra galega para unha esfera ou pelota pequena («bóla»).",
+   "a": "bóla",
+   "tema": "do libro 📖",
    "dif": 3,
    "tipo": "escri"
+  },
+  {
+   "q": "En galego, a palabra «xente» escríbese con x e non con j.",
+   "a": "Verdadeiro",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "vf",
+   "opts": [
+    "Verdadeiro",
+    "Falso"
+   ]
+  },
+  {
+   "q": "En galego correcto dise «eu dixen» e nunca «eu dicín».",
+   "a": "Verdadeiro",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "vf",
+   "opts": [
+    "Verdadeiro",
+    "Falso"
+   ]
+  },
+  {
+   "q": "Que significa a expresión galega «estar nas nubes»?",
+   "a": "Estar distraído",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "Estar distraído",
+    "Voar en avión",
+    "Ter moito frío",
+    "Chover forte"
+   ]
+  },
+  {
+   "q": "Cal é o plural correcto da palabra galega «animal»?",
+   "a": "animais",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "animais",
+    "animales",
+    "animals",
+    "animás"
+   ]
+  }
+ ],
+ "ingles": [
+  {
+   "q": "Complete the sentence: «She ___ my best friend.»",
+   "a": "is",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "is",
+    "are",
+    "am",
+    "be"
+   ]
+  },
+  {
+   "q": "Which day comes after Tuesday?",
+   "a": "Wednesday",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "Wednesday",
+    "Monday",
+    "Thursday",
+    "Sunday"
+   ]
+  },
+  {
+   "q": "Which animal lives in the sea and has eight arms?",
+   "a": "octopus",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "octopus",
+    "giraffe",
+    "rabbit",
+    "eagle"
+   ]
+  },
+  {
+   "q": "Write in English the number 15.",
+   "a": "fifteen",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "escri"
+  },
+  {
+   "q": "Which is the last month of the year in English?",
+   "a": "December",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "December",
+    "January",
+    "November",
+    "October"
+   ]
+  },
+  {
+   "q": "Match each English colour with its Spanish meaning:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Red",
+     "Rojo"
+    ],
+    [
+     "Blue",
+     "Azul"
+    ],
+    [
+     "Green",
+     "Verde"
+    ],
+    [
+     "Yellow",
+     "Amarillo"
+    ]
+   ],
+   "a": "Red-Blue-Green-Yellow",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Match each English animal with its Spanish translation:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Dog",
+     "Perro"
+    ],
+    [
+     "Cat",
+     "Gato"
+    ],
+    [
+     "Bird",
+     "Pájaro"
+    ],
+    [
+     "Fish",
+     "Pez"
+    ]
+   ],
+   "a": "Dog-Cat-Bird-Fish",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Tap the days of the week in order starting with Monday:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday"
+   ],
+   "a": "Monday → Tuesday → Wednesday → Thursday",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Order these English numbers from smallest to largest:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Two",
+    "Five",
+    "Eight",
+    "Ten"
+   ],
+   "a": "Two → Five → Eight → Ten",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Say aloud the English word for «manzana».",
+   "a": "apple",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "dis",
+   "lang": "en-US"
+  },
+  {
+   "q": "Write in English the word for «libro».",
+   "a": "book",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "escri"
+  },
+  {
+   "q": "Complete the sentence with one word: «I ___ nine years old.»",
+   "a": "am",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "escri"
+  },
+  {
+   "q": "In English, «nose» means «nariz».",
+   "a": "True",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "vf",
+   "opts": [
+    "True",
+    "False"
+   ]
+  },
+  {
+   "q": "In English, «sunny» means «lluvioso».",
+   "a": "False",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "vf",
+   "opts": [
+    "True",
+    "False"
+   ]
+  },
+  {
+   "q": "How do you say «hermana» in English?",
+   "a": "sister",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "sister",
+    "brother",
+    "mother",
+    "aunt"
+   ]
+  },
+  {
+   "q": "Choose the right option: «A bird ___ got wings.»",
+   "a": "has",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "has",
+    "have",
+    "is",
+    "do"
+   ]
+  },
+  {
+   "q": "Complete the sentence: «Fish can swim, but they ___ fly.»",
+   "a": "can't",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "can't",
+    "can",
+    "aren't",
+    "hasn't"
+   ]
+  },
+  {
+   "q": "Which of these foods is a vegetable?",
+   "a": "carrot",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "carrot",
+    "apple",
+    "cheese",
+    "bread"
+   ]
+  },
+  {
+   "q": "What is the plural of «child» in English?",
+   "a": "children",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "children",
+    "childs",
+    "childes",
+    "childrens"
+   ]
+  },
+  {
+   "q": "Complete: «Take your umbrella! It is ___ today.»",
+   "a": "raining",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "raining",
+    "sunny",
+    "hot",
+    "dry"
+   ]
+  },
+  {
+   "q": "Write the opposite of the adjective «fast» in English.",
+   "a": "slow",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "Match each room of the house with what it means:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Kitchen",
+     "Cocina"
+    ],
+    [
+     "Bedroom",
+     "Dormitorio"
+    ],
+    [
+     "Bathroom",
+     "Baño"
+    ],
+    [
+     "Garden",
+     "Jardín"
+    ]
+   ],
+   "a": "Kitchen-Bedroom-Bathroom-Garden",
+   "tema": "do libro 📖",
+   "dif": 2
+  },
+  {
+   "q": "Match each English adjective with its opposite:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Big",
+     "Small"
+    ],
+    [
+     "Hot",
+     "Cold"
+    ],
+    [
+     "Fast",
+     "Slow"
+    ],
+    [
+     "Happy",
+     "Sad"
+    ]
+   ],
+   "a": "Big-Hot-Fast-Happy",
+   "tema": "do libro 📖",
+   "dif": 2
+  },
+  {
+   "q": "Order these months from January to April:",
+   "tipo": "ordenar",
+   "pasos": [
+    "January",
+    "February",
+    "March",
+    "April"
+   ],
+   "a": "January → February → March → April",
+   "tema": "do libro 📖",
+   "dif": 2
+  },
+  {
+   "q": "Say aloud the English season when it is very cold and snows.",
+   "a": "winter",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "dis",
+   "lang": "en-US"
+  },
+  {
+   "q": "Say aloud the name of the big grey animal with a long trunk in English.",
+   "a": "elephant",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "dis",
+   "lang": "en-US"
+  },
+  {
+   "q": "Write the plural of «child» in English.",
+   "a": "children",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "Write in English the word for «zapatos».",
+   "a": "shoes",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "We say «an elephant» because «elephant» starts with a vowel sound.",
+   "a": "True",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "vf",
+   "opts": [
+    "True",
+    "False"
+   ]
+  },
+  {
+   "q": "Choose the correct option: «Tom ___ football every Saturday.»",
+   "a": "plays",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "plays",
+    "play",
+    "playing",
+    "is play"
+   ]
+  },
+  {
+   "q": "What does «half past three» mean?",
+   "a": "3:30",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "3:30",
+    "3:15",
+    "3:45",
+    "3:00"
+   ]
+  },
+  {
+   "q": "Complete with the correct preposition: «My birthday is ___ May.»",
+   "a": "in",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "in",
+    "on",
+    "at",
+    "under"
+   ]
+  },
+  {
+   "q": "Choose the correct verb form: «Tom ___ football every Saturday.»",
+   "a": "plays",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "plays",
+    "play",
+    "playing",
+    "to play"
+   ]
+  },
+  {
+   "q": "How do you say «Son las tres y media» in English?",
+   "a": "half past three",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "half past three",
+    "three o'clock",
+    "quarter to three",
+    "quarter past three"
+   ]
+  },
+  {
+   "q": "Match each English question word with its meaning:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Who",
+     "Quién"
+    ],
+    [
+     "Where",
+     "Dónde"
+    ],
+    [
+     "When",
+     "Cuándo"
+    ],
+    [
+     "Why",
+     "Por qué"
+    ]
+   ],
+   "a": "Who-Where-When-Why",
+   "tema": "do libro 📖",
+   "dif": 3
+  },
+  {
+   "q": "Order the words to make a correct English sentence:",
+   "tipo": "ordenar",
+   "pasos": [
+    "She",
+    "always",
+    "reads",
+    "books"
+   ],
+   "a": "She → always → reads → books",
+   "tema": "do libro 📖",
+   "dif": 3
+  },
+  {
+   "q": "Order these daily routine actions from morning to night:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Wake up",
+    "Have breakfast",
+    "Go to school",
+    "Go to sleep"
+   ],
+   "a": "Wake up → Have breakfast → Go to school → Go to sleep",
+   "tema": "do libro 📖",
+   "dif": 3
+  },
+  {
+   "q": "Say aloud the English place where you go to borrow books.",
+   "a": "library",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "dis",
+   "lang": "en-US"
+  },
+  {
+   "q": "Say aloud the English day that comes after Friday.",
+   "a": "Saturday",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "dis",
+   "lang": "en-US"
+  },
+  {
+   "q": "Write the past simple of the verb «go» in English.",
+   "a": "went",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "escri"
+  },
+  {
+   "q": "We use «There are» for plural nouns, like «There are three cats».",
+   "a": "True",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "vf",
+   "opts": [
+    "True",
+    "False"
+   ]
+  },
+  {
+   "q": "The word «their» is used to talk about something belonging to «they».",
+   "a": "True",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "vf",
+   "opts": [
+    "True",
+    "False"
+   ]
+  },
+  {
+   "q": "Choose the right comparative: «A cheetah is ___ than a turtle.»",
+   "a": "faster",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "faster",
+    "fastest",
+    "more fast",
+    "fast"
+   ]
+  },
+  {
+   "q": "Complete the sentence: «The cat is hiding ___ the table.»",
+   "a": "under",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "under",
+    "between",
+    "into",
+    "through"
+   ]
   }
  ],
  "mat": [
@@ -369,7 +1942,7 @@
    "q": "Ana tiene una colección de 178 cromos de motos y Javier tiene una colección de 245 cromos de animales.\n¿Cuántos cromos tienen en total?\n2. Piensa qué hay que hacer.",
    "a": "una suma.",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "opts": [
     "una suma.",
     "una multiplicación.",
@@ -381,7 +1954,7 @@
    "q": "En la estantería del salón hay colocados 127 libros de historia y 76 libros de cuentos.\n¿Cuántos libros hay en la estantería?\n2. Piensa qué hay que hacer.",
    "a": "una suma.",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "opts": [
     "una suma.",
     "una multiplicación.",
@@ -491,70 +2064,70 @@
    "q": "1. Completa las dos descomposiciones de cada número.\n3862\nPosición:",
    "a": "3 UM + 8 C + 6 D + 2 U",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "1. Completa las dos descomposiciones de cada número.\n3862\nValor:",
    "a": "3000 + 800 + 60 + 2",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "1. Completa las dos descomposiciones de cada número.\n5047\nPosición:",
    "a": "5 UM + 0 C + 4 D + 7 U",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "1. Completa las dos descomposiciones de cada número.\n5047\nValor:",
    "a": "5000 + 0 + 40 + 7",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "1. Completa las dos descomposiciones de cada número.\n7219\nPosición:",
    "a": "7 UM + 2 C + 1 D + 9 U",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "1. Completa las dos descomposiciones de cada número.\n7219\nValor:",
    "a": "7000 + 200 + 10 + 9",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "1. Completa las dos descomposiciones de cada número.\n9405\nPosición:",
    "a": "9 UM + 4 C + 0 D + 5 U",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "1. Completa las dos descomposiciones de cada número.\n9405\nValor:",
    "a": "9000 + 400 + 0 + 5",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "1. Completa las dos descomposiciones de cada número.\n1680\nPosición:",
    "a": "1 UM + 6 C + 8 D + 0 U",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "1. Completa las dos descomposiciones de cada número.\n1680\nValor:",
    "a": "1000 + 600 + 80 + 0",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
@@ -575,224 +2148,224 @@
    "q": "Descompón como en el ejemplo. Incluye los ceros.\n2.581 =",
    "a": "2.000 + 500 + 80 + 1",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Descompón como en el ejemplo. Incluye los ceros.\n4.306 =",
    "a": "4.000 + 300 + 0 + 6",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Descompón como en el ejemplo. Incluye los ceros.\n6.070 =",
    "a": "6.000 + 0 + 70 + 0",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Descompón como en el ejemplo. Incluye los ceros.\n8.009 =",
    "a": "8.000 + 0 + 0 + 9",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Reúne las piezas y escribe el número.\n5.000 + 200 + 30 + 8 =",
    "a": "5.238",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Reúne las piezas y escribe el número.\n7 + 0 + 60 + 4 =",
    "a": "71",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe con letra el número 1.245.",
    "a": "mil doscientos cuarenta y cinco",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe con letra el número 3.608.",
    "a": "tres mil seiscientos ocho",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe con letra el número 5.070.",
    "a": "cinco mil setenta",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe con letra el número 8.019.",
    "a": "ocho mil diecinueve",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe con cifras el número Dos mil trescientos dieciséis.",
    "a": "2.316",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe con cifras el número Cuatro mil noventa.",
    "a": "4.090",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe con cifras el número Seis mil setecientos cinco.",
    "a": "6.705",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe con cifras el número Nueve mil ocho.",
    "a": "9.008",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Completa la siguiente serie: 1.000 1.100 1.200 __ 1.400 1.600 1.800",
    "a": "1.300",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Completa la siguiente serie: 1.000 2.000 3.000 __",
    "a": "4.000",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Completa la siguiente serie: 5.900 5.800 5.700 __",
    "a": "5.600",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe el número: cuatro mil trescientos cuatro",
    "a": "4.304",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe el número: tres mil noventa y ocho",
    "a": "3.098",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe el número: cinco mil setecientos noventa",
    "a": "5.790",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe el número: nueve mil setecientos setenta y nueve",
    "a": "9.779",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe cómo se lee el número: 3.617",
    "a": "tres mil seiscientos diecisiete",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe cómo se lee el número: 9.909",
    "a": "nueve mil novecientos nueve",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe cómo se lee el número: 5.010",
    "a": "cinco mil diez",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "ochocientos ochenta y uno se lee: ____________",
    "a": "881",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "quinientos quince se lee: ____________",
    "a": "515",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "novecientos noventa se lee: ____________",
    "a": "990",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "setecientos cinco se lee: ____________",
    "a": "705",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "¿Cuántos hay? Completa.\n3 centenas 5 decenas se lee: ____________",
    "a": "trescientos cincuenta",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "¿Cuántos hay? Completa.\n8 centenas 9 decenas 3 unidades se lee: ____________",
    "a": "ochocientos noventa y tres",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "¿Cuántos hay? Completa.\n3 centenas 5 unidades se lee: ____________",
    "a": "trescientos cinco",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "¿Cuántos hay? Completa.\n7 centenas 6 decenas 9 unidades se lee: ____________",
    "a": "setecientos sesenta y nueve",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 1,
    "tipo": "escri"
   },
   {
@@ -806,29 +2379,187 @@
    "q": "Escribe cómo se lee cada número:\n909",
    "a": "novecientos nueve",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe cómo se lee cada número:\n330",
    "a": "trescientos treinta",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe cómo se lee cada número:\n612",
    "a": "seiscientos doce",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
   },
   {
    "q": "Escribe cómo se lee cada número:\n878",
    "a": "ochocientos setenta y ocho",
    "tema": "do libro 📖",
-   "dif": 2,
+   "dif": 1,
    "tipo": "escri"
+  },
+  {
+   "q": "¿Qué número se forma con 3 centenas, 4 decenas y 5 unidades?",
+   "a": "345",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "escri"
+  },
+  {
+   "q": "¿Cuál es el doble del número 18?",
+   "a": "36",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "escri"
+  },
+  {
+   "q": "¿Cuál es la mitad de 48?",
+   "a": "24",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "24",
+    "22",
+    "26",
+    "14"
+   ]
+  },
+  {
+   "q": "Une cada suma sencilla con su resultado correcto:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "7 + 5",
+     "12"
+    ],
+    [
+     "9 + 6",
+     "15"
+    ],
+    [
+     "8 + 8",
+     "16"
+    ],
+    [
+     "4 + 9",
+     "13"
+    ]
+   ],
+   "a": "7 + 5-9 + 6-8 + 8-4 + 9",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Empareja cada número con su descomposición en decenas y unidades:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "34",
+     "3D + 4U"
+    ],
+    [
+     "52",
+     "5D + 2U"
+    ],
+    [
+     "78",
+     "7D + 8U"
+    ],
+    [
+     "91",
+     "9D + 1U"
+    ]
+   ],
+   "a": "34-52-78-91",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Toca estos números de menor a mayor:",
+   "tipo": "ordenar",
+   "pasos": [
+    "148",
+    "235",
+    "419",
+    "602"
+   ],
+   "a": "148 → 235 → 419 → 602",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Ordena estas unidades de tiempo de la más corta a la más larga:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Segundo",
+    "Minuto",
+    "Hora",
+    "Día"
+   ],
+   "a": "Segundo → Minuto → Hora → Día",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Di en voz alta cuánto es 6 por 4.",
+   "a": "24",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Escribe el resultado de restar 50 menos 18.",
+   "a": "32",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "escri"
+  },
+  {
+   "q": "Escribe el número posterior a 399.",
+   "a": "400",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "escri"
+  },
+  {
+   "q": "¿Es cierto que un triángulo tiene exactamente tres lados?",
+   "a": "Verdadero",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "vf",
+   "opts": [
+    "Verdadero",
+    "Falso"
+   ]
+  },
+  {
+   "q": "El número 47 es un número par.",
+   "a": "Falso",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "vf",
+   "opts": [
+    "Verdadero",
+    "Falso"
+   ]
+  },
+  {
+   "q": "Si tienes dos monedas de 50 céntimos, ¿cuánto dinero tienes en total?",
+   "a": "1 euro",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "1 euro",
+    "2 euros",
+    "50 céntimos",
+    "10 euros"
+   ]
   },
   {
    "q": "(7+9)+3 = 7 + (__ + __)",
@@ -841,14 +2572,14 @@
    "q": "Ana tiene una colección de 178 cromos de motos y Javier tiene una colección de 245 cromos de animales.\n¿Cuántos cromos tienen en total?\n3. Calcula.\nRespuesta:",
    "a": "423",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "En la estantería del salón hay colocados 127 libros de historia y 76 libros de cuentos.\n¿Cuántos libros hay en la estantería?\n3. Calcula.\nRespuesta:",
    "a": "203",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 2,
    "tipo": "escri"
   },
   {
@@ -862,29 +2593,1431 @@
    "q": "En una carrera, Ana va 4.ª y adelanta a quien va 3.º. ¿Qué posición ocupa ahora Ana?",
    "a": "3.ª",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "En una tienda había 2.475 postales. Han recibido 1.368 postales más. ¿Cuántas postales hay ahora?",
    "a": "3843",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Un museo tenía 5.000 entradas. Se han vendido 2.746. ¿Cuántas entradas quedan por vender?",
    "a": "2254",
    "tema": "do libro 📖",
-   "dif": 3,
+   "dif": 2,
    "tipo": "escri"
   },
   {
    "q": "Una familia recorre 1.285 km en una etapa y 1.476 km en otra. ¿Cuántos kilómetros recorre en total?",
    "a": "2761",
    "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "¿Cuántos minutos hay en 2 horas?",
+   "a": "120",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "¿Cuántos centímetros son 3 metros?",
+   "a": "300",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "300",
+    "30",
+    "3000",
+    "3"
+   ]
+  },
+  {
+   "q": "¿Cuántos lados tiene un hexágono?",
+   "a": "6",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "6",
+    "5",
+    "7",
+    "8"
+   ]
+  },
+  {
+   "q": "En una caja hay 8 lápices. ¿Cuántos lápices habrá en 7 cajas iguales?",
+   "a": "56",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "Une cada multiplicación con su producto:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "6 × 7",
+     "42"
+    ],
+    [
+     "8 × 5",
+     "40"
+    ],
+    [
+     "9 × 4",
+     "36"
+    ],
+    [
+     "7 × 8",
+     "56"
+    ]
+   ],
+   "a": "6 × 7-8 × 5-9 × 4-7 × 8",
+   "tema": "do libro 📖",
+   "dif": 2
+  },
+  {
+   "q": "Empareja cada polígono con su número de lados:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Triángulo",
+     "3 lados"
+    ],
+    [
+     "Cuadrado",
+     "4 lados"
+    ],
+    [
+     "Pentágono",
+     "5 lados"
+    ],
+    [
+     "Hexágono",
+     "6 lados"
+    ]
+   ],
+   "a": "Triángulo-Cuadrado-Pentágono-Hexágono",
+   "tema": "do libro 📖",
+   "dif": 2
+  },
+  {
+   "q": "Ordena estas longitudes de menor a mayor:",
+   "tipo": "ordenar",
+   "pasos": [
+    "50 cm",
+    "1 m",
+    "150 cm",
+    "2 m"
+   ],
+   "a": "50 cm → 1 m → 150 cm → 2 m",
+   "tema": "do libro 📖",
+   "dif": 2
+  },
+  {
+   "q": "Di en voz alta el doble de 35.",
+   "a": "70",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Di en voz alta cuánto es 45 dividido entre 5.",
+   "a": "9",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Calcula y escribe el resultado de 23 × 4.",
+   "a": "92",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "Un álbum cuesta 14 euros y compras 2 iguales. ¿Cuántos euros pagas?",
+   "a": "28",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "En un reloj analógico, media hora equivale a 30 minutos.",
+   "a": "Verdadero",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "vf",
+   "opts": [
+    "Verdadero",
+    "Falso"
+   ]
+  },
+  {
+   "q": "¿Qué valor tiene la cifra 6 en el número 4.620?",
+   "a": "600",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "600",
+    "60",
+    "6.000",
+    "6"
+   ]
+  },
+  {
+   "q": "¿Cómo se llama el ángulo que mide exactamente 90 grados?",
+   "a": "Ángulo recto",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "Ángulo recto",
+    "Ángulo agudo",
+    "Ángulo obtuso",
+    "Ángulo llano"
+   ]
+  },
+  {
+   "q": "Si repartimos 72 caramelos en 8 bolsas iguales, ¿cuántos caramelos van en cada bolsa?",
+   "a": "9",
+   "tema": "do libro 📖",
    "dif": 3,
    "tipo": "escri"
+  },
+  {
+   "q": "¿Cuál es el perímetro de un cuadrado cuyo lado mide 9 cm?",
+   "a": "36 cm",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "36 cm",
+    "18 cm",
+    "81 cm",
+    "27 cm"
+   ]
+  },
+  {
+   "q": "Si divides una pizza en 4 trozos iguales y te comes 1 trozo, ¿qué fracción representa lo que comiste?",
+   "a": "1/4",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "1/4",
+    "4/1",
+    "1/3",
+    "3/4"
+   ]
+  },
+  {
+   "q": "Empareja cada fracción con su lectura correcta:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "1/2",
+     "Un medio"
+    ],
+    [
+     "1/3",
+     "Un tercio"
+    ],
+    [
+     "3/4",
+     "Tres cuartos"
+    ],
+    [
+     "2/5",
+     "Dos quintos"
+    ]
+   ],
+   "a": "1/2-1/3-3/4-2/5",
+   "tema": "do libro 📖",
+   "dif": 3
+  },
+  {
+   "q": "Ordena estas fracciones de menor a mayor:",
+   "tipo": "ordenar",
+   "pasos": [
+    "1/8",
+    "3/8",
+    "5/8",
+    "7/8"
+   ],
+   "a": "1/8 → 3/8 → 5/8 → 7/8",
+   "tema": "do libro 📖",
+   "dif": 3
+  },
+  {
+   "q": "Ordena los pasos para resolver un problema matemático:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Leer el enunciado",
+    "Anotar los datos",
+    "Elegir la operación",
+    "Comprobar el resultado"
+   ],
+   "a": "Leer el enunciado → Anotar los datos → Elegir la operación → Comprobar el resultado",
+   "tema": "do libro 📖",
+   "dif": 3
+  },
+  {
+   "q": "Di en voz alta el perímetro de un triángulo equilátero de 12 cm de lado.",
+   "a": "36",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Di en voz alta cuánto es 72 dividido entre 8.",
+   "a": "9",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "¿Cuántos cuartos de litro hay en 3 litros? Escribe el número.",
+   "a": "12",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "escri"
+  },
+  {
+   "q": "Dos rectas paralelas se cortan siempre en un punto.",
+   "a": "Falso",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "vf",
+   "opts": [
+    "Verdadero",
+    "Falso"
+   ]
+  },
+  {
+   "q": "En una multiplicación, cambiar el orden de los factores no altera el producto.",
+   "a": "Verdadero",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "vf",
+   "opts": [
+    "Verdadero",
+    "Falso"
+   ]
+  },
+  {
+   "q": "Repartimos 29 caramelos en bolsas de 4. ¿Cuántos caramelos sobran sin bolsa?",
+   "a": "1",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "1",
+    "2",
+    "3",
+    "7"
+   ]
+  },
+  {
+   "q": "¿Cuántos gramos son 2 kilogramos y medio?",
+   "a": "2.500 g",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "2.500 g",
+    "250 g",
+    "2.050 g",
+    "5.000 g"
+   ]
+  }
+ ],
+ "nat": [
+  {
+   "q": "¿Cómo se llaman los animales que tienen columna vertebral?",
+   "a": "Vertebrados",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "Vertebrados",
+    "Invertebrados",
+    "Moluscos",
+    "Insectos"
+   ]
+  },
+  {
+   "q": "¿Cómo se llaman los animales que nacen de un huevo?",
+   "a": "Ovíparos",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "Ovíparos",
+    "Vivíparos",
+    "Herbívoros",
+    "Omnívoros"
+   ]
+  },
+  {
+   "q": "¿Qué parte de la planta absorbe el agua y las sales minerales del suelo?",
+   "a": "La raíz",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "La raíz",
+    "El tallo",
+    "La hoja",
+    "La flor"
+   ]
+  },
+  {
+   "q": "¿Cuál es el órgano principal del sentido del oído?",
+   "a": "El oído",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "El oído",
+    "La lengua",
+    "La piel",
+    "La nariz"
+   ]
+  },
+  {
+   "q": "¿En qué estado se encuentra el agua cuando forma hielo?",
+   "a": "Sólido",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "Sólido",
+    "Líquido",
+    "Gaseoso",
+    "Vapor"
+   ]
+  },
+  {
+   "q": "Une cada sentido co órgano do corpo correspondente:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Vista",
+     "Ollos"
+    ],
+    [
+     "Oído",
+     "Orellas"
+    ],
+    [
+     "Olfacto",
+     "Nariz"
+    ],
+    [
+     "Gusto",
+     "Lingua"
+    ]
+   ],
+   "a": "Vista-Oído-Olfacto-Gusto",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Emparella cada animal coa forma principal na que se despraza:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Aguia",
+     "Voa"
+    ],
+    [
+     "Sardiña",
+     "Nada"
+    ],
+    [
+     "Cabalo",
+     "Corre"
+    ],
+    [
+     "Serpe",
+     "Repta"
+    ]
+   ],
+   "a": "Aguia-Sardiña-Cabalo-Serpe",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Ordena as etapas do crecemento dunha planta desde a semente:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Semente",
+    "Raíz",
+    "Talo",
+    "Follas e flor"
+   ],
+   "a": "Semente → Raíz → Talo → Follas e flor",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Ordena as etapas da vida humana de menor a maior idade:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Infancia",
+    "Adolescencia",
+    "Idade adulta",
+    "Vellez"
+   ],
+   "a": "Infancia → Adolescencia → Idade adulta → Vellez",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Di en voz alta que estrela dá a luz que necesitan as plantas para medrar.",
+   "a": "sol",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Escribe o nome da función vital pola que os seres vivos teñen crías.",
+   "a": "reprodución",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "escri"
+  },
+  {
+   "q": "Escribe como se chama a auga en estado sólido polo frío.",
+   "a": "xeo",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "escri"
+  },
+  {
+   "q": "Unha pedra é un ser vivo porque está na natureza.",
+   "a": "Falso",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "vf",
+   "opts": [
+    "Verdadeiro",
+    "Falso"
+   ]
+  },
+  {
+   "q": "Os animais vertebrados teñen esqueleto interno con columna vertebral.",
+   "a": "Verdadeiro",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "vf",
+   "opts": [
+    "Verdadeiro",
+    "Falso"
+   ]
+  },
+  {
+   "q": "Que parte da planta absorbe a auga e os sales minerais do solo?",
+   "a": "A raíz",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "A raíz",
+    "A folla",
+    "O pétalo",
+    "O froito"
+   ]
+  },
+  {
+   "q": "¿Cómo se llama el proceso por el que las plantas fabrican su propio alimento con luz solar?",
+   "a": "Fotosíntesis",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "Fotosíntesis",
+    "Digestión",
+    "Respiración",
+    "Evaporación"
+   ]
+  },
+  {
+   "q": "¿Qué órgano bombea la sangre por todo el cuerpo?",
+   "a": "El corazón",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "El corazón",
+    "El estómago",
+    "El pulmón",
+    "El hígado"
+   ]
+  },
+  {
+   "q": "¿Cómo se llaman los dos órganos principales con los que respiramos?",
+   "a": "Pulmones",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "¿Cómo se llama un animal que come tanto plantas como carne?",
+   "a": "Omnívoro",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "Omnívoro",
+    "Carnívoro",
+    "Herbívoro",
+    "Descomponedor"
+   ]
+  },
+  {
+   "q": "¿A qué grupo de vertebrados pertenecen las ranas y los sapos?",
+   "a": "Anfibios",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "Anfibios",
+    "Reptiles",
+    "Peces",
+    "Mamíferos"
+   ]
+  },
+  {
+   "q": "Une cada animal co grupo de vertebrados ao que pertence:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Balea",
+     "Mamífero"
+    ],
+    [
+     "Ra",
+     "Anfibio"
+    ],
+    [
+     "Lagarto",
+     "Réptil"
+    ],
+    [
+     "Troita",
+     "Peixe"
+    ]
+   ],
+   "a": "Balea-Ra-Lagarto-Troita",
+   "tema": "do libro 📖",
+   "dif": 2
+  },
+  {
+   "q": "Emparella cada aparello do corpo coa súa función:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Dixestivo",
+     "Dixire alimentos"
+    ],
+    [
+     "Respiratorio",
+     "Toma osíxeno"
+    ],
+    [
+     "Circulatorio",
+     "Move o sangue"
+    ],
+    [
+     "Locomotor",
+     "Permite o movemento"
+    ]
+   ],
+   "a": "Dixestivo-Respiratorio-Circulatorio-Locomotor",
+   "tema": "do libro 📖",
+   "dif": 2
+  },
+  {
+   "q": "Ordena esta cadea alimentaria desde o produtor ata o último consumidor:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Herba",
+    "Coello",
+    "Raposo",
+    "Aguia"
+   ],
+   "a": "Herba → Coello → Raposo → Aguia",
+   "tema": "do libro 📖",
+   "dif": 2
+  },
+  {
+   "q": "Di en voz alta o nome do proceso polo que as plantas fabrican o seu alimento coa luz.",
+   "a": "fotosíntese",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Di en voz alta o nome dos dous órganos esponxosos cos que respiramos.",
+   "a": "pulmóns",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Como se chaman os animais que só comen plantas? Escribe a palabra.",
+   "a": "herbívoros",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "Escribe o nome da substancia verde das follas que capta a luz solar.",
+   "a": "clorofila",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "As aves e a maioría dos réptiles son animais ovíparos porque nacen de ovos.",
+   "a": "Verdadeiro",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "vf",
+   "opts": [
+    "Verdadeiro",
+    "Falso"
+   ]
+  },
+  {
+   "q": "A que reino pertencen os cogomelos e os lévedos?",
+   "a": "Fungos",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "Fungos",
+    "Plantas",
+    "Moneras",
+    "Protistas"
+   ]
+  },
+  {
+   "q": "Cal destes alimentos pertence ao grupo das froitas e achega moitas vitaminas?",
+   "a": "laranxa",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "laranxa",
+    "manteiga",
+    "pan",
+    "queixo"
+   ]
+  },
+  {
+   "q": "En una cadena alimentaria, ¿qué seres vivos son los productores?",
+   "a": "Las plantas",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "Las plantas",
+    "Los leones",
+    "Las bacterias",
+    "Los zorros"
+   ]
+  },
+  {
+   "q": "¿Cómo se llama el paso del agua líquida a vapor de agua al calentarse?",
+   "a": "Evaporación",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "Evaporación",
+    "Condensación",
+    "Solidificación",
+    "Fusión"
+   ]
+  },
+  {
+   "q": "¿Cuántos huesos tiene aproximadamente el cuerpo humano adulto?",
+   "a": "206",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "206",
+    "50",
+    "900",
+    "12"
+   ]
+  },
+  {
+   "q": "¿Qué fuente de energía renovable aprovecha la fuerza del viento?",
+   "a": "Energía eólica",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "Energía eólica",
+    "Energía solar",
+    "Energía nuclear",
+    "Carbón"
+   ]
+  },
+  {
+   "q": "Une cada cambio de estado da auga coa súa descrición:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Fusión",
+     "De sólido a líquido"
+    ],
+    [
+     "Evaporación",
+     "De líquido a gas"
+    ],
+    [
+     "Solidificación",
+     "De líquido a sólido"
+    ],
+    [
+     "Condensación",
+     "De gas a líquido"
+    ]
+   ],
+   "a": "Fusión-Evaporación-Solidificación-Condensación",
+   "tema": "do libro 📖",
+   "dif": 3
+  },
+  {
+   "q": "Ordena as catro fases principais do ciclo da auga:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Evaporación",
+    "Condensación",
+    "Precipitación",
+    "Retorno ao mar"
+   ],
+   "a": "Evaporación → Condensación → Precipitación → Retorno ao mar",
+   "tema": "do libro 📖",
+   "dif": 3
+  },
+  {
+   "q": "Ordena o percorrido dos alimentos polo tubo dixestivo:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Boca",
+    "Esófago",
+    "Estómago",
+    "Intestinos"
+   ],
+   "a": "Boca → Esófago → Estómago → Intestinos",
+   "tema": "do libro 📖",
+   "dif": 3
+  },
+  {
+   "q": "Di en voz alta o gas que liberan as plantas ao aire durante a fotosíntese.",
+   "a": "osíxeno",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Di en voz alta como se chama a unidade máis pequena que forma todos os seres vivos.",
+   "a": "célula",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Escribe como se chama o conxunto formado polos seres vivos e o medio físico onde viven.",
+   "a": "ecosistema",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "escri"
+  },
+  {
+   "q": "Os anfibios sofren metamorfose ao pasar de cágados acuáticos a adultos.",
+   "a": "Verdadeiro",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "vf",
+   "opts": [
+    "Verdadeiro",
+    "Falso"
+   ]
+  },
+  {
+   "q": "O carbón e o petróleo son fontes de enerxía renovables que nunca se esgotan.",
+   "a": "Falso",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "vf",
+   "opts": [
+    "Verdadeiro",
+    "Falso"
+   ]
+  },
+  {
+   "q": "Cal é a parte feminina da flor onde se atopan os óvulos?",
+   "a": "O pistilo",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "O pistilo",
+    "O estame",
+    "O cáliz",
+    "A corola"
+   ]
+  },
+  {
+   "q": "Cal destas opcións é unha máquina simple?",
+   "a": "polea",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "polea",
+    "ordenador",
+    "lavadora",
+    "automóbil"
+   ]
+  }
+ ],
+ "soc": [
+  {
+   "q": "¿Cuántas provincias tiene la comunidad autónoma de Galicia?",
+   "a": "4",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "escri"
+  },
+  {
+   "q": "¿Cuál es la capital de Galicia?",
+   "a": "Santiago de Compostela",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "Santiago de Compostela",
+    "A Coruña",
+    "Vigo",
+    "Lugo"
+   ]
+  },
+  {
+   "q": "¿Por qué punto cardinal sale el Sol cada mañana?",
+   "a": "Este",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "Este",
+    "Oeste",
+    "Norte",
+    "Sur"
+   ]
+  },
+  {
+   "q": "¿Cuál de estas provincias gallegas NO tiene costa?",
+   "a": "Ourense",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "Ourense",
+    "Pontevedra",
+    "A Coruña",
+    "Lugo"
+   ]
+  },
+  {
+   "q": "¿Cómo se llama el único satélite natural de la Tierra?",
+   "a": "Luna",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "escri"
+  },
+  {
+   "q": "Une cada provincia galega coa súa cidade capital:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "A Coruña",
+     "A Coruña"
+    ],
+    [
+     "Lugo",
+     "Lugo"
+    ],
+    [
+     "Ourense",
+     "Ourense"
+    ],
+    [
+     "Pontevedra",
+     "Pontevedra"
+    ]
+   ],
+   "a": "A Coruña-Lugo-Ourense-Pontevedra",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Emparella cada astro coa súa característica principal:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Sol",
+     "Estrela central"
+    ],
+    [
+     "Terra",
+     "Planeta onde vivimos"
+    ],
+    [
+     "Lúa",
+     "Satélite da Terra"
+    ],
+    [
+     "Marte",
+     "Planeta vermello"
+    ]
+   ],
+   "a": "Sol-Terra-Lúa-Marte",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Ordena estas etapas históricas da máis antiga á máis actual:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Prehistoria",
+    "Idade Antiga",
+    "Idade Media",
+    "Idade Contemporánea"
+   ],
+   "a": "Prehistoria → Idade Antiga → Idade Media → Idade Contemporánea",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Ordena estes lugares do máis pequeno ao máis grande:",
+   "tipo": "ordenar",
+   "pasos": [
+    "A miña rúa",
+    "O meu concello",
+    "Galicia",
+    "Europa"
+   ],
+   "a": "A miña rúa → O meu concello → Galicia → Europa",
+   "tema": "do libro 📖",
+   "dif": 1
+  },
+  {
+   "q": "Di en voz alta por que punto cardinal sae o Sol cada mañá.",
+   "a": "leste",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Escribe o nome da capital de Galicia.",
+   "a": "Santiago de Compostela",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "escri"
+  },
+  {
+   "q": "Cantos días tarda a Terra en dar unha volta completa arredor do Sol? Escribe só o número.",
+   "a": "365",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "escri"
+  },
+  {
+   "q": "O movemento de rotación da Terra sobre si mesma dá lugar ao día e á noite.",
+   "a": "Verdadeiro",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "vf",
+   "opts": [
+    "Verdadeiro",
+    "Falso"
+   ]
+  },
+  {
+   "q": "Europa é o continente onde se atopan Galicia e España.",
+   "a": "Verdadeiro",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "tipo": "vf",
+   "opts": [
+    "Verdadeiro",
+    "Falso"
+   ]
+  },
+  {
+   "q": "Que cor do semáforo indica aos peóns que poden cruzar a rúa?",
+   "a": "Verde",
+   "tema": "do libro 📖",
+   "dif": 1,
+   "opts": [
+    "Verde",
+    "Vermella",
+    "Amarela",
+    "Azul"
+   ]
+  },
+  {
+   "q": "¿Qué océano baña la costa oeste de Galicia?",
+   "a": "Océano Atlántico",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "Océano Atlántico",
+    "Mar Mediterráneo",
+    "Océano Pacífico",
+    "Océano Índico"
+   ]
+  },
+  {
+   "q": "¿Cuál es el río más largo de Galicia?",
+   "a": "Miño",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "Miño",
+    "Ebro",
+    "Duero",
+    "Guadalquivir"
+   ]
+  },
+  {
+   "q": "¿Qué movimiento de la Tierra dura 24 horas y produce el día y la noche?",
+   "a": "Rotación",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "Rotación",
+    "Traslación",
+    "Erupción",
+    "Inclinación"
+   ]
+  },
+  {
+   "q": "¿Con qué país limita Galicia por el sur?",
+   "a": "Portugal",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "Portugal",
+    "Francia",
+    "Andorra",
+    "Marruecos"
+   ]
+  },
+  {
+   "q": "¿A qué sector pertenece la pesca y la agricultura?",
+   "a": "Sector primario",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "Sector primario",
+    "Sector secundario",
+    "Sector terciario",
+    "Sector digital"
+   ]
+  },
+  {
+   "q": "¿Cómo se llama una porción de tierra rodeada de agua por todas partes menos por una?",
+   "a": "Península",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "Península",
+    "Isla",
+    "Archipiélago",
+    "Cabo"
+   ]
+  },
+  {
+   "q": "Une cada forma do relevo coa súa definición:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Montaña",
+     "Elevación do terreo"
+    ],
+    [
+     "Val",
+     "Terreo entre montañas"
+    ],
+    [
+     "Illa",
+     "Terra rodeada de mar"
+    ],
+    [
+     "Cabo",
+     "Punta de terra no mar"
+    ]
+   ],
+   "a": "Montaña-Val-Illa-Cabo",
+   "tema": "do libro 📖",
+   "dif": 2
+  },
+  {
+   "q": "Emparella cada traballo co sector económico ao que pertence:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Agricultor",
+     "Sector primario"
+    ],
+    [
+     "Carpinteiro",
+     "Sector secundario"
+    ],
+    [
+     "Mestra",
+     "Sector terciario"
+    ],
+    [
+     "Pescador",
+     "Sector primario"
+    ]
+   ],
+   "a": "Agricultor-Carpinteiro-Mestra-Pescador",
+   "tema": "do libro 📖",
+   "dif": 2
+  },
+  {
+   "q": "Ordena o percorrido dun río desde onde nace ata onde chega ao mar:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Nacemento",
+    "Curso alto",
+    "Curso medio",
+    "Desembocadura"
+   ],
+   "a": "Nacemento → Curso alto → Curso medio → Desembocadura",
+   "tema": "do libro 📖",
+   "dif": 2
+  },
+  {
+   "q": "Di en voz alta o nome do océano que baña a costa oeste de Galicia.",
+   "a": "Atlántico",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Di en voz alta como se chama a fase da Lúa na que a vemos completamente redonda.",
+   "a": "Lúa chea",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Escribe o nome do río máis longo de Galicia.",
+   "a": "Miño",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "Como se chama a representación plana de toda a superficie da Terra?",
+   "a": "planisferio",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "escri"
+  },
+  {
+   "q": "A veleta serve para indicar a dirección na que sopra o vento.",
+   "a": "Verdadeiro",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "tipo": "vf",
+   "opts": [
+    "Verdadeiro",
+    "Falso"
+   ]
+  },
+  {
+   "q": "Que gran descubrimento marcou o paso da Prehistoria á Idade Antiga?",
+   "a": "A escritura",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "A escritura",
+    "O lume",
+    "A roda",
+    "A imprenta"
+   ]
+  },
+  {
+   "q": "Cal é o planeta do Sistema Solar máis próximo ao Sol?",
+   "a": "Mercurio",
+   "tema": "do libro 📖",
+   "dif": 2,
+   "opts": [
+    "Mercurio",
+    "Venus",
+    "Xúpiter",
+    "Saturno"
+   ]
+  },
+  {
+   "q": "¿Qué instrumento sirve para medir la cantidad de lluvia que cae?",
+   "a": "Pluviómetro",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "Pluviómetro",
+    "Termómetro",
+    "Veleta",
+    "Brújula"
+   ]
+  },
+  {
+   "q": "¿Cuál es el planeta más grande del sistema solar?",
+   "a": "Júpiter",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "Júpiter",
+    "Saturno",
+    "Marte",
+    "Venus"
+   ]
+  },
+  {
+   "q": "¿Qué invento marcó el final de la Prehistoria y el inicio de la Historia?",
+   "a": "La escritura",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "La escritura",
+    "La electricidad",
+    "El automóvil",
+    "El teléfono"
+   ]
+  },
+  {
+   "q": "Une cada invento ou elemento coa etapa histórica na que apareceu:",
+   "tipo": "parejas",
+   "pares": [
+    [
+     "Pinturas rupestres",
+     "Prehistoria"
+    ],
+    [
+     "Acueduto romano",
+     "Idade Antiga"
+    ],
+    [
+     "Castelo medieval",
+     "Idade Media"
+    ],
+    [
+     "Máquina de vapor",
+     "Idade Contemporánea"
+    ]
+   ],
+   "a": "Pinturas rupestres-Acueduto romano-Castelo medieval-Máquina de vapor",
+   "tema": "do libro 📖",
+   "dif": 3
+  },
+  {
+   "q": "Ordena os catro planetas rochosos desde o máis próximo ao Sol:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Mercurio",
+    "Venus",
+    "Terra",
+    "Marte"
+   ],
+   "a": "Mercurio → Venus → Terra → Marte",
+   "tema": "do libro 📖",
+   "dif": 3
+  },
+  {
+   "q": "Ordena de menor a maior nivel administrativo en España:",
+   "tipo": "ordenar",
+   "pasos": [
+    "Concello",
+    "Provincia",
+    "Comunidade Autónoma",
+    "Estado"
+   ],
+   "a": "Concello → Provincia → Comunidade Autónoma → Estado",
+   "tema": "do libro 📖",
+   "dif": 3
+  },
+  {
+   "q": "Di en voz alta o nome do mar que baña o norte de Galicia.",
+   "a": "Cantábrico",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Di en voz alta o nome do instrumento que mide a cantidade de chuvia que cae.",
+   "a": "pluviómetro",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "dis",
+   "lang": "es-ES"
+  },
+  {
+   "q": "Escribe o nome do océano máis grande da Terra.",
+   "a": "Pacífico",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "escri"
+  },
+  {
+   "q": "Na Idade Media construíronse moitos castelos e mosteiros.",
+   "a": "Verdadeiro",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "vf",
+   "opts": [
+    "Verdadeiro",
+    "Falso"
+   ]
+  },
+  {
+   "q": "O ecuador é a liña imaxinaria que divide a Terra en hemisferio norte e hemisferio sur.",
+   "a": "Verdadeiro",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "tipo": "vf",
+   "opts": [
+    "Verdadeiro",
+    "Falso"
+   ]
+  },
+  {
+   "q": "Que institución goberna un concello xunto coas concelleiras e concelleiros?",
+   "a": "O alcalde ou alcaldesa",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "O alcalde ou alcaldesa",
+    "O presidente do Goberno",
+    "O xuíz de paz",
+    "O director do colexio"
+   ]
+  },
+  {
+   "q": "Como se chama a capa de aire que rodea a Terra?",
+   "a": "Atmosfera",
+   "tema": "do libro 📖",
+   "dif": 3,
+   "opts": [
+    "Atmosfera",
+    "Hidrosfera",
+    "Xeosfera",
+    "Litosfera"
+   ]
   }
  ]
 }

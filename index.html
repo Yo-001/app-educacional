@@ -92,20 +92,12 @@ body{padding-bottom:78px}
 .co-chip{flex:0 0 auto;border:2px solid transparent;background:#eef2ff;border-radius:14px;padding:6px 10px;font-weight:800;font-size:13px;cursor:pointer}
 .co-chip.on{border-color:var(--accent);background:#fff}
 .co-chip .em{font-size:18px;display:block;text-align:center}
-#catSvg{width:70px;height:64px;animation:bob 3.2s ease-in-out infinite}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-.eye{transform-box:fill-box;transform-origin:center;animation:blink 3.8s infinite}
-@keyframes blink{0%,93%,100%{transform:scaleY(1)}95%,97%{transform:scaleY(.06)}}
-.earL{transform-box:fill-box;transform-origin:bottom right;animation:twitchL 5s infinite}
-@keyframes twitchL{0%,88%,100%{transform:rotate(0)}90%,94%{transform:rotate(-8deg)}}
-.earR{transform-box:fill-box;transform-origin:bottom left;animation:twitchR 6.5s infinite 2s}
-@keyframes twitchR{0%,88%,100%{transform:rotate(0)}90%,94%{transform:rotate(8deg)}}
-#mouthOpen{transform-box:fill-box;transform-origin:center;display:none}
-/* la mascota ya no es el que habla: la boca se mueve solo como reacción */
+#catSvg{width:60px;height:60px;opacity:1;display:block;overflow:visible}
 #catSvg.cheer #mouthOpen{display:block;animation:chomp .16s infinite alternate}
 #catSvg.cheer #mouthW{display:none}
 #catSvg.cheer{animation:bob .26s ease-in-out 4}
-@keyframes chomp{from{transform:scaleY(.35)}to{transform:scaleY(1.15)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes chomp{from{transform:scaleY(.45)}to{transform:scaleY(1.1)}}
 .speech{position:relative;background:#fff;border-radius:14px;padding:10px 14px;margin:0 0 12px;
   box-shadow:var(--shadow);font-weight:700;font-size:14px;line-height:1.3}
 .speech:after{content:"";position:absolute;top:-7px;left:32px;border:7px solid transparent;border-bottom-color:#fff;border-top:0}
@@ -205,7 +197,7 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
   opacity:0;transform:translate3d(0,0,0);
   transition:transform var(--mia-dur,7s) cubic-bezier(.45,.05,.55,.95),opacity .9s ease}
 #mia.in{opacity:1}
-#mia .mia-f{position:relative;transform-origin:50% 92%;
+#mia .mia-f{position:relative;z-index:1;transform-origin:50% 92%;
   animation:miaBob 4.2s ease-in-out infinite;filter:drop-shadow(0 9px 11px rgba(28,35,51,.18))}
 #mia img{display:block;width:100%;height:auto;transition:opacity .3s ease;
   user-select:none;-webkit-user-drag:none;pointer-events:none}
@@ -214,7 +206,7 @@ hr{border:0;border-top:1px solid #eef0f7;margin:12px 0}
 #mia.talk img{opacity:0}
 #mia.talk video{opacity:1}
 #mia .mia-tap{position:absolute;left:50%;top:3%;width:48%;height:46%;transform:translateX(-50%);
-  margin:0;padding:0;border:0;background:none;pointer-events:auto;border-radius:50%;
+  margin:0;padding:0;border:0;background:none;pointer-events:auto;border-radius:50%;z-index:5;
   cursor:pointer;-webkit-tap-highlight-color:transparent}
 #mia .mia-tap:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
 #mia.cheer .mia-f{animation:miaCheer .9s cubic-bezier(.2,.8,.3,1)}
@@ -245,8 +237,11 @@ h2,h1{font-family:var(--font-display);letter-spacing:-.01em}
   box-shadow:0 0 0 1px var(--line),0 6px 14px -10px rgba(43,29,46,.8)}
 /* el retrato pequeño de la mascota, con su cartel */
 .mascot{display:flex;flex-direction:column;align-items:center;gap:3px;flex:0 0 auto}
-.mascot .avatar{width:52px;height:52px;font-size:23px}
-.mascot-cap{max-width:82px;text-align:center;font-size:9.5px;line-height:1.15;font-weight:800;color:var(--muted)}
+.mascot-pair{display:flex;align-items:center;gap:5px}
+.mia-mini{width:46px;height:46px;border-radius:50%;background:url("assets/mia/mia.webp") 50% 8%/cover no-repeat;
+  border:2.5px solid var(--surface);box-shadow:0 0 0 1px var(--line),0 6px 14px -10px rgba(43,29,46,.8);flex-shrink:0}
+.mascot .avatar{width:64px;height:64px;font-size:23px;overflow:visible}
+.mascot-cap{max-width:118px;text-align:center;font-size:9.5px;line-height:1.15;font-weight:800;color:var(--muted)}
 .who{min-width:0;line-height:1.15}
 .who b{display:block;font:500 19px/1.12 var(--font-display);letter-spacing:-.01em}
 .who span{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-top:3px}
@@ -438,37 +433,179 @@ input[type=file]{padding:6px}
   <!-- CABECERA -->
   <div class="top">
     <div class="mascot">
+    <div class="mascot-pair">
+    <div class="mia-mini" aria-hidden="true"></div>
     <div class="avatar" id="avatar" title="Gatuno, la mascota de la princesa">
-      <svg id="catSvg" viewBox="0 0 220 200" aria-hidden="true">
+      <svg id="catSvg" viewBox="0 0 240 240" aria-hidden="true">
         <defs>
-          <radialGradient id="fur" cx="42%" cy="34%" r="82%">
-            <stop offset="0%" stop-color="#ffe3ad"/><stop offset="58%" stop-color="#ffb75c"/><stop offset="100%" stop-color="#f59a33"/>
+          <radialGradient id="g3dHead" cx="38%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="#ffe19e"/>
+            <stop offset="32%" stop-color="#ffaa44"/>
+            <stop offset="76%" stop-color="#ef731a"/>
+            <stop offset="100%" stop-color="#b94708"/>
           </radialGradient>
-          <radialGradient id="cheek" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#ff9d9d" stop-opacity=".8"/><stop offset="100%" stop-color="#ff9d9d" stop-opacity="0"/>
+          <radialGradient id="g3dBody" cx="36%" cy="28%" r="74%">
+            <stop offset="0%" stop-color="#ffce78"/>
+            <stop offset="40%" stop-color="#fb8c24"/>
+            <stop offset="82%" stop-color="#df5c10"/>
+            <stop offset="100%" stop-color="#a63905"/>
           </radialGradient>
+          <radialGradient id="g3dBelly" cx="45%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#fffcf4"/>
+            <stop offset="55%" stop-color="#ffe6c4"/>
+            <stop offset="100%" stop-color="#f2be83"/>
+          </radialGradient>
+          <linearGradient id="g3dTail" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ffad46"/>
+            <stop offset="60%" stop-color="#e96c16"/>
+            <stop offset="100%" stop-color="#b44207"/>
+          </linearGradient>
+          <linearGradient id="g3dEarIn" x1="30%" y1="0%" x2="70%" y2="100%">
+            <stop offset="0%" stop-color="#ffc7d6"/>
+            <stop offset="55%" stop-color="#ff86a8"/>
+            <stop offset="100%" stop-color="#d64a75"/>
+          </linearGradient>
+          <radialGradient id="g3dPaw" cx="42%" cy="30%" r="68%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="65%" stop-color="#ffe8cb"/>
+            <stop offset="100%" stop-color="#ebb47c"/>
+          </radialGradient>
+          <radialGradient id="g3dEye" cx="42%" cy="38%" r="60%">
+            <stop offset="0%" stop-color="#89f2a5"/>
+            <stop offset="48%" stop-color="#2eb665"/>
+            <stop offset="100%" stop-color="#105931"/>
+          </radialGradient>
+          <radialGradient id="g3dNose" cx="40%" cy="32%" r="65%">
+            <stop offset="0%" stop-color="#ffb8c8"/>
+            <stop offset="45%" stop-color="#ff6b8b"/>
+            <stop offset="100%" stop-color="#c9365b"/>
+          </radialGradient>
+          <radialGradient id="g3dCheek" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ff858d" stop-opacity=".65"/>
+            <stop offset="100%" stop-color="#ff858d" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="g3dSpec" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity=".75"/>
+            <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+          </linearGradient>
+          <filter id="g3dDrop" x="-15%" y="-15%" width="130%" height="135%">
+            <feDropShadow dx="0" dy="4" stdDeviation="3.5" flood-color="#4e1f03" flood-opacity=".32"/>
+          </filter>
         </defs>
-        <ellipse cx="110" cy="188" rx="60" ry="11" fill="#000" opacity=".10"/>
-        <path class="earL" d="M46 64 L38 10 L94 36 Z" fill="url(#fur)" stroke="#e08a26" stroke-width="3"/>
-        <path class="earR" d="M174 64 L182 10 L126 36 Z" fill="url(#fur)" stroke="#e08a26" stroke-width="3"/>
-        <path d="M54 48 L52 22 L78 36 Z" fill="#ffb3c1"/>
-        <path d="M166 48 L168 22 L142 36 Z" fill="#ffb3c1"/>
-        <circle cx="110" cy="114" r="78" fill="url(#fur)" stroke="#e08a26" stroke-width="3"/>
-        <path d="M92 42 q4 14 0 22 M110 40 v22 M128 42 q-4 14 0 22" stroke="#e08a26" stroke-width="4" stroke-linecap="round" fill="none"/>
-        <circle cx="58" cy="142" r="17" fill="url(#cheek)"/>
-        <circle cx="162" cy="142" r="17" fill="url(#cheek)"/>
-        <g class="eye"><ellipse cx="76" cy="108" rx="11" ry="13" fill="#fff"/><circle cx="77" cy="110" r="6.5" fill="#2b1d0e"/><circle cx="79" cy="106" r="2.3" fill="#fff"/></g>
-        <g class="eye"><ellipse cx="144" cy="108" rx="11" ry="13" fill="#fff"/><circle cx="143" cy="110" r="6.5" fill="#2b1d0e"/><circle cx="141" cy="106" r="2.3" fill="#fff"/></g>
-        <path d="M104 130 h12 l-6 8 z" fill="#ff7b93"/>
-        <path id="mouthW" d="M110 138 q-6 8 -14 2 M110 138 q6 8 14 2" stroke="#8a5a12" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-        <ellipse id="mouthOpen" cx="110" cy="146" rx="10" ry="7" fill="#7a3b2e"/>
-        <g stroke="#8a5a12" stroke-width="2.2" stroke-linecap="round" opacity=".55">
-          <path d="M42 130 l-24 -4 M44 140 l-22 6 M178 130 l24 -4 M176 140 l22 6"/>
+
+        <!-- Sombra no chão -->
+        <ellipse class="gato-ground" cx="122" cy="222" rx="64" ry="12" fill="#2c1204" opacity=".24"/>
+
+        <!-- Rabo longo e expressivo -->
+        <g class="gato-tail" filter="url(#g3dDrop)">
+          <path d="M164 190 C206 188,224 146,204 118 C194 104,178 112,186 127 C196 146,184 170,158 172 Z" fill="url(#g3dTail)" stroke="#a83d06" stroke-width="2.4" stroke-linejoin="round"/>
+          <!-- Listras do rabo -->
+          <path d="M189 170 q7 4 11 -1 M200 151 q6 0 7 -7 M198 130 q-4 -3 -8 0" stroke="#b34107" stroke-width="4.2" stroke-linecap="round" fill="none" opacity=".72"/>
+          <!-- Ponta clarinha do rabo -->
+          <path d="M204 118 C195 106,181 113,187 126 C192 124,199 124,204 118 Z" fill="url(#g3dBelly)"/>
+        </g>
+
+        <!-- Corpo 3D fofinho -->
+        <g class="gato-body-grp" filter="url(#g3dDrop)">
+          <!-- Patinha traseira esquerda/direita -->
+          <ellipse cx="80" cy="200" rx="22" ry="17" fill="url(#g3dBody)" stroke="#a83d06" stroke-width="2.2"/>
+          <ellipse cx="164" cy="200" rx="22" ry="17" fill="url(#g3dBody)" stroke="#a83d06" stroke-width="2.2"/>
+          <!-- Tronco volumétrico -->
+          <path d="M72 152 C66 196,84 216,122 216 C160 216,178 196,172 152 C168 128,148 118,122 118 C96 118,76 128,72 152 Z" fill="url(#g3dBody)" stroke="#a83d06" stroke-width="2.5"/>
+          <!-- Listras laterais sutis -->
+          <path d="M77 166 q11 2 16 6 M76 181 q10 1 14 5 M167 166 q-11 2 -16 6 M168 181 q-10 1 -14 5" stroke="#b84207" stroke-width="4" stroke-linecap="round" fill="none" opacity=".55"/>
+          <!-- Peitinho e barriguinha creme 3D -->
+          <path d="M95 144 C90 174,98 206,122 206 C146 206,154 174,149 144 C144 132,100 132,95 144 Z" fill="url(#g3dBelly)"/>
+          <ellipse cx="116" cy="160" rx="16" ry="18" fill="url(#g3dSpec)" opacity=".5"/>
+          <!-- Patinhas dianteiras -->
+          <g class="gato-paw-l">
+            <rect x="85" y="176" width="27" height="40" rx="13.5" fill="url(#g3dBody)" stroke="#a83d06" stroke-width="2.2"/>
+            <ellipse cx="98.5" cy="208" rx="14" ry="11" fill="url(#g3dPaw)" stroke="#b86b2b" stroke-width="1.8"/>
+            <path d="M93 209 v5 M98.5 208 v6 M104 209 v5" stroke="#c88147" stroke-width="1.6" stroke-linecap="round"/>
+          </g>
+          <g class="gato-paw-r">
+            <rect x="132" y="176" width="27" height="40" rx="13.5" fill="url(#g3dBody)" stroke="#a83d06" stroke-width="2.2"/>
+            <ellipse cx="145.5" cy="208" rx="14" ry="11" fill="url(#g3dPaw)" stroke="#b86b2b" stroke-width="1.8"/>
+            <path d="M140 209 v5 M145.5 208 v6 M151 209 v5" stroke="#c88147" stroke-width="1.6" stroke-linecap="round"/>
+          </g>
+        </g>
+
+        <!-- Cabeça 3D expressiva -->
+        <g class="gato-head-grp" filter="url(#g3dDrop)">
+          <!-- Orelha esquerda -->
+          <g class="gato-ear-l">
+            <path d="M56 76 C44 46,44 20,56 16 C70 12,92 32,102 52 Z" fill="url(#g3dHead)" stroke="#a83d06" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M62 66 C56 46,56 30,63 27 C72 25,86 38,93 52 Z" fill="url(#g3dEarIn)"/>
+            <path d="M67 60 q6 -7 12 -4" stroke="#fff0f5" stroke-width="2.2" stroke-linecap="round" fill="none" opacity=".65"/>
+          </g>
+          <!-- Orelha direita -->
+          <g class="gato-ear-r">
+            <path d="M188 76 C200 46,200 20,188 16 C174 12,152 32,142 52 Z" fill="url(#g3dHead)" stroke="#a83d06" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M182 66 C188 46,188 30,181 27 C172 25,158 38,151 52 Z" fill="url(#g3dEarIn)"/>
+            <path d="M177 60 q-6 -7 -12 -4" stroke="#fff0f5" stroke-width="2.2" stroke-linecap="round" fill="none" opacity=".65"/>
+          </g>
+
+          <!-- Sombra suave no pescoço/queixo -->
+          <ellipse cx="122" cy="144" rx="46" ry="12" fill="#8d3004" opacity=".28"/>
+
+          <!-- Rosto gordinho 3D -->
+          <path d="M46 98 C46 54,80 34,122 34 C164 34,198 54,198 98 C198 134,166 150,122 150 C78 150,46 134,46 98 Z" fill="url(#g3dHead)" stroke="#a83d06" stroke-width="2.6"/>
+
+          <!-- Brilho especular na testa -->
+          <ellipse cx="110" cy="54" rx="34" ry="14" fill="url(#g3dSpec)" opacity=".65"/>
+
+          <!-- Listras tabby na testa e bochechas -->
+          <path d="M106 39 q3 12 0 21 M122 36 v24 M138 39 q-3 12 0 21" stroke="#b94407" stroke-width="4.5" stroke-linecap="round" fill="none" opacity=".78"/>
+          <path d="M53 96 q12 2 18 6 M56 108 q10 1 15 5 M191 96 q-12 2 -18 6 M188 108 q-10 1 -15 5" stroke="#b94407" stroke-width="3.8" stroke-linecap="round" fill="none" opacity=".68"/>
+
+          <!-- Bochechas rosadas -->
+          <circle cx="72" cy="116" r="16" fill="url(#g3dCheek)"/>
+          <circle cx="172" cy="116" r="16" fill="url(#g3dCheek)"/>
+
+          <!-- Olhos grandes 3D com reflexos luminosos -->
+          <g class="gato-eye gato-eye-l">
+            <ellipse cx="90" cy="92" rx="17" ry="19" fill="#2e1508"/>
+            <ellipse cx="90" cy="92" rx="15.2" ry="17.2" fill="#ffffff"/>
+            <circle cx="91.5" cy="93.5" r="12.5" fill="url(#g3dEye)"/>
+            <circle cx="91.5" cy="94" r="7.2" fill="#171019"/>
+            <circle cx="85.5" cy="86.5" r="4.8" fill="#ffffff"/>
+            <circle cx="97" cy="99.5" r="2.2" fill="#ffffff" opacity=".9"/>
+          </g>
+          <g class="gato-eye gato-eye-r">
+            <ellipse cx="154" cy="92" rx="17" ry="19" fill="#2e1508"/>
+            <ellipse cx="154" cy="92" rx="15.2" ry="17.2" fill="#ffffff"/>
+            <circle cx="152.5" cy="93.5" r="12.5" fill="url(#g3dEye)"/>
+            <circle cx="152.5" cy="94" r="7.2" fill="#171019"/>
+            <circle cx="147.5" cy="86.5" r="4.8" fill="#ffffff"/>
+            <circle cx="158.5" cy="99.5" r="2.2" fill="#ffffff" opacity=".9"/>
+          </g>
+
+          <!-- Almofadinhas do focinho 3D -->
+          <ellipse cx="110" cy="119" rx="14" ry="11" fill="url(#g3dBelly)"/>
+          <ellipse cx="134" cy="119" rx="14" ry="11" fill="url(#g3dBelly)"/>
+
+          <!-- Narizinho 3D brilhante -->
+          <path d="M114 108 Q122 105 130 108 Q131 114 122 119 Q113 114 114 108 Z" fill="url(#g3dNose)" stroke="#b82f53" stroke-width="1.2"/>
+          <ellipse cx="119.5" cy="110" rx="3" ry="1.4" fill="#ffffff" opacity=".85"/>
+
+          <!-- Boquinha sorridente e feliz -->
+          <path id="mouthW" class="gato-mouth-w" d="M122 119 v3 M122 122 q-6 7 -14 2 M122 122 q6 7 14 2" stroke="#7d3b14" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <g id="mouthOpen" class="gato-mouth-open">
+            <path d="M111 122 Q122 138 133 122 Q122 124 111 122 Z" fill="#8b2635" stroke="#6c1c28" stroke-width="1.5"/>
+            <ellipse cx="122" cy="128" rx="6" ry="3.5" fill="#ff7895"/>
+          </g>
+
+          <!-- Bigodes delicados -->
+          <g stroke="#fff8ee" stroke-width="2" stroke-linecap="round" opacity=".9">
+            <path d="M62 112 L28 105 M60 120 L26 122 M64 128 L33 136"/>
+            <path d="M182 112 L216 105 M184 120 L218 122 M180 128 L211 136"/>
+          </g>
         </g>
       </svg>
       <span class="hat" id="hatEmoji" style="display:none">🧢</span>
       <span class="ove" id="eyeEmoji" style="display:none"></span>
       <span class="ovm" id="mouthEmoji" style="display:none"></span>
+    </div>
     </div>
     <span class="mascot-cap">Mía y Gatuno</span>
     </div>
@@ -859,11 +996,16 @@ function confetti(){const colors=["#4a7cff","#22b573","#f5a623","#ff70a6","#ffd1
 function vibrate(ms){try{navigator.vibrate&&navigator.vibrate(ms);}catch(e){}}
 
 /* moneda: nunca negativa, debitar solo si hay saldo, idempotente vía owned */
-function earn(n,why){
+function earn(n,why,silent){
   if(!Number.isFinite(n)||n<=0) return;
   state.coins+=n; state.totalEarned+=n; save(); renderWallet(); renderShop(); // re-render: libera botões da loja sem recarregar
   toast("+ "+fmt(n)+" 🪙 "+(why?"· "+why:""));
   if(n>=5) confetti();
+  catCheer(true);
+  if(!silent && n>=5){
+    const seq=_spSeq;
+    setTimeout(()=>{ if(_spSeq===seq && !speechPlaying) speakFX("moedas"); },0);
+  }
 }
 function tryBuy(id,price){
   if(state.owned.includes(id)) return false;
@@ -1056,10 +1198,40 @@ let curCat="Todos";
 /* ============== LA PRINCESA: frases + reacción de la mascota ============== */
 const LINES={
   greet:"¡Hola! Soy Mía, la princesa. Elige una materia y aprendemos juntas.",
-  good:["¡Muy bien! +10 monedas.","¡Eso es, genial!","¡Correcto! ¡Bien hecho!"],
-  bad:"¡Casi! Sin prisa, inténtalo otra vez.",
-  buy:"¡Qué bien! Ya lo desbloqueaste."
+  good:["acerto_1","acerto_2"],
+  bad:"erro_1",
+  buy:"acerto_3"
 };
+/* Backend local quando aberto vía file:// ou localhost; Cloud Run en produción */
+const BACKEND_URL=(location.protocol==="file:"||location.hostname==="localhost"||location.hostname==="127.0.0.1")
+  ? ("http://"+(location.hostname==="127.0.0.1"?"127.0.0.1":"localhost")+":8080")
+  : "https://estudo-exames-405899472513.europe-west1.run.app";
+/* Perfil padrão de voz do app (VoiceStudio / Amostra 2 — Entusiasmada e Comemorativa) */
+const FX_PROFILE={id:"amostra-2-entusiasmada",voicestudioProfileId:"mia_amostra2",name:"Amostra 2 — Entusiasmada e Comemorativa",instruct:"high pitch",speed:1.10,guidance_scale:2.7,language:"gl"};
+const FX_AUDIO={
+  acerto_1:{src:"content/audio/fx/acerto_1.mp3",text:"¡Moi ben!"},
+  acerto_2:{src:"content/audio/fx/acerto_2.mp3",text:"¡xenial! ¡Acertaches á primeira!"},
+  acerto_3:{src:"content/audio/fx/acerto_3.mp3",text:"¡Uau! ¡Tesouro desbloqueado!"},
+  moedas:{src:"content/audio/fx/moedas.mp3",text:"¡Gañaches cinco moedas máis!"},
+  erro_1:{src:"content/audio/fx/erro_1.mp3",text:"Non pasa nada, tentalo outra vez."},
+  missao_nova:{src:"content/audio/fx/missao_nova.mp3",text:"¡Nova misión lista! ¡Imos aló!"}
+};
+const FX_BY_TEXT=new Map(Object.values(FX_AUDIO).map(f=>[f.text.toLowerCase(),f.src]));
+const FX_RULES=[
+  {re:/moed|moned|fruta|ronda|puntos|ganaste \d+/i,src:FX_AUDIO.moedas.src},
+  {re:/tesouro|desbloquead|ahora lo llevo|visual actualizado|2048/i,src:FX_AUDIO.acerto_3.src},
+  {re:/xenial|acertaches|ganaste|increíble|genio|lo estás haciendo|completad/i,src:FX_AUDIO.acerto_2.src},
+  {re:/moi ben|muy bien|qué bien|qué bonito|qué guapo|bien hecho|ben feito|campo limpo/i,src:FX_AUDIO.acerto_1.src},
+  {re:/non pasa nada|no pasa nada|tentalo|inténtalo|ya no lo llevo|respuesta correcta/i,src:FX_AUDIO.erro_1.src},
+  {re:/hola|soy mía|aprendemos|jugamos|tú puedes|nova misión|imos aló|empezamos|princesa/i,src:FX_AUDIO.missao_nova.src}
+];
+function matchFxFallback(line){
+  const s=String(line||"").trim().toLowerCase();
+  if(!s) return null;
+  if(FX_BY_TEXT.has(s)) return FX_BY_TEXT.get(s);
+  const hit=FX_RULES.find(r=>r.re.test(s));
+  return hit?hit.src:null;
+}
 let speechTimer=null;
 let esVoiceCache=null;
 function esVoice(){
@@ -1075,8 +1247,8 @@ function esVoice(){
   return esVoiceCache;
 }
 try{ window.speechSynthesis.onvoiceschanged=()=>{esVoiceCache=null;}; }catch(e){}
-/* Voz do gato: MP3 neural do backend (/tts, edge-tts); fallback = sintetizador do navegador */
-let _aud=null, _spSeq=0, _spResolve=null, _spStop=null, _audioOK=false;
+/* Voz de Mía: perfil Amostra 2 (OmniVoice/VoiceStudio en /tts) + fallback local fx/ + navegador */
+let _aud=null, _spSeq=0, _spResolve=null, _spStop=null, _audioOK=false, _pendingGreet=null;
 /* desbloqueia a reprodução de áudio no tablet: o play() chamado após o
    fetch do MP3 costuma cair na política de autoplay (NotAllowedError) e o
    gato fica mudo; um play() mudo no 1º toque libera o canal */
@@ -1090,7 +1262,11 @@ function unlockAudio(){
     dv.setUint32(28,sr*2,true); dv.setUint16(32,2,true); dv.setUint16(34,16,true);
     w(36,"data"); dv.setUint32(40,n*2,true);
     const a=new Audio(URL.createObjectURL(new Blob([dv.buffer],{type:"audio/wav"})));
-    a.volume=0; const p=a.play(); if(p&&p.then) p.then(()=>{_audioOK=true;}).catch(()=>{});
+    a.volume=0; const p=a.play();
+    if(p&&p.then) p.then(()=>{
+      _audioOK=true;
+      if(_pendingGreet){ const g=_pendingGreet; _pendingGreet=null; if(_spSeq<=1) speak(g.line,g.directUrl); }
+    }).catch(()=>{});
   }catch(e){}
 }
 document.addEventListener("pointerdown",unlockAudio);
@@ -1103,18 +1279,26 @@ function stopAudio(){
    assim o feedback sai na hora do toque, sem esperar o backend gerar o MP3 */
 const _ttsCache=new Map(); const TTS_CACHE_MAX=80;
 function ttsURL(line){
+  const fx=FX_BY_TEXT.get(String(line||"").trim().toLowerCase());
+  if(fx) return Promise.resolve(fx);
   const hit=_ttsCache.get(line);
   if(hit) return Promise.resolve(hit); /* hit é Promise (fetch em curso) ou string (blob já pronto) — speak() sempre recebe uma Promise */
-  const p=fetch(BACKEND_URL+"/tts?text="+encodeURIComponent(line.slice(0,400)))
+  const ctrl=typeof AbortController!=="undefined"?new AbortController():null;
+  const to=ctrl?setTimeout(()=>ctrl.abort(),10000):null;
+  const p=fetch(BACKEND_URL+"/tts?text="+encodeURIComponent(line.slice(0,400)),ctrl?{signal:ctrl.signal}:undefined)
     .then(r=>{ if(!r.ok) throw new Error("tts "+r.status); return r.blob(); })
-    .then(b=>{ const u=URL.createObjectURL(b); _ttsCache.set(line,u);
+    .then(b=>{ if(to) clearTimeout(to); const u=URL.createObjectURL(b); _ttsCache.set(line,u);
       if(_ttsCache.size>TTS_CACHE_MAX){ const k=_ttsCache.keys().next().value; try{URL.revokeObjectURL(_ttsCache.get(k));}catch(e){} _ttsCache.delete(k); }
       return u; })
-    .catch(e=>{ _ttsCache.delete(line); throw e; });
+    .catch(e=>{ if(to) clearTimeout(to); _ttsCache.delete(line); throw e; });
   _ttsCache.set(line,p);
   return p;
 }
 function prefetchTTS(line){ ttsURL(line).catch(()=>{}); }
+function speakFX(keyOrLine){
+  const fx=FX_AUDIO[keyOrLine];
+  return fx ? speak(fx.text,fx.src) : speak(keyOrLine);
+}
 const EMOJI_RE=/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{20E3}\u{200D}\u{1F1E6}-\u{1F1FF}]/gu;
 /* quita emojis del texto que va al TTS (si no, los "describe": "cara de gato"...) */
 function stripEmoji(s){ return String(s||"").replace(EMOJI_RE,"").replace(/[ \t]{2,}/g," ").trim(); }
@@ -1136,8 +1320,8 @@ const Mia=(()=>{
     const r=app?app.getBoundingClientRect():{left:0,right:innerWidth,top:0};
     const nh=nav?nav.getBoundingClientRect().height:0;
     const tb=top?top.getBoundingClientRect().bottom:0;
-    const w=(box&&box.offsetWidth)||120, h=(box&&box.offsetHeight)||190, m=6;
-    let x0=Math.max(m,r.left+m), x1=Math.min(innerWidth-w-m,r.right-w-m);
+    const w=(box&&box.offsetWidth)||120, h=(box&&box.offsetHeight)||190, m=6, petPad=74;
+    let x0=Math.max(m+petPad,r.left+m+petPad), x1=Math.min(innerWidth-w-m,r.right-w-m);
     /* no tapa la cabecera (avatar + globo de voz) mientras se ve */
     let y0=Math.max(m,r.top+m/2, Math.min(tb+m, innerHeight*0.55)), y1=innerHeight-h-nh-m;
     if(x1<x0){ x0=x1=Math.max(m,(innerWidth-w)/2); }
@@ -1249,7 +1433,7 @@ const Mia=(()=>{
 /* devuelve Promise que resuelve cuando el audio termina (o es interrumpido por otra fala) */
 let speechPlaying=0; /* >0 mientras suena la voz del gato (evita que el micro se escuche a sí mismo) */
 let catQuietUntil=0; /* ms absolutas: hasta cuándo se descarta lo que oye el micro (cola de eco tras hablar el gato) */
-function speak(line){
+function speak(line,directUrl){
   if(window.Gato){Gato.colo(true);clearTimeout(window.__gatoT);window.__gatoT=setTimeout(function(){Gato.colo(false);},2400);}
   return new Promise(resolve=>{
   const b=$("speech");
@@ -1262,22 +1446,41 @@ function speak(line){
   let stopped=false;
   const stop=()=>{ if(stopped) return; stopped=true; speechPlaying=Math.max(0,speechPlaying-1); catQuietUntil=Date.now()+700; /* cola de eco curta: o altavoz cala rápido e a nena non espera */ if(_spStop===stop) _spStop=null; Mia.talk(false); b.style.display="none"; if(_spResolve===resolve) _spResolve=null; resolve(); };
   _spStop=stop;
-  if(!sayLine){ stop(); return; } /* nada para falar (p.ex. opção só de emoji): não trava o avanço */
+  if(!sayLine && !directUrl){ stop(); return; } /* nada para falar (p.ex. opção só de emoji): não trava o avanço */
   const seq=++_spSeq;
   speechPlaying++;
   stopAudio(); clearTimeout(speechTimer);
-  speechTimer=setTimeout(stop, Math.min(Math.max(2500,sayLine.length*110),8000)); // rede de segurança (com teto: voz travada não prende o exercício)
-  ttsURL(sayLine).then(url=>{
+  speechTimer=setTimeout(stop, Math.min(Math.max(4000,sayLine.length*130),14000)); // rede de segurança (com teto: voz travada não prende o exercício)
+  const urlP=directUrl ? Promise.resolve(directUrl) : ttsURL(sayLine);
+  urlP.then(url=>{
     if(seq!==_spSeq) return; // si hay otra habla, gana la nueva
     const audio=new Audio(url);
     _aud=audio;
     audio.onended=()=>{ if(seq===_spSeq) stop(); };
     audio.onerror=()=>{ if(seq===_spSeq) fallbackSpeak(sayLine,stop,seq); };
-    audio.play().catch(()=>{ if(seq===_spSeq) fallbackSpeak(sayLine,stop,seq); });
+    audio.play().catch(err=>{
+      if(seq!==_spSeq) return;
+      if(!_audioOK && err && err.name==="NotAllowedError" && seq===1){ _pendingGreet={line,directUrl}; }
+      fallbackSpeak(sayLine,stop,seq);
+    });
   }).catch(()=>{ if(seq===_spSeq) fallbackSpeak(sayLine,stop,seq); });
   });
 }
 function fallbackSpeak(line,stop,seq){
+  const fxSrc=matchFxFallback(line);
+  if(fxSrc){
+    try{
+      const audio=new Audio(fxSrc);
+      _aud=audio;
+      audio.onended=()=>{ if(seq===_spSeq) stop(); };
+      audio.onerror=()=>{ if(seq===_spSeq) synthFallback(line,stop,seq); };
+      audio.play().catch(()=>{ if(seq===_spSeq) synthFallback(line,stop,seq); });
+      return;
+    }catch(e){}
+  }
+  synthFallback(line,stop,seq);
+}
+function synthFallback(line,stop,seq){
   try{
     if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){ if(seq===_spSeq) stop(); return; }
     speechSynthesis.cancel();
@@ -1384,7 +1587,7 @@ function paintExercise(ex,after,timer){
   /* embaralha as opções (exceto Verdadero/Falso): o modelo tende a pôr a certa em 1º */
   const opts=ex.opts.slice();
   if(ex.tipo!=="vf"){ for(let i=opts.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=opts[i]; opts[i]=opts[j]; opts[j]=t; } }
-  opts.forEach(o=>{ prefetchTTS(o+". ¡Muy bien!"); prefetchTTS(o+". La respuesta correcta es: "+ex.a); });
+  prefetchTTS("La respuesta correcta es: "+ex.a);
   opts.forEach(o=>{
     const b=document.createElement("button"); b.className="opt"; b.textContent=o;
     b.onclick=()=>{
@@ -1393,9 +1596,10 @@ function paintExercise(ex,after,timer){
       b.className="opt "+(ok?"ok":"no");
       if(!ok){[...box.children].forEach(x=>{if(x.textContent===ex.a)x.className="opt ok";});}
       const fb=$("exFb"); fb.textContent=ok?("¡Bien! +10 🪙"):("Casi… la correcta está en verde 👇"); fb.className="feedback "+(ok?"good":"bad");
-      /* el gato lee la opción elegida; si está mal, dice la correcta (el avance es con «Siguiente») */
-      const say=o+(ok?". ¡Muy bien!":". La respuesta correcta es: "+ex.a);
-      const p=registerResult(ok,say);
+      const tk=exToken;
+      const p=ok
+        ? registerResult(true)
+        : registerResult(false,"erro_1").then(()=>{ if(tk===exToken) return speak("La respuesta correcta es: "+ex.a); });
       if(after) after(ok,p);
     };
     box.appendChild(b);
@@ -1584,7 +1788,10 @@ function discFinish(box,ex,after,ok,prefix,showCard){
     if(showCard!==false) showAnswerCard(box,ex.a);
     fb.textContent=(prefix||"")+"La respuesta era: "+ex.a; fb.className="feedback bad";
   }
-  const p=registerResult(ok, ok?"¡Muy bien!":"La respuesta correcta es: "+ex.a);
+  const tk=exToken;
+  const p=ok
+    ? registerResult(true)
+    : registerResult(false,"erro_1").then(()=>{ if(tk===exToken) return speak("La respuesta correcta es: "+ex.a); });
   if(after) after(ok,p);
 }
 /* discursiva por voz: botão do microfone escuta a resposta (Web Speech API) e compara com a certa */
@@ -1592,7 +1799,7 @@ function paintDis(ex,box,after){
   box.className="opts";
   const fb=$("exFb");
   fb.textContent="Pulsa 🎤 y responde en voz alta"; fb.className="feedback";
-  speak(ex.q); prefetchTTS("¡Muy bien!"); prefetchTTS("La respuesta correcta es: "+ex.a);
+  speak(ex.q); prefetchTTS("La respuesta correcta es: "+ex.a);
   const mic=document.createElement("button"); mic.className="opt"; mic.style.cssText="text-align:center;font-size:20px"; mic.textContent="🎤 Hablar";
   const reveal=document.createElement("button"); reveal.className="opt"; reveal.style.textAlign="center"; reveal.textContent="👀 No lo sabía";
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -1602,7 +1809,7 @@ function paintDis(ex,box,after){
     let heard=false;
     let rec;
     try{ rec=new SR(); }catch(e){ fb.textContent="No pude abrir el micrófono. Toca «No lo sabía»."; mic.style.display="none"; return; }
-    rec.lang="es-ES"; rec.interimResults=false; rec.maxAlternatives=3; rec.continuous=false;
+    rec.lang=(ex.lang||"es-ES"); rec.interimResults=false; rec.maxAlternatives=3; rec.continuous=false;
     mic.disabled=true; mic.textContent="🎙️ Escuchando…"; fb.textContent="Te escucho…"; fb.className="feedback";
     rec.onresult=e=>{
       heard=true;
@@ -1639,7 +1846,7 @@ function paintEscri(ex,box,after){
   box.className="opts";
   const fb=$("exFb");
   fb.textContent="Escribe la respuesta ✏️"; fb.className="feedback";
-  speak(ex.q); prefetchTTS("¡Muy bien!"); prefetchTTS("La respuesta correcta es: "+ex.a);
+  speak(ex.q); prefetchTTS("La respuesta correcta es: "+ex.a);
   const form=document.createElement("form"); form.style.cssText="display:flex;gap:8px;width:100%";
   const input=document.createElement("input"); input.type="text"; input.placeholder="Escribe aquí…";
   input.autocomplete="off"; input.autocapitalize="off"; input.spellcheck=false;
@@ -1691,8 +1898,8 @@ function nextInDeck(){
     const ei=document.getElementById("exIntro"); if(ei) ei.style.display="";
     $("exercise").style.display="none"; $("subjects").style.display="";
     $("btnNew").style.display="";
-    earn(deckBonus,"colección terminada");
-    speak("¡Completaste "+deckLabel+"! +"+deckBonus+" monedas 🎉"); confetti();
+    earn(deckBonus,"colección terminada",true);
+    speakFX("acerto_3"); confetti();
     renderSubjects(); syncTutor(); return;
   }
   const ex=deckQ.shift();
@@ -1715,10 +1922,14 @@ function buildPractice(){
 let attempts=0;
 /* la mascota ya no habla: reacciona abriendo la boca un instante cuando hay resultado */
 let _catCheerT=0;
-function catCheer(){
-  const svg=$("catSvg"); if(!svg) return;
-  svg.classList.remove("cheer"); void svg.offsetWidth; svg.classList.add("cheer");
-  clearTimeout(_catCheerT); _catCheerT=setTimeout(()=>svg.classList.remove("cheer"),1100);
+function catCheer(ok){
+  if(ok===false) return;
+  const svg=$("catSvg");
+  if(svg){
+    svg.classList.remove("cheer"); void svg.offsetWidth; svg.classList.add("cheer");
+    clearTimeout(_catCheerT); _catCheerT=setTimeout(()=>svg.classList.remove("cheer"),1100);
+  }
+  if(window.Gato && typeof window.Gato.feliz==="function") window.Gato.feliz();
 }
 function registerResult(ok,say){
   attempts=0; // nuevo ejercicio (showEx)
@@ -1741,10 +1952,10 @@ function registerResult(ok,say){
     if(state.difStreak<=-2 && state.curDif>1){ state.curDif--; state.difStreak=0; }
   }
   let p;
-  if(ok){ state.exRight++; earn(10,"ejercicio correcto"); p=speak(say||pick(LINES.good)); }
-  else { p=speak(say||LINES.bad); }
+  if(ok){ state.exRight++; earn(10,"ejercicio correcto",true); p=speakFX(say||pick(LINES.good)); }
+  else { p=speakFX(say||LINES.bad); }
   streakTouch(ok);
-  Mia.cheer(ok); catCheer();
+  Mia.cheer(ok); catCheer(ok);
   save(); renderReport();
   return p;
 }
@@ -1774,7 +1985,7 @@ function renderShop(){
         return;
       }
       if(!tryBuy(item.id,item.pr)){ toast("¡Monedas insuficientes — haz más ejercicios!"); return; }
-      toast("Desbloqueado: "+item.nm+" 🎉"); confetti(); vibrate(60); speak(LINES.buy);
+      toast("Desbloqueado: "+item.nm+" 🎉"); confetti(); vibrate(60); speakFX(LINES.buy);
       if(w){ state.worn[w]=item.id; save(); renderAvatar(); }
       if(item.act) item.act();
       renderShop(); renderBoardBar();
@@ -2857,7 +3068,6 @@ $("btnBlitz").onclick=()=>{
   startDeck(bag.slice(0,12),"⚡ Relámpago",20,8);
 };
 /* ======= 🎓 Generación con IA (backend Cloud Run + fallback offline) ======= */
-const BACKEND_URL="https://estudo-exames-405899472513.europe-west1.run.app";
 async function generarIA(texto,topicos){
   const ctrl=new AbortController(); const to=setTimeout(()=>ctrl.abort(),60000);
   try{
@@ -2897,6 +3107,7 @@ $("btnGenExamen").onclick=async()=>{
   state.examen1=exs.slice(0,half); state.examen2=exs.slice(half);
   save(); updateExamUI();
   toast("¡Listo! Generé "+exs.length+" ejercicios y 2 revisiones 🎓");
+  speakFX("missao_nova");
 };
 $("btnExamenPracticar").onclick=()=>{ if(!state.examen.length){toast("Genera primero los ejercicios del examen 🎓");return;} startDeck(state.examen,"Examen",20); };
 $("btnExamenRev1").onclick=()=>{ if(!state.examen1.length){toast("Genera primero los ejercicios del examen 🎓");return;} startDeck(state.examen1,"Revisión 1 (examen)",30); };
@@ -2908,29 +3119,162 @@ Mia.init();
 speak("¡Hola, "+(state.name||"Maitê")+"! "+LINES.greet);
 </script>
 <style>
-.mascot .avatar{background-image:url("assets/mia/mia.webp");background-size:cover;background-position:50% 8%}
-.mascot #catSvg,.mascot .hat,.mascot .ove,.mascot .ovm{display:none!important}
-#mia .gato-pet{position:absolute;left:-14px;bottom:6px;width:56px;height:56px;z-index:4;cursor:pointer;
+.mascot .avatar{background:linear-gradient(145deg,#ffe9b0,#ffd166);overflow:visible}
+#mia .gato-pet{position:absolute;left:-66px;bottom:0;width:84px;height:84px;aspect-ratio:1/1;z-index:10;cursor:pointer;
+  opacity:1;pointer-events:auto;user-select:none;-webkit-tap-highlight-color:transparent;
   transform-origin:bottom center;transition:transform .45s cubic-bezier(.2,.9,.3,1.3)}
-#mia .gato-pet svg{width:100%;height:100%;display:block;filter:drop-shadow(0 2px 3px rgba(0,0,0,.28))}
-#mia .gato-pet.en-colo{transform:translate(30px,-96px) rotate(-7deg) scale(.95)}
-#mia .gato-pet.feliz{animation:gatoPula .55s ease-out}
-#mia .gato-pet.dorme svg{animation:gatoDorme 3.2s ease-in-out infinite}
-@keyframes gatoPula{0%,100%{transform:translateY(0)}35%{transform:translateY(-18px) scale(1.07)}70%{transform:translateY(0)}}
-@keyframes gatoDorme{0%,100%{transform:scale(1)}50%{transform:scale(1.05,.95)}}
+#mia.tutor .gato-pet{left:-72px;width:90px;height:90px}
+#mia .gato-pet svg{width:100%;height:100%;display:block;opacity:1;overflow:visible;
+  filter:drop-shadow(0 4px 6px rgba(34,18,6,.28))}
+#mia .gato-pet .gato-mouth-open{display:none;transform-box:fill-box;transform-origin:center}
+#mia .gato-pet.feliz .gato-mouth-open,#mia .gato-pet.cheer .gato-mouth-open{display:block;animation:gatoBoca .18s ease-in-out 4 alternate}
+#mia .gato-pet.feliz .gato-mouth-w,#mia .gato-pet.cheer .gato-mouth-w{display:none}
+#mia .gato-pet .gato-body-grp{transform-box:fill-box;transform-origin:50% 92%;animation:gatoRespira 3.1s ease-in-out infinite}
+#mia .gato-pet .gato-head-grp{transform-box:fill-box;transform-origin:50% 88%;animation:gatoCabeca 4.8s ease-in-out infinite}
+#mia .gato-pet .gato-tail{transform-box:fill-box;transform-origin:12% 86%;animation:gatoRabo 2.4s ease-in-out infinite}
+#mia .gato-pet .gato-eye{transform-box:fill-box;transform-origin:center;animation:gatoPisca 4.2s infinite}
+#mia .gato-pet .gato-ear-l{transform-box:fill-box;transform-origin:78% 82%;animation:gatoOrelhaL 5.6s infinite}
+#mia .gato-pet .gato-ear-r{transform-box:fill-box;transform-origin:22% 82%;animation:gatoOrelhaR 6.9s infinite 1.8s}
+#mia .gato-pet.en-colo{transform:translate(72px,-58%) rotate(-6deg) scale(.86)}
+#mia .gato-pet.feliz,#mia .gato-pet.cheer{animation:gatoPula .9s cubic-bezier(.25,.9,.35,1)}
+#mia .gato-pet.feliz .gato-tail,#mia .gato-pet.cheer .gato-tail{animation:gatoRabo .42s ease-in-out 4}
+#mia .gato-pet.esfrega{animation:gatoEsfrega 1.5s ease-in-out}
+#mia .gato-pet.esfrega .gato-body-grp{animation:gatoArqueia 1.5s ease-in-out}
+#mia .gato-pet.espreguica svg{animation:gatoEspreguica 1.15s ease-in-out}
+#mia .gato-pet.ronrona svg{animation:gatoRonrona .13s ease-in-out 10}
+#mia .gato-pet.dorme .gato-body-grp{animation:gatoDorme 3.4s ease-in-out infinite}
+#mia .gato-pet.dorme .gato-eye{animation:none;transform:scaleY(.08)}
+#mia .gato-pet.dorme .gato-tail{animation:gatoRabo 5.2s ease-in-out infinite}
+#mia .gato-fx{position:absolute;inset:-24px -12px 0;pointer-events:none;overflow:visible}
+#mia .gato-fx-p{position:absolute;left:50%;bottom:58%;font-size:13px;font-weight:800;line-height:1;
+  color:#ff4f87;text-shadow:0 1px 2px rgba(255,255,255,.9);animation:gatoSobe 1.15s ease-out forwards}
+#mia .gato-fx-p.star{color:#ffb400}
+#mia .gato-fx-p.purr{font-size:11px;color:#d95b0f;background:rgba(255,250,240,.92);padding:2px 6px;
+  border-radius:999px;box-shadow:0 2px 5px rgba(0,0,0,.14);white-space:nowrap}
+@keyframes gatoRespira{0%,100%{transform:scale(1,1)}50%{transform:scale(1.035,.97)}}
+@keyframes gatoCabeca{0%,100%{transform:rotate(-1.5deg) translateY(0)}50%{transform:rotate(2deg) translateY(-1.5px)}}
+@keyframes gatoRabo{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(14deg)}}
+@keyframes gatoPisca{0%,91%,100%{transform:scaleY(1)}94%,96%{transform:scaleY(.07)}}
+@keyframes gatoOrelhaL{0%,86%,100%{transform:rotate(0)}89%,93%{transform:rotate(-9deg)}}
+@keyframes gatoOrelhaR{0%,86%,100%{transform:rotate(0)}89%,93%{transform:rotate(9deg)}}
+@keyframes gatoBoca{from{transform:scaleY(.55)}to{transform:scaleY(1.08)}}
+@keyframes gatoPula{0%,100%{transform:translateY(0) scale(1)}22%{transform:translateY(-20px) scale(1.08,.96)}
+  45%{transform:translateY(-2px) scale(.98,1.03)}68%{transform:translateY(-13px) scale(1.05)}85%{transform:translateY(0) scale(1.02,.98)}}
+@keyframes gatoEsfrega{0%,100%{transform:translateX(0) rotate(0)}
+  25%{transform:translateX(14px) rotate(10deg)}55%{transform:translateX(18px) rotate(6deg)}80%{transform:translateX(11px) rotate(9deg)}}
+@keyframes gatoArqueia{0%,100%{transform:scale(1,1)}45%{transform:scale(.95,1.08) translateY(-3px)}}
+@keyframes gatoEspreguica{0%,100%{transform:scale(1,1) translateY(0)}
+  35%{transform:scale(1.14,.84) translate(4px,3px)}70%{transform:scale(.93,1.1) translateY(-4px)}}
+@keyframes gatoRonrona{0%,100%{transform:translateX(0)}50%{transform:translateX(1.6px)}}
+@keyframes gatoDorme{0%,100%{transform:scale(1,1)}50%{transform:scale(1.05,.94)}}
+@keyframes gatoSobe{0%{opacity:0;transform:translate(-50%,6px) scale(.6)}
+  20%{opacity:1;transform:translate(calc(-50% + var(--gx,0px)),-8px) scale(1.05)}
+  100%{opacity:0;transform:translate(calc(-50% + var(--gx,0px)),-38px) scale(.9)}}
+@media (prefers-reduced-motion:reduce){
+  #mia .gato-pet,#mia .gato-pet *{animation:none!important}
+}
 </style>
 <script>
 (function(){
-  var mia=document.getElementById('mia'), svg=document.getElementById('catSvg');
-  if(!mia||!svg) return;
+  var mia=document.getElementById('mia'), src=document.getElementById('catSvg');
+  if(!mia||!src) return;
+  var still=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)');
+  var clone=src.cloneNode(true);
+  clone.id='gatoSvg';
+  // Evita colisión de IDs con #catSvg oculto en .mascot (corrige gradientes/filtros en todos los navegadores)
+  var idMap={};
+  clone.querySelectorAll('[id]').forEach(function(n){
+    var oldId=n.getAttribute('id');
+    var newId='pet-'+oldId;
+    idMap[oldId]=newId;
+    n.setAttribute('id',newId);
+  });
+  clone.querySelectorAll('*').forEach(function(n){
+    ['fill','stroke','filter','clip-path','mask'].forEach(function(attr){
+      var v=n.getAttribute(attr);
+      if(v&&v.indexOf('url(#')===0){
+        var k=v.slice(5,-1);
+        if(idMap[k]) n.setAttribute(attr,'url(#'+idMap[k]+')');
+      }
+    });
+  });
+
   var pet=document.createElement('div');
   pet.className='gato-pet'; pet.id='gatoPet'; pet.title='Gatuno, la mascota de la princesa';
-  pet.appendChild(svg.cloneNode(true));
+  pet.setAttribute('role','button'); pet.setAttribute('aria-label','Acariciar a Gatuno');
+  var fx=document.createElement('div'); fx.className='gato-fx'; fx.setAttribute('aria-hidden','true');
+  pet.appendChild(clone);
+  pet.appendChild(fx);
   mia.appendChild(pet);
-  pet.addEventListener('click',function(){pet.classList.remove('feliz');void pet.offsetWidth;pet.classList.add('feliz');});
+
+  var timers={}, lastCheer=0, clickStep=0;
+  function pulseClass(cls,ms){
+    pet.classList.remove(cls); void pet.offsetWidth; pet.classList.add(cls);
+    clearTimeout(timers[cls]);
+    timers[cls]=setTimeout(function(){pet.classList.remove(cls);},ms);
+  }
+  function spawnFx(items){
+    if(still&&still.matches) return;
+    items.forEach(function(it,idx){
+      var s=document.createElement('span');
+      s.className='gato-fx-p'+(it.cls?' '+it.cls:'');
+      s.textContent=it.txt;
+      s.style.setProperty('--gx',((idx%2===0?-1:1)*(8+idx*7))+'px');
+      s.style.animationDelay=(idx*90)+'ms';
+      fx.appendChild(s);
+      setTimeout(function(){if(s.parentNode) s.parentNode.removeChild(s);},1300);
+    });
+  }
+  function feliz(){
+    var now=Date.now();
+    if(now-lastCheer<260) return;
+    lastCheer=now;
+    pulseClass('feliz',950);
+    spawnFx([{txt:'♥'},{txt:'✦',cls:'star'},{txt:'♥'}]);
+  }
+  function esfregar(){
+    if(pet.classList.contains('dorme')||pet.classList.contains('en-colo')) return;
+    pulseClass('esfrega',1550);
+    spawnFx([{txt:'♥'},{txt:'prrr~',cls:'purr'}]);
+  }
+  function espreguicar(){
+    if(pet.classList.contains('dorme')) return;
+    pulseClass('espreguica',1200);
+  }
+  function ronronar(){
+    pulseClass('ronrona',1350);
+    spawnFx([{txt:'prrr~ ♥',cls:'purr'},{txt:'✦',cls:'star'}]);
+  }
+
+  pet.addEventListener('click',function(e){
+    e.stopPropagation();
+    if(pet.classList.contains('dorme')) pet.classList.remove('dorme');
+    clickStep=(clickStep+1)%2;
+    if(clickStep===1){
+      espreguicar();
+      setTimeout(function(){ronronar();},450);
+    }else{
+      ronronar();
+      feliz();
+    }
+  });
+
+  // Comportamiento felino espontáneo cada ~11s (esfregarse o espreguiçarse junto a Mía)
+  setInterval(function(){
+    if(document.hidden||(still&&still.matches)) return;
+    if(pet.classList.contains('dorme')||pet.classList.contains('en-colo')||pet.classList.contains('feliz')) return;
+    if(Math.random()<0.62) esfregar();
+    else espreguicar();
+  },11000);
+
   window.Gato={
     colo:function(on){pet.classList.toggle('en-colo',!!on);},
-    dorme:function(on){pet.classList.toggle('dorme',!!on);}
+    dorme:function(on){pet.classList.toggle('dorme',!!on);},
+    feliz:feliz,
+    cheer:feliz,
+    esfregar:esfregar,
+    espreguicar:espreguicar,
+    ronronar:ronronar
   };
 })();
 </script>

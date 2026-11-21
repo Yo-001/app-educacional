@@ -2,3 +2,5 @@ backend/secrets.json
 __pycache__/
 *.backup
 tmpfile
+content/audio/raw/
+backend/tts_cache/

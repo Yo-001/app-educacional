@@ -162,7 +162,19 @@ def cmd_ocr(limit=None):
         print("  ok  %-45s %5d chars" % (row["local_path"].split("extracao/")[-1], len(text)))
 
 
-APP_SLUG = {"mates": "mat", "castellano": "cast", "galego": "gal", "sociais": "soc", "ingles": "ingles"}
+APP_SLUG = {
+    "mates": "mat",
+    "mat": "mat",
+    "castellano": "cast",
+    "cast": "cast",
+    "galego": "gal",
+    "gal": "gal",
+    "sociais": "soc",
+    "soc": "soc",
+    "naturais": "nat",
+    "nat": "nat",
+    "ingles": "ingles",
+}
 CONTENT_OUT = os.path.join(ROOT, "..", "..", "content", "ejercicios-libro.json")
 TEMA = "do libro 📖"
 
@@ -170,36 +182,129 @@ TEMA = "do libro 📖"
 def cmd_export():
     """Exercicios que o app consegue corrigir -> content/ejercicios-libro.json.
 
-    O app compara UMA resposta curta, por isso aqui ficam só invariantes objetivas: tem resposta,
-    a resposta tem letra ou número (corta restos como ". . . ." ou "-") e não é uma lista longa.
+    Suporta: parejas, ordenar, dis (voz), vf, escri e escolha múltipla (opts).
     """
     con = init()
     out = {}
-    for r in con.execute("SELECT s.slug, e.statement, e.answer, e.options, e.difficulty"
-                         " FROM exercises e JOIN subjects s ON s.id=e.subject_id"
-                         " WHERE e.answer IS NOT NULL AND trim(e.answer) <> ''"
-                         " ORDER BY s.slug, e.difficulty, e.id"):
+    for r in con.execute(
+        "SELECT s.slug, e.kind, e.statement, e.answer, e.options, e.difficulty, e.lang"
+        " FROM exercises e JOIN subjects s ON s.id=e.subject_id"
+        " WHERE (e.answer IS NOT NULL AND trim(e.answer) <> '')"
+        "    OR e.kind IN ('parejas', 'ordenar')"
+        " ORDER BY s.slug, e.difficulty, e.id"
+    ):
         key = APP_SLUG.get(r["slug"])
-        st, ans = r["statement"].strip(), r["answer"].strip()
-        if not key or len(st) < 15 or len(ans) > 60 or not re.search(r"[0-9a-záéíóúñü]", ans, re.I):
+        st = (r["statement"] or "").strip()
+        ans = (r["answer"] or "").strip()
+        kind = (r["kind"] or "").strip().lower()
+        if not key or len(st) < 15:
             continue
-        item = {"q": r["statement"].strip(), "a": r["answer"].strip(),
-                "tema": TEMA, "dif": r["difficulty"] or 1}
-        opts = [str(o).strip() for o in json.loads(r["options"] or "[]") if str(o).strip()]
-        if len(opts) >= 3 and item["a"] in opts:
-            item["opts"] = opts                      # escolha múltipla
+
+        raw_opts = None
+        if r["options"]:
+            try:
+                raw_opts = json.loads(r["options"])
+            except Exception:
+                raw_opts = None
+
+        dif = r["difficulty"] or 1
+        is_parejas = kind == "parejas" or (
+            isinstance(raw_opts, list)
+            and len(raw_opts) >= 2
+            and all(isinstance(p, list) and len(p) == 2 for p in raw_opts)
+        )
+        is_ordenar = (not is_parejas) and (
+            kind == "ordenar"
+            or (
+                isinstance(raw_opts, list)
+                and len(raw_opts) >= 3
+                and all(not isinstance(x, list) for x in raw_opts)
+                and re.search(r"\b(ordena|en orden|en orde|order)\b", st, re.I)
+                and (not ans or ans not in [str(o).strip() for o in raw_opts])
+            )
+        )
+
+        if is_parejas:
+            if not isinstance(raw_opts, list):
+                continue
+            pares = [
+                [str(p[0]).strip(), str(p[1]).strip()]
+                for p in raw_opts
+                if isinstance(p, list) and len(p) == 2 and str(p[0]).strip() and str(p[1]).strip()
+            ]
+            if len(pares) < 2:
+                continue
+            item = {
+                "q": st,
+                "tipo": "parejas",
+                "pares": pares,
+                "a": ans or "-".join(p[0] for p in pares),
+                "tema": TEMA,
+                "dif": dif,
+            }
+        elif is_ordenar:
+            if not isinstance(raw_opts, list):
+                continue
+            pasos = [str(o).strip() for o in raw_opts if str(o).strip()]
+            if len(pasos) < 2:
+                continue
+            item = {
+                "q": st,
+                "tipo": "ordenar",
+                "pasos": pasos,
+                "a": ans if (ans and "→" in ans) else " → ".join(pasos),
+                "tema": TEMA,
+                "dif": dif,
+            }
         else:
-            item["tipo"] = "escri"                   # resposta curta/cálculo: escreve-se
+            if not ans or len(ans) > 60 or not re.search(r"[0-9a-záéíóúñü]", ans, re.I):
+                continue
+            item = {"q": st, "a": ans, "tema": TEMA, "dif": dif}
+            opts = (
+                [str(o).strip() for o in raw_opts if str(o).strip()]
+                if isinstance(raw_opts, list)
+                else []
+            )
+            vf_sets = ({"verdadero", "falso"}, {"verdadeiro", "falso"}, {"true", "false"})
+            is_vf = kind == "vf" or (len(opts) == 2 and {o.lower() for o in opts} in vf_sets)
+
+            if kind in ("voz", "dis"):
+                item["tipo"] = "dis"
+                item["lang"] = (
+                    "en-US"
+                    if (key == "ingles" or (r["lang"] or "").lower().startswith("en"))
+                    else "es-ES"
+                )
+            elif is_vf:
+                if len(opts) != 2 or ans not in opts:
+                    continue
+                item["tipo"] = "vf"
+                item["opts"] = opts
+            elif kind in ("escrita", "escri") or raw_opts is None:
+                item["tipo"] = "escri"
+            elif len(opts) >= 3 and ans in opts:
+                item["opts"] = opts
+            else:
+                item["tipo"] = "escri"
+
         out.setdefault(key, []).append(item)
+
     path = os.path.abspath(CONTENT_OUT)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as fh:
         json.dump(out, fh, ensure_ascii=False, indent=1)
         fh.write("\n")
     print("escrito %s" % path)
+    counts = {}
     for k in sorted(out):
-        mc = sum(1 for i in out[k] if "opts" in i)
-        print("  %-8s %3d exercicios (%d escolha, %d escrever)" % (k, len(out[k]), mc, len(out[k]) - mc))
+        by_t = {}
+        for i in out[k]:
+            t = i.get("tipo", "opts")
+            by_t[t] = by_t.get(t, 0) + 1
+            counts[t] = counts.get(t, 0) + 1
+        det = ", ".join(f"{t}={by_t[t]}" for t in sorted(by_t))
+        print("  %-8s %3d exercicios (%s)" % (k, len(out[k]), det))
+    print("  por tipo:", ", ".join(f"{t}={counts[t]}" for t in sorted(counts)))
     print("  total: %d exercicios (de %d na base)" % (
         sum(len(v) for v in out.values()),
         con.execute("SELECT COUNT(*) c FROM exercises").fetchone()["c"]))

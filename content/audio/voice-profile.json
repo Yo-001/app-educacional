@@ -1,0 +1,48 @@
+{
+  "id": "amostra-2-entusiasmada",
+  "voicestudio_profile_id": "mia_amostra2",
+  "name": "Amostra 2 — Entusiasmada e Comemorativa",
+  "default": true,
+  "engine": "VoiceStudio (k2-fsa/OmniVoice)",
+  "language": "gl",
+  "params": {
+    "instruct": "high pitch",
+    "speed": 1.1,
+    "guidance_scale": 2.7,
+    "num_step": 20,
+    "denoise": true,
+    "postprocess_output": true
+  },
+  "reference": {
+    "source": "content/audio/raw/20-11-2026 21.45.m4a",
+    "clip": "content/audio/raw/ref_clip.wav",
+    "segment_seconds": [438.4, 452.3],
+    "ref_text": "Pongo una música y se pone a llorar. Pongo un suéter caro y se pone a gritar. Le doy una guitarra y se pone a bailar."
+  },
+  "fx": {
+    "acerto_1": {
+      "file": "content/audio/fx/acerto_1.mp3",
+      "text": "¡Moi ben!"
+    },
+    "acerto_2": {
+      "file": "content/audio/fx/acerto_2.mp3",
+      "text": "¡xenial! ¡Acertaches á primeira!"
+    },
+    "acerto_3": {
+      "file": "content/audio/fx/acerto_3.mp3",
+      "text": "¡Uau! ¡Tesouro desbloqueado!"
+    },
+    "moedas": {
+      "file": "content/audio/fx/moedas.mp3",
+      "text": "¡Gañaches cinco moedas máis!"
+    },
+    "erro_1": {
+      "file": "content/audio/fx/erro_1.mp3",
+      "text": "Non pasa nada, tentalo outra vez."
+    },
+    "missao_nova": {
+      "file": "content/audio/fx/missao_nova.mp3",
+      "text": "¡Nova misión lista! ¡Imos aló!"
+    }
+  }
+}
