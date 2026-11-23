@@ -1199,7 +1199,8 @@ const LINES={
 /* Backend local quando aberto vía file:// ou localhost; Cloud Run en produción */
 const LOCAL_BACKEND_URL="http://"+(location.hostname==="127.0.0.1"?"127.0.0.1":"localhost")+":8080";
 const CLOUD_BACKEND_URL="https://estudo-exames-405899472513.europe-west1.run.app";
-const TTS_BACKEND_URL=LOCAL_BACKEND_URL; /* /tts usa EXCLUSIVAMENTE o VoiceStudio local (mia_amostra2), nunca o edge-tts do Cloud Run */
+const CLOUD_TTS_URL="https://estudo-tts-405899472513.europe-west1.run.app";
+const TTS_BACKEND_URL=CLOUD_TTS_URL; /* /tts usa o Cloud Run GPU (estudo-tts, mia_amostra2), funcionando em qualquer dispositivo sem servidor local */
 let BACKEND_URL=(location.protocol==="file:"||location.hostname==="localhost"||location.hostname==="127.0.0.1")
   ? LOCAL_BACKEND_URL
   : CLOUD_BACKEND_URL;
@@ -1326,6 +1327,13 @@ function stopAudio(){
 }
 /* cache de TTS: saudações, incentivos e falas conhecidas resolvem direto para MP3 local (Amostra 2) */
 const _ttsCache=new Map(); const TTS_CACHE_MAX=80;
+let _lastTtsWarm=0;
+function warmCloudTTS(){
+  const now=Date.now();
+  if(now-_lastTtsWarm<180000) return;
+  _lastTtsWarm=now;
+  fetch(CLOUD_TTS_URL+"/health",{mode:"cors"}).catch(()=>{});
+}
 function ttsURL(line){
   const fx=matchExactFx(line);
   if(fx) return Promise.resolve(fx);
@@ -1335,8 +1343,15 @@ function ttsURL(line){
   if(hit) return Promise.resolve(hit); /* hit é Promise (fetch em curso) ou string (blob já pronto) — speak() sempre recebe uma Promise */
   const ctrl=typeof AbortController!=="undefined"?new AbortController():null;
   const to=ctrl?setTimeout(()=>ctrl.abort(),90000):null;
-  const p=fetch(TTS_BACKEND_URL+"/tts?text="+encodeURIComponent(clean.slice(0,400)),ctrl?{signal:ctrl.signal}:undefined)
+  const q="/tts?text="+encodeURIComponent(clean.slice(0,400));
+  const opts=ctrl?{signal:ctrl.signal}:undefined;
+  const canLocal=location.protocol==="file:"||location.hostname==="localhost"||location.hostname==="127.0.0.1";
+  const p=fetch(TTS_BACKEND_URL+q,opts)
     .then(r=>{ if(!r.ok) throw new Error("tts "+r.status); return r.blob(); })
+    .catch(err=>{
+      if(!canLocal) throw err;
+      return fetch(LOCAL_BACKEND_URL+q,opts).then(r=>{ if(!r.ok) throw new Error("tts "+r.status); return r.blob(); });
+    })
     .then(b=>{ if(to) clearTimeout(to); const u=URL.createObjectURL(b); _ttsCache.set(clean,u);
       if(_ttsCache.size>TTS_CACHE_MAX){ const k=_ttsCache.keys().next().value; try{URL.revokeObjectURL(_ttsCache.get(k));}catch(e){} _ttsCache.delete(k); }
       return u; })
@@ -1681,7 +1696,7 @@ function setTab(id){
     }
     c.style.display=(c.dataset.tab===id)?"":"none";
   });
-  if(id==="chat") initChat();
+  if(id==="chat"){ initChat(); warmCloudTTS(); }
   syncTutor();
   window.scrollTo({top:0});
   if(Mia && Mia.avoidText) requestAnimationFrame(()=>Mia.avoidText(520));

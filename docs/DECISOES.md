@@ -61,3 +61,16 @@ resposta no texto (inglês, sociais) ficam de fora. O export também exige respo
 com letra ou número, porque o app compara uma resposta só; atividade de relacionar/colorear entra como
 "aberta" e não chega ao app. Se o ficheiro não carregar, o app continua a funcionar com os geradores —
 nada depende da rede.
+
+## DEC-006 · Serviço dedicado `estudo-tts` em Cloud Run GPU + cache GCS privado (2026-11-23)
+
+**Decisão:** publicar o serviço dedicado `estudo-tts` no Cloud Run (`europe-west1`, GPU NVIDIA L4,
+`--no-gpu-zonal-redundancy`, `--min-instances=0`, `--max-instances=1`) executando `k2-fsa/OmniVoice`
+com o perfil `mia_amostra2`, e conectar `index.html` a ele como `TTS_BACKEND_URL` para todas as abas
+(com fallback ao servidor local apenas em `file:` / `localhost` / `127.0.0.1` e warm-up ao abrir o chat).
+**Motivo:** permitir síntese de voz da Mía em qualquer dispositivo sem depender de servidor local,
+mantendo custo zero em repouso (`min-instances=0`) e sem acordar a GPU em chamadas de texto/exame.
+**Consequência:** o cache persistente e o áudio de referência ficam no bucket GCS privado
+`gs://estudo-tts-cache-514315` montado em `/cache`, fora do repositório Git; `estudo-exames` segue
+separado em CPU leve para `/chat`, `/ocr`, `/generate` e `/exam`; os 29 FX locais em `content/audio/fx/`
+continuam gratuitos e instantâneos no cliente.
