@@ -181,20 +181,21 @@ def call_ocr(data_url):
     return text
 
 
-CHAT_SYSTEM = """Eres Gatuno, un gato tutor divertido y cariñoso que conversa con una niña de 8 años en Galicia (España). Respondes SIEMPRE en el mismo idioma en que escribe la niña (español, gallego u otro).
+CHAT_SYSTEM = """Eres Mía, una princesa y amiga divertida, cariñosa y curiosa que conversa con una niña de 8 años en Galicia (España). Respondes SIEMPRE en el mismo idioma en que escribe la niña (español, gallego u otro).
 
 Reglas:
-- Respuestas MUY cortas (2-3 frases, máximo ~40 palabras), vocabulario sencillo de 8 años, 0-2 emojis.
-- Eres un gato: a veces dices "miau" o ronroneas "prrr", y te gustan los juegos de gatos.
+- Responde en 1 o 2 frases muy cortas (máximo 22 palabras en total), vocabulario sencillo de 8 años, sin emojis ni símbolos raros y con puntuación fluida para lectura en voz alta (TTS).
+- Prefiere empezar la primera frase con una reacción breve y natural (como "¡Claro que sí!", "¡Qué divertido!", "¡Qué buena pregunta!", "¡Me encanta esa idea!", "¡Vamos a pensar juntas!", "¡Muy bien!" o "¡Hola, Maitê!") seguida de signo de exclamación, y en la segunda frase da la respuesta o pregunta directa.
+- Eres alegre, cercana y animadora; habla siempre como una princesa humana, sin maullidos ni onomatopeyas de animales.
 - Fomentas el aprendizaje: si pide ayuda con la escuela, la guías con preguntas paso a paso; NUNCA das la respuesta directa de un deber sin que ella lo piense primero.
-- Propones juegos (adivinanzas, "palabras que empiezan por X", sumas locas, adivina el animal), chistes cortos y cosas divertidas cuando está aburrida.
-- El nombre de la niña es: {name}. Llámala SIEMPRE por su nombre con cariño. NUNCA la llames "gatito", "gatita", "gatuna" ni con diminutivos de gato: la gata eres TÚ; ella es {name}, una niña.
+- Propones juegos (adivinanzas, "palabras que empiezan por X", sumas divertidas, adivina el animal), chistes cortos y retos cuando está aburrida.
+- El nombre de la niña es: {name}. Llámala SIEMPRE por su nombre con cariño.
 - Temas seguros solo: escuela, animales, juegos, chistes, familia, hobbies. Si pide algo inapropiado, o habla de miedo o tristeza fuerte, responde con calma y sugiere contárselo a sus padres.
 - Nunca hables de política, violencia, romance ni nada de adultos."""
 
 
 def call_chat(messages, name, text):
-    """Resposta curta do gato tutor; histórico saneado (≤14 msgs, ≤600 car)."""
+    """Resposta curta de Mía; histórico saneado (≤14 msgs, ≤600 car)."""
     msgs = [{"role": "system",
              "content": CHAT_SYSTEM.replace("{name}", name or "pequeña")}]
     for m in (messages or [])[-14:]:
@@ -205,7 +206,7 @@ def call_chat(messages, name, text):
     payload = json.dumps({
         "model": MODEL,
         "temperature": 0.9,
-        "max_tokens": 220,
+        "max_tokens": 90,
         "messages": msgs,
     }).encode("utf-8")
     req = urllib.request.Request(
@@ -220,35 +221,69 @@ def call_chat(messages, name, text):
     return (content or "").strip()[:800]
 
 
-TTS_VOICE = "gl-ES-SabelaNeural"          # fallback remoto (Cloud Run) se OmniVoice non estiver dispoñible
-TTS_VOICE_FALLBACK = "es-ES-ElviraNeural"
-TTS_PITCH = "+20Hz"
-TTS_SPEED = "+8%"
 TTS_CACHE_DIR = os.environ.get("TTS_CACHE_DIR", os.path.join(BASE_DIR, "tts_cache"))
 _tts_cache = {}
 _tts_lock = threading.Lock()
 _omni_proc = None
 
+_GL_WORD_RE = re.compile(
+    r"\b(moi|ben|xenial|gañaches|moedas|tentalo|outra|imos|aló|acertaches|tesouro|non|limpo|feito|galego|auga|folla|follas|osíxeno|cal|cales|cantos|onde|verdadeiro|unha|dous|catro|árbores|raíz|talo|froito|semente|fungos|coñecemento|lingua)\b",
+    re.IGNORECASE,
+)
+_GL_STEM_RE = re.compile(r"(unha|coñec)", re.IGNORECASE)
+_EMOJI_RE = re.compile(
+    "["
+    "\U0001F300-\U0001FAFF"
+    "\U00002600-\U000027BF"
+    "\U0000FE00-\U0000FE0F"
+    "\U0000200D"
+    "]+",
+    flags=re.UNICODE,
+)
+
 _DEFAULT_PROFILE = {
     "id": "amostra-2-entusiasmada",
     "voicestudio_profile_id": "mia_amostra2",
-    "language": "gl",
+    "language": "auto",
     "params": {
-        "instruct": "high pitch",
-        "speed": 1.1,
-        "guidance_scale": 2.7,
-        "num_step": 20,
+        "instruct": "",
+        "speed": 1.06,
+        "guidance_scale": 2.0,
+        "num_step": 12,
         "denoise": True,
         "postprocess_output": True,
     },
     "reference": {
-        "clip": "content/audio/raw/ref_clip.wav",
-        "ref_text": (
-            "Pongo una música y se pone a llorar. Pongo un suéter caro y se pone "
-            "a gritar. Le doy una guitarra y se pone a bailar."
-        ),
+        "clip": "content/audio/raw/ref_clip_clean.wav",
+        "ref_text": "Y se pone el tutú y se pone a bailar como una bailarina.",
     },
 }
+
+
+def _detect_tts_lang(text, default_lang="es"):
+    """Detecta idioma para OmniVoice ('gl' ou 'es')."""
+    s = text or ""
+    if _GL_WORD_RE.search(s) or _GL_STEM_RE.search(s):
+        return "gl"
+    return default_lang if default_lang in ("gl", "es") else "es"
+
+
+def _normalize_tts_text(text, lang="es"):
+    """Normaliza texto para síntese TTS removendo emojis e expandindo símbolos."""
+    s = _EMOJI_RE.sub("", text or "")
+    s = s.replace("«", "").replace("»", "")
+    s = s.replace("×", " por ").replace("÷", " entre ").replace("=", " igual a ").replace("→", ", ")
+    plus_word = " máis " if lang == "gl" else " más "
+    s = re.sub(r"(?<=\d)\s*\+\s*(?=\d)|\s+\+\s+", plus_word, s)
+    s = re.sub(r"\s+([.!?,])", r"\1", s)
+    s = re.sub(r"([.!?,¡¿])\1+", r"\1", s)
+    return re.sub(r"\s+", " ", s).strip()
+
+
+def _norm_fx_text(text):
+    s = re.sub(r"\s+", " ", (text or "").strip().lower())
+    s = re.sub(r"^[.!¡?¿]+|[.!¡?¿]+$", "", s)
+    return re.sub(r"[¡¿]", "", s).strip()
 
 
 def _load_voice_profile():
@@ -266,11 +301,13 @@ def _load_voice_profile():
 
 def _fx_file_for_text(text):
     prof = _load_voice_profile()
-    norm = re.sub(r"\s+", " ", (text or "").strip().lower())
+    norm = _norm_fx_text(text)
+    if not norm:
+        return None
     for item in (prof.get("fx") or {}).values():
         if not isinstance(item, dict):
             continue
-        ft = re.sub(r"\s+", " ", (item.get("text") or "").strip().lower())
+        ft = _norm_fx_text(item.get("text"))
         rel = item.get("file") or ""
         if ft and ft == norm and rel:
             fp = os.path.join(REPO_DIR, rel.replace("/", os.sep))
@@ -356,18 +393,87 @@ def _omni_env(hf_cache, offline):
 
 
 _WORKER_CODE = r"""
-import json, sys, torch, torchaudio
+import hashlib, json, os, sys, torch, torchaudio
 _proto_out = sys.stdout
 sys.stdout = sys.stderr
-from omnivoice.models.omnivoice import OmniVoice
-from omnivoice.utils.dtype import tts_dtype_name
-
+torch.set_num_threads(max(4, min(8, (os.cpu_count() or 6))))
 cfg = json.loads(sys.argv[1])
+_backend_dir = cfg.get("backend_dir") or os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(sys.executable))),
+    "backend",
+)
+if not os.path.isdir(_backend_dir):
+    _backend_dir = os.path.join(os.environ.get("APPDATA", ""), "VoiceStudio", "runtime", "project", "backend")
+if os.path.isdir(_backend_dir) and _backend_dir not in sys.path:
+    sys.path.insert(0, _backend_dir)
+from omnivoice.models.omnivoice import OmniVoice, OmniVoiceModelOutput, VoiceClonePrompt
+from omnivoice.utils.dtype import tts_dtype_name
+from services import audio_dsp as dsp
+
 device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
 model = OmniVoice.from_pretrained(cfg["model"], device_map=device, dtype=getattr(torch, tts_dtype_name(device)))
+
+_orig_forward = model.forward
+def _fast_forward(input_ids, audio_mask, labels=None, attention_mask=None, document_ids=None, position_ids=None):
+    if (
+        labels is None
+        and document_ids is None
+        and input_ids.shape[0] == 2
+        and attention_mask is not None
+        and attention_mask.ndim == 4
+    ):
+        c_len = int(attention_mask[0, 0, 0].sum().item())
+        u_len = int(attention_mask[1, 0, 0].sum().item())
+        if 0 < u_len < c_len and c_len == input_ids.shape[-1]:
+            cond_emb = model._prepare_embed_inputs(input_ids[0:1], audio_mask[0:1])
+            cond_h = model.llm(
+                inputs_embeds=cond_emb,
+                attention_mask=attention_mask[0:1],
+                return_dict=True,
+                position_ids=position_ids,
+            )[0][:, c_len - u_len : c_len, :]
+            uncond_emb = model._prepare_embed_inputs(input_ids[1:2, :, :u_len], audio_mask[1:2, :u_len])
+            uncond_pos = position_ids[:, :u_len] if position_ids is not None else None
+            uncond_h = model.llm(
+                inputs_embeds=uncond_emb,
+                attention_mask=attention_mask[1:2, :, :u_len, :u_len],
+                return_dict=True,
+                position_ids=uncond_pos,
+            )[0]
+            pair_h = torch.cat([cond_h, uncond_h], dim=0)
+            logits_pair = model.audio_heads(pair_h).view(
+                2, u_len, model.config.num_audio_codebook, model.config.audio_vocab_size
+            ).permute(0, 2, 1, 3)
+            out_logits = logits_pair.new_zeros((2, model.config.num_audio_codebook, c_len, model.config.audio_vocab_size))
+            out_logits[0, :, c_len - u_len : c_len, :] = logits_pair[0]
+            out_logits[1, :, :u_len, :] = logits_pair[1]
+            return OmniVoiceModelOutput(loss=None, logits=out_logits)
+    return _orig_forward(
+        input_ids=input_ids,
+        audio_mask=audio_mask,
+        labels=labels,
+        attention_mask=attention_mask,
+        document_ids=document_ids,
+        position_ids=position_ids,
+    )
+model.forward = _fast_forward
+
+_st = os.stat(cfg["ref_audio"]) if cfg.get("ref_audio") else None
+_h = hashlib.sha1(f'{cfg.get("ref_audio")}|{_st.st_size if _st else 0}|{int(_st.st_mtime) if _st else 0}|{cfg.get("ref_text")}'.encode("utf-8")).hexdigest()[:16]
+cache_pt = os.path.join(os.environ.get("APPDATA", ""), "OmniVoice", "prompt_cache", f"mia_prompt_{_h}.pt")
 prompt = None
-if cfg.get("ref_audio"):
+if os.path.isfile(cache_pt):
+    try:
+        prompt = VoiceClonePrompt.load(cache_pt, map_location=device)
+    except Exception:
+        prompt = None
+if prompt is None and cfg.get("ref_audio"):
     prompt = model.create_voice_clone_prompt(ref_audio=cfg["ref_audio"], ref_text=cfg.get("ref_text"))
+    try:
+        os.makedirs(os.path.dirname(cache_pt), exist_ok=True)
+        prompt.save(cache_pt)
+    except Exception:
+        pass
 _proto_out.write(json.dumps({"ready": True, "device": device}) + "\n")
 _proto_out.flush()
 
@@ -376,21 +482,28 @@ for line in sys.stdin:
     if not line:
         continue
     req = json.loads(line)
-    kw = dict(
-        text=req["text"],
-        language=req.get("language") or None,
-        instruct=req.get("instruct") or None,
-        speed=float(req.get("speed", 1.1)),
-        guidance_scale=float(req.get("guidance_scale", 2.7)),
-        num_step=int(req.get("num_step", 20)),
-        denoise=bool(req.get("denoise", True)),
-        postprocess_output=bool(req.get("postprocess_output", True)),
-    )
-    if prompt is not None:
-        kw["voice_clone_prompt"] = prompt
-    audios = model.generate(**kw)
-    torchaudio.save(req["output"], audios[0], model.sampling_rate)
-    _proto_out.write(json.dumps({"ok": True, "output": req["output"]}) + "\n")
+    try:
+        kw = dict(
+            text=req["text"],
+            language=req.get("language") or None,
+            instruct=(req.get("instruct") or "").strip() or None,
+            speed=float(req.get("speed", 1.06)),
+            guidance_scale=float(req.get("guidance_scale", 2.0)),
+            num_step=int(req.get("num_step", 12)),
+            denoise=bool(req.get("denoise", True)),
+            postprocess_output=bool(req.get("postprocess_output", True)),
+        )
+        if prompt is not None:
+            kw["voice_clone_prompt"] = prompt
+        audio = model.generate(**kw)[0]
+        audio = dsp.trim_speech_padding(audio, model.sampling_rate)
+        audio = dsp.apply_mastering(audio, model.sampling_rate)
+        audio = dsp.normalize_audio(audio, target_dBFS=-2.0)
+        audio = audio.detach().cpu().float()
+        torchaudio.save(req["output"], audio.unsqueeze(0) if audio.ndim == 1 else audio, model.sampling_rate)
+        _proto_out.write(json.dumps({"ok": True, "output": req["output"]}) + "\n")
+    except Exception as exc:
+        _proto_out.write(json.dumps({"ok": False, "error": str(exc)}) + "\n")
     _proto_out.flush()
 """
 
@@ -399,7 +512,13 @@ def _ensure_omni_worker(py_exe, model_arg, ref_audio, ref_text, hf_cache, offlin
     global _omni_proc
     if _omni_proc is not None and _omni_proc.poll() is None:
         return _omni_proc
-    cfg = json.dumps({"model": model_arg, "ref_audio": ref_audio, "ref_text": ref_text})
+    backend_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(py_exe))), "backend")
+    cfg = json.dumps({
+        "model": model_arg,
+        "ref_audio": ref_audio,
+        "ref_text": ref_text,
+        "backend_dir": backend_dir,
+    })
     flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
     proc = subprocess.Popen(
         [py_exe, "-c", _WORKER_CODE, cfg],
@@ -425,7 +544,7 @@ def _wav_to_mp3_or_bytes(wav_path):
         mp3_path = wav_path[:-4] + ".mp3"
         flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
         res = subprocess.run(
-            [ff, "-y", "-i", wav_path, "-codec:a", "libmp3lame", "-qscale:a", "3", mp3_path],
+            [ff, "-y", "-i", wav_path, "-codec:a", "libmp3lame", "-qscale:a", "2", mp3_path],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             timeout=30,
@@ -438,15 +557,15 @@ def _wav_to_mp3_or_bytes(wav_path):
         return f.read(), "audio/wav", ".wav"
 
 
-def _synth_omnivoice(text, prof):
+def _synth_omnivoice(text, prof, lang=None):
     params = prof.get("params") or {}
     ref_audio = _resolve_ref_audio(prof)
     ref_text = (prof.get("reference") or {}).get("ref_text") or ""
-    lang = prof.get("language") or "gl"
-    instruct = params.get("instruct") or "high pitch"
-    speed = params.get("speed", 1.1)
-    guidance = params.get("guidance_scale", 2.7)
-    num_step = params.get("num_step", 20)
+    lang = lang or _detect_tts_lang(text)
+    instruct = (params.get("instruct") or "").strip()
+    speed = params.get("speed", 1.06)
+    guidance = params.get("guidance_scale", 2.0)
+    num_step = params.get("num_step", 12)
     denoise = bool(params.get("denoise", True))
     postproc = bool(params.get("postprocess_output", True))
     model_arg, hf_cache, offline = _omnivoice_model_arg()
@@ -489,7 +608,6 @@ def _synth_omnivoice(text, prof):
                 "--model", model_arg,
                 "--text", text,
                 "--language", str(lang),
-                "--instruct", str(instruct),
                 "--speed", str(speed),
                 "--guidance_scale", str(guidance),
                 "--num_step", str(num_step),
@@ -497,6 +615,8 @@ def _synth_omnivoice(text, prof):
                 "--postprocess_output", "true" if postproc else "false",
                 "--output", wav_out,
             ]
+            if instruct:
+                cmd.extend(["--instruct", str(instruct)])
             if ref_audio:
                 cmd.extend(["--ref_audio", ref_audio])
                 if ref_text:
@@ -517,52 +637,41 @@ def _synth_omnivoice(text, prof):
     raise RuntimeError("omnivoice unavailable")
 
 
-def _synth_edge_tts(text):
-    """Fallback remoto (Cloud Run) se OmniVoice/VoiceStudio non estiver dispoñible."""
-    import asyncio
-    import edge_tts
-
-    async def _go(voice):
-        c = edge_tts.Communicate(text, voice, rate=TTS_SPEED, pitch=TTS_PITCH)
-        buf = bytearray()
-        async for chunk in c.stream():
-            if chunk.get("type") == "audio":
-                buf.extend(chunk["data"])
-        return bytes(buf)
-
-    for voice in (TTS_VOICE, TTS_VOICE_FALLBACK):
-        try:
-            audio = asyncio.run(_go(voice))
-            if audio:
-                return audio, "audio/mpeg", ".mp3"
-        except Exception:
-            continue
-    raise RuntimeError("edge-tts: ninguna voz disponible")
-
-
-def _tts_cache_key(text, prof):
+def _tts_cache_key(text, prof, lang=""):
     params = prof.get("params") or {}
+    ref = prof.get("reference") or {}
     raw = "|".join([
+        "v3_clean_fp32",
         str(prof.get("id") or "amostra-2-entusiasmada"),
-        str(prof.get("language") or "gl"),
-        str(params.get("instruct") or "high pitch"),
-        str(params.get("speed", 1.1)),
-        str(params.get("guidance_scale", 2.7)),
-        str(params.get("num_step", 20)),
+        str(lang or prof.get("language") or "es"),
+        str(ref.get("clip") or ""),
+        str(ref.get("ref_text") or ""),
+        str((params.get("instruct") or "").strip()),
+        str(params.get("speed", 1.06)),
+        str(params.get("guidance_scale", 2.0)),
+        str(params.get("num_step", 12)),
+        str(bool(params.get("denoise", True))),
+        str(bool(params.get("postprocess_output", True))),
         text,
     ])
     return hashlib.sha1(raw.encode("utf-8")).hexdigest()
 
 
 def _synth_tts(text):
-    """Sintetiza co perfil Amostra 2 (OmniVoice/VoiceStudio) + caché en disco; fallback edge-tts."""
+    """Sintetiza exclusivamente co perfil clonado mia_amostra2 (OmniVoice/VoiceStudio) + caché en disco."""
     fx_path = _fx_file_for_text(text)
     if fx_path:
         with open(fx_path, "rb") as f:
             return f.read(), "audio/mpeg"
 
     prof = _load_voice_profile()
-    key = _tts_cache_key(text, prof)
+    prof_lang = (prof.get("language") or "auto").strip().lower()
+    lang = _detect_tts_lang(text) if prof_lang in ("", "auto") else prof_lang
+    norm_text = _normalize_tts_text(text, lang=lang)
+    if not norm_text:
+        raise RuntimeError("texto vacío")
+
+    key = _tts_cache_key(norm_text, prof, lang=lang)
     os.makedirs(TTS_CACHE_DIR, exist_ok=True)
     for ext, ctype in ((".mp3", "audio/mpeg"), (".wav", "audio/wav")):
         cached_file = os.path.join(TTS_CACHE_DIR, key + ext)
@@ -581,11 +690,7 @@ def _synth_tts(text):
                 if data:
                     return data, ctype
 
-        if _voicestudio_python() or _omnivoice_cli():
-            audio, ctype, ext = _synth_omnivoice(text, prof)
-        else:
-            audio, ctype, ext = _synth_edge_tts(text)
-
+        audio, ctype, ext = _synth_omnivoice(norm_text, prof, lang=lang)
         if audio:
             try:
                 with open(os.path.join(TTS_CACHE_DIR, key + ext), "wb") as f:
@@ -593,6 +698,21 @@ def _synth_tts(text):
             except Exception:
                 pass
         return audio, ctype
+
+
+def _warmup_omni_worker():
+    py_exe = _voicestudio_python()
+    if not py_exe:
+        return
+    try:
+        prof = _load_voice_profile()
+        ref_audio = _resolve_ref_audio(prof)
+        ref_text = (prof.get("reference") or {}).get("ref_text") or ""
+        model_arg, hf_cache, offline = _omnivoice_model_arg()
+        with _tts_lock:
+            _ensure_omni_worker(py_exe, model_arg, ref_audio, ref_text, hf_cache, offline)
+    except Exception:
+        pass
 
 
 def call_model(text, topics):
@@ -637,6 +757,7 @@ class H(BaseHTTPRequestHandler):
         self.send_header("Vary", "Origin")
         self.send_header("Access-Control-Allow-Methods", "POST,GET,OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Access-Control-Allow-Private-Network", "true")
 
     def _json(self, code, obj):
         body = json.dumps(obj, ensure_ascii=False).encode("utf-8")
@@ -671,6 +792,8 @@ class H(BaseHTTPRequestHandler):
             data = f.read()
         self.send_response(200)
         self._cors()
+        if full.endswith((".html", ".json", ".mp3", ".wav")):
+            self.send_header("Cache-Control", "no-cache, must-revalidate")
         self.send_header("Content-Type", ctype or "application/octet-stream")
         self.send_header("Content-Length", str(len(data)))
         self.end_headers()
@@ -680,8 +803,7 @@ class H(BaseHTTPRequestHandler):
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
         if parsed.path == "/health":
-            engine = "omnivoice" if (_voicestudio_python() or _omnivoice_cli()) else "edge-tts"
-            self._json(200, {"ok": True, "tts_engine": engine, "profile": "amostra-2-entusiasmada"})
+            self._json(200, {"ok": True, "tts_engine": "omnivoice", "profile": "amostra-2-entusiasmada", "tts_available": bool(_voicestudio_python() or _omnivoice_cli())})
         elif parsed.path == "/tts":
             self._do_tts()
         elif self._serve_static(parsed.path):
@@ -702,7 +824,7 @@ class H(BaseHTTPRequestHandler):
         text = clean_str((qs.get("text") or [""])[0], 400)
         if not text:
             return self._json(400, {"error": "falta el texto"})
-        h = hashlib.sha1(("amostra-2-entusiasmada|" + text).encode("utf-8")).digest()
+        h = hashlib.sha1(("v3_clean_fp32|amostra-2-entusiasmada|" + text).encode("utf-8")).digest()
         if h in _tts_cache:
             audio, ctype = _tts_cache[h]
             return self._send_audio(audio, ctype)
@@ -720,6 +842,7 @@ class H(BaseHTTPRequestHandler):
     def _send_audio(self, audio, ctype="audio/mpeg"):
         self.send_response(200)
         self._cors()
+        self.send_header("Cache-Control", "no-cache, must-revalidate")
         self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(audio)))
         self.end_headers()
@@ -772,7 +895,7 @@ class H(BaseHTTPRequestHandler):
         except Exception as e:
             return self._json(502, {"error": "fallo del chat: " + type(e).__name__})
         if not reply:
-            return self._json(502, {"error": "el gato se quedó sin palabras"})
+            return self._json(502, {"error": "Mía se quedó sin palabras"})
         self._json(200, {"text": reply})
 
     def _do_ocr(self, reqj):
@@ -835,6 +958,8 @@ class H(BaseHTTPRequestHandler):
 
 
 def main():
+    if _voicestudio_python():
+        threading.Thread(target=_warmup_omni_worker, daemon=True).start()
     port = int(os.environ.get("PORT", "8080"))
     ThreadingHTTPServer(("0.0.0.0", port), H).serve_forever()
 

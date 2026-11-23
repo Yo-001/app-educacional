@@ -4,20 +4,29 @@
   "name": "Amostra 2 — Entusiasmada e Comemorativa",
   "default": true,
   "engine": "VoiceStudio (k2-fsa/OmniVoice)",
-  "language": "gl",
+  "language": "auto",
   "params": {
-    "instruct": "high pitch",
-    "speed": 1.1,
-    "guidance_scale": 2.7,
-    "num_step": 20,
+    "instruct": "",
+    "speed": 1.06,
+    "guidance_scale": 2.0,
+    "num_step": 12,
     "denoise": true,
     "postprocess_output": true
   },
   "reference": {
     "source": "content/audio/raw/20-11-2026 21.45.m4a",
-    "clip": "content/audio/raw/ref_clip.wav",
-    "segment_seconds": [438.4, 452.3],
-    "ref_text": "Pongo una música y se pone a llorar. Pongo un suéter caro y se pone a gritar. Le doy una guitarra y se pone a bailar."
+    "clip": "content/audio/raw/ref_clip_clean.wav",
+    "segments_seconds": [
+      [
+        355.72,
+        357.55
+      ],
+      [
+        360.8,
+        363.95
+      ]
+    ],
+    "ref_text": "Y se pone el tutú y se pone a bailar como una bailarina."
   },
   "fx": {
     "acerto_1": {
@@ -83,6 +92,58 @@
     "completado": {
       "file": "content/audio/fx/completado.mp3",
       "text": "¡Completado! ¡Bien hecho!"
+    },
+    "saudacao_maite": {
+      "file": "content/audio/fx/saudacao_maite.mp3",
+      "text": "¡Hola, Maitê! Soy Mía, la princesa. Elige una materia y aprendemos juntas."
+    },
+    "palabra_completada": {
+      "file": "content/audio/fx/palabra_completada.mp3",
+      "text": "¡Palabra completada! ¡Bien!"
+    },
+    "vitoria_2048": {
+      "file": "content/audio/fx/vitoria_2048.mp3",
+      "text": "¡Llegaste a 2048! ¡Increíble!"
+    },
+    "campo_limpo": {
+      "file": "content/audio/fx/campo_limpo.mp3",
+      "text": "¡Campo limpo! ¡Ben feito!"
+    },
+    "sumas_completadas": {
+      "file": "content/audio/fx/sumas_completadas.mp3",
+      "text": "¡Sumas completadas!"
+    },
+    "chat_claro": {
+      "file": "content/audio/fx/chat_claro.mp3",
+      "text": "¡Claro que sí!"
+    },
+    "chat_buena": {
+      "file": "content/audio/fx/chat_buena.mp3",
+      "text": "¡Qué buena pregunta!"
+    },
+    "chat_divertido": {
+      "file": "content/audio/fx/chat_divertido.mp3",
+      "text": "¡Qué divertido!"
+    },
+    "chat_pensar": {
+      "file": "content/audio/fx/chat_pensar.mp3",
+      "text": "¡Vamos a pensar juntas!"
+    },
+    "chat_idea": {
+      "file": "content/audio/fx/chat_idea.mp3",
+      "text": "¡Me encanta esa idea!"
+    },
+    "chat_hola_maite": {
+      "file": "content/audio/fx/chat_hola_maite.mp3",
+      "text": "¡Hola, Maitê!"
+    },
+    "chat_boas_vindas_maite": {
+      "file": "content/audio/fx/chat_boas_vindas_maite.mp3",
+      "text": "¡Hola, Maitê! Soy Mía, la princesa. ¿Quieres jugar, un chiste, o repasar la escuela?"
+    },
+    "chat_boas_vindas": {
+      "file": "content/audio/fx/chat_boas_vindas.mp3",
+      "text": "¡Hola! Soy Mía, la princesa. ¿Quieres jugar, un chiste, o repasar la escuela?"
     }
   }
 }

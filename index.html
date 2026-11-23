@@ -1197,11 +1197,19 @@ const LINES={
   buy:"acerto_3"
 };
 /* Backend local quando aberto vía file:// ou localhost; Cloud Run en produción */
-const BACKEND_URL=(location.protocol==="file:"||location.hostname==="localhost"||location.hostname==="127.0.0.1")
-  ? ("http://"+(location.hostname==="127.0.0.1"?"127.0.0.1":"localhost")+":8080")
-  : "https://estudo-exames-405899472513.europe-west1.run.app";
+const LOCAL_BACKEND_URL="http://"+(location.hostname==="127.0.0.1"?"127.0.0.1":"localhost")+":8080";
+const CLOUD_BACKEND_URL="https://estudo-exames-405899472513.europe-west1.run.app";
+const TTS_BACKEND_URL=LOCAL_BACKEND_URL; /* /tts usa EXCLUSIVAMENTE o VoiceStudio local (mia_amostra2), nunca o edge-tts do Cloud Run */
+let BACKEND_URL=(location.protocol==="file:"||location.hostname==="localhost"||location.hostname==="127.0.0.1")
+  ? LOCAL_BACKEND_URL
+  : CLOUD_BACKEND_URL;
+try{
+  fetch(LOCAL_BACKEND_URL+"/health",{mode:"cors"}).then(r=>r.ok?r.json():null).then(d=>{
+    if(d&&d.ok) BACKEND_URL=LOCAL_BACKEND_URL;
+  }).catch(()=>{});
+}catch(e){}
 /* Perfil padrão de voz do app (VoiceStudio / Amostra 2 — Entusiasmada e Comemorativa) */
-const FX_PROFILE={id:"amostra-2-entusiasmada",voicestudioProfileId:"mia_amostra2",name:"Amostra 2 — Entusiasmada e Comemorativa",instruct:"high pitch",speed:1.10,guidance_scale:2.7,language:"gl"};
+const FX_PROFILE={id:"amostra-2-entusiasmada",voicestudioProfileId:"mia_amostra2",name:"Amostra 2 — Entusiasmada e Comemorativa",instruct:"",speed:1.06,guidance_scale:2.0,language:"auto"};
 const FX_AUDIO={
   acerto_1:{src:"content/audio/fx/acerto_1.mp3",text:"¡Moi ben!"},
   acerto_2:{src:"content/audio/fx/acerto_2.mp3",text:"¡xenial! ¡Acertaches á primeira!"},
@@ -1210,6 +1218,7 @@ const FX_AUDIO={
   erro_1:{src:"content/audio/fx/erro_1.mp3",text:"Non pasa nada, tentalo outra vez."},
   missao_nova:{src:"content/audio/fx/missao_nova.mp3",text:"¡Nova misión lista! ¡Imos aló!"},
   saudacao:{src:"content/audio/fx/saudacao.mp3",text:"¡Hola! Soy Mía, la princesa. Elige una materia y aprendemos juntas."},
+  saudacao_maite:{src:"content/audio/fx/saudacao_maite.mp3",text:"¡Hola, Maitê! Soy Mía, la princesa. Elige una materia y aprendemos juntas."},
   saudacao_2:{src:"content/audio/fx/saudacao_2.mp3",text:"¡Hola! ¡Qué ganas de aprender jugando juntos!"},
   animar_1:{src:"content/audio/fx/animar_1.mp3",text:"¡Hola! Soy Mía, tu amiga. ¡Vamos a aprender juntas!"},
   animar_2:{src:"content/audio/fx/animar_2.mp3",text:"¡Tú puedes! Yo estoy aquí contigo."},
@@ -1218,9 +1227,40 @@ const FX_AUDIO={
   visual_ok:{src:"content/audio/fx/visual_ok.mp3",text:"¡Me encanta!"},
   visual_off:{src:"content/audio/fx/visual_off.mp3",text:"Ya no lo llevo."},
   vitoria:{src:"content/audio/fx/vitoria.mp3",text:"¡Ganaste! ¡Qué bien!"},
-  completado:{src:"content/audio/fx/completado.mp3",text:"¡Completado! ¡Bien hecho!"}
+  completado:{src:"content/audio/fx/completado.mp3",text:"¡Completado! ¡Bien hecho!"},
+  palabra_completada:{src:"content/audio/fx/palabra_completada.mp3",text:"¡Palabra completada! ¡Bien!"},
+  vitoria_2048:{src:"content/audio/fx/vitoria_2048.mp3",text:"¡Llegaste a 2048! ¡Increíble!"},
+  campo_limpo:{src:"content/audio/fx/campo_limpo.mp3",text:"¡Campo limpo! ¡Ben feito!"},
+  sumas_completadas:{src:"content/audio/fx/sumas_completadas.mp3",text:"¡Sumas completadas!"},
+  chat_claro:{src:"content/audio/fx/chat_claro.mp3",text:"¡Claro que sí!"},
+  chat_buena:{src:"content/audio/fx/chat_buena.mp3",text:"¡Qué buena pregunta!"},
+  chat_divertido:{src:"content/audio/fx/chat_divertido.mp3",text:"¡Qué divertido!"},
+  chat_pensar:{src:"content/audio/fx/chat_pensar.mp3",text:"¡Vamos a pensar juntas!"},
+  chat_idea:{src:"content/audio/fx/chat_idea.mp3",text:"¡Me encanta esa idea!"},
+  chat_hola_maite:{src:"content/audio/fx/chat_hola_maite.mp3",text:"¡Hola, Maitê!"},
+  chat_boas_vindas:{src:"content/audio/fx/chat_boas_vindas.mp3",text:"¡Hola! Soy Mía, la princesa. ¿Quieres jugar, un chiste, o repasar la escuela?"},
+  chat_boas_vindas_maite:{src:"content/audio/fx/chat_boas_vindas_maite.mp3",text:"¡Hola, Maitê! Soy Mía, la princesa. ¿Quieres jugar, un chiste, o repasar la escuela?"}
 };
-const FX_BY_TEXT=new Map(Object.values(FX_AUDIO).map(f=>[f.text.toLowerCase(),f.src]));
+const EMOJI_RE=/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{20E3}\u{200D}\u{1F1E6}-\u{1F1FF}]/gu;
+/* quita emojis del texto que va al TTS (si no, los "describe": "cara de gato"...) */
+function stripEmoji(s){ return String(s||"").replace(EMOJI_RE,"").replace(/[ \t]{2,}/g," ").trim(); }
+function cleanForTTS(s){
+  return stripEmoji(s)
+    .replace(/×/g," por ")
+    .replace(/÷/g," entre ")
+    .replace(/→/g,", ")
+    .replace(/[«»]/g,"")
+    .replace(/\s+/g," ")
+    .trim();
+}
+function normFxKey(s){
+  return stripEmoji(s).toLowerCase().replace(/^[.!¡?¿]+|[.!¡?¿]+$/g,"").replace(/[¡¿]/g,"").replace(/\s+/g," ").trim();
+}
+const FX_BY_TEXT=new Map(Object.values(FX_AUDIO).map(f=>[normFxKey(f.text),f.src]));
+FX_BY_TEXT.set("ya no lo llevo",FX_AUDIO.visual_off.src);
+FX_BY_TEXT.set("muy bien",FX_AUDIO.acerto_1.src);
+FX_BY_TEXT.set("genial",FX_AUDIO.acerto_2.src);
+FX_BY_TEXT.set("hola",FX_AUDIO.chat_hola_maite.src);
 const FX_RULES=[
   {re:/qué ganas de aprender jugando/i,src:FX_AUDIO.saudacao_2.src},
   {re:/soy mía,\s*tu amiga|vamos a aprender juntas/i,src:FX_AUDIO.animar_1.src},
@@ -1239,28 +1279,19 @@ const FX_RULES=[
   {re:/non pasa nada|no pasa nada|tentalo|inténtalo/i,src:FX_AUDIO.erro_1.src},
   {re:/nova misión|imos aló|empezamos/i,src:FX_AUDIO.missao_nova.src}
 ];
+function matchExactFx(line){
+  const k=normFxKey(line);
+  return k ? (FX_BY_TEXT.get(k)||null) : null;
+}
 function matchFxFallback(line){
-  const s=String(line||"").trim().toLowerCase();
+  const exact=matchExactFx(line);
+  if(exact) return exact;
+  const s=normFxKey(line);
   if(!s) return null;
-  if(FX_BY_TEXT.has(s)) return FX_BY_TEXT.get(s);
   const hit=FX_RULES.find(r=>r.re.test(s));
   return hit?hit.src:null;
 }
 let speechTimer=null;
-let esVoiceCache=null;
-function esVoice(){
-  if(esVoiceCache) return esVoiceCache;
-  try{
-    const vs=window.speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.toLowerCase().replace("_","-").startsWith("es"));
-    if(!vs.length) return null;
-    const friendly=["carmen","elvira","helena","beatriz","luciana","teresa","raquel","irene","monica","maria","female","mujer"];
-    esVoiceCache=vs.find(v=>friendly.some(k=>v.name.toLowerCase().includes(k)))
-      || vs.find(v=>/es-es/i.test(v.lang.replace("_","-")))
-      || vs[0];
-  }catch(e){ return null; }
-  return esVoiceCache;
-}
-try{ window.speechSynthesis.onvoiceschanged=()=>{esVoiceCache=null;}; }catch(e){}
 /* Voz de Mía: perfil Amostra 2 (MP3 locales en fx/ + OmniVoice en /tts) */
 let _aud=null, _spSeq=0, _spResolve=null, _spStop=null, _audioOK=false, _pendingGreet=null;
 /* desbloqueia a reprodução de áudio no tablet: o play() chamado após o
@@ -1292,24 +1323,25 @@ document.addEventListener("pointerdown",unlockAudio);
 document.addEventListener("keydown",unlockAudio);
 function stopAudio(){
   if(_aud){try{_aud.pause();}catch(e){}} _aud=null;
-  try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
 }
 /* cache de TTS: saudações, incentivos e falas conhecidas resolvem direto para MP3 local (Amostra 2) */
 const _ttsCache=new Map(); const TTS_CACHE_MAX=80;
 function ttsURL(line){
-  const fx=matchFxFallback(line);
+  const fx=matchExactFx(line);
   if(fx) return Promise.resolve(fx);
-  const hit=_ttsCache.get(line);
+  const clean=cleanForTTS(line);
+  if(!clean) return Promise.reject(new Error("empty tts"));
+  const hit=_ttsCache.get(clean);
   if(hit) return Promise.resolve(hit); /* hit é Promise (fetch em curso) ou string (blob já pronto) — speak() sempre recebe uma Promise */
   const ctrl=typeof AbortController!=="undefined"?new AbortController():null;
-  const to=ctrl?setTimeout(()=>ctrl.abort(),10000):null;
-  const p=fetch(BACKEND_URL+"/tts?text="+encodeURIComponent(line.slice(0,400)),ctrl?{signal:ctrl.signal}:undefined)
+  const to=ctrl?setTimeout(()=>ctrl.abort(),90000):null;
+  const p=fetch(TTS_BACKEND_URL+"/tts?text="+encodeURIComponent(clean.slice(0,400)),ctrl?{signal:ctrl.signal}:undefined)
     .then(r=>{ if(!r.ok) throw new Error("tts "+r.status); return r.blob(); })
-    .then(b=>{ if(to) clearTimeout(to); const u=URL.createObjectURL(b); _ttsCache.set(line,u);
+    .then(b=>{ if(to) clearTimeout(to); const u=URL.createObjectURL(b); _ttsCache.set(clean,u);
       if(_ttsCache.size>TTS_CACHE_MAX){ const k=_ttsCache.keys().next().value; try{URL.revokeObjectURL(_ttsCache.get(k));}catch(e){} _ttsCache.delete(k); }
       return u; })
-    .catch(e=>{ if(to) clearTimeout(to); _ttsCache.delete(line); throw e; });
-  _ttsCache.set(line,p);
+    .catch(e=>{ if(to) clearTimeout(to); _ttsCache.delete(clean); throw e; });
+  _ttsCache.set(clean,p);
   return p;
 }
 function prefetchTTS(line){ ttsURL(line).catch(()=>{}); }
@@ -1317,9 +1349,6 @@ function speakFX(keyOrLine){
   const fx=FX_AUDIO[keyOrLine];
   return fx ? speak(fx.text,fx.src) : speak(keyOrLine);
 }
-const EMOJI_RE=/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE00}-\u{FE0F}\u{20E3}\u{200D}\u{1F1E6}-\u{1F1FF}]/gu;
-/* quita emojis del texto que va al TTS (si no, los "describe": "cara de gato"...) */
-function stripEmoji(s){ return String(s||"").replace(EMOJI_RE,"").replace(/[ \t]{2,}/g," ").trim(); }
 /* ===== MÍA: mascota 3D que flota libremente por la app sin tapar texto =====
    #mia es una capa fixed: calcula bounding boxes de texto/cards activos y solo
    se detiene o vaga por zonas seguras (márgenes laterales externos o rodapé). */
@@ -1544,7 +1573,7 @@ const Mia=(()=>{
 /* devuelve Promise que resuelve cuando el audio termina (o es interrumpido por otra fala) */
 let speechPlaying=0; /* >0 mientras suena la voz del gato (evita que el micro se escuche a sí mismo) */
 let catQuietUntil=0; /* ms absolutas: hasta cuándo se descarta lo que oye el micro (cola de eco tras hablar el gato) */
-function speak(line,directUrl){
+function speak(line,directUrl,exactOnly){
   if(window.Gato){Gato.colo(true);clearTimeout(window.__gatoT);window.__gatoT=setTimeout(function(){Gato.colo(false);},2400);}
   return new Promise(resolve=>{
   const b=$("speech");
@@ -1553,44 +1582,81 @@ function speak(line,directUrl){
   _spResolve=resolve;
   b.textContent=line; b.style.display="";
   if(Mia && Mia.avoidText) requestAnimationFrame(()=>Mia.avoidText(420));
-  Mia.talk(true); /* la que habla es la princesa: la boca de la mascota ya no es el rostro de la voz */
   const sayLine=stripEmoji(line);
   let stopped=false;
-  const stop=()=>{ if(stopped) return; stopped=true; speechPlaying=Math.max(0,speechPlaying-1); catQuietUntil=Date.now()+700; /* cola de eco curta: o altavoz cala rápido e a nena non espera */ if(_spStop===stop) _spStop=null; Mia.talk(false); b.style.display="none"; if(_spResolve===resolve) _spResolve=null; resolve(); };
+  const stop=()=>{ if(stopped) return; stopped=true; clearTimeout(speechTimer); speechPlaying=Math.max(0,speechPlaying-1); catQuietUntil=Date.now()+700; /* cola de eco curta: o altavoz cala rápido e a nena non espera */ if(_spStop===stop) _spStop=null; Mia.talk(false); b.style.display="none"; if(_spResolve===resolve) _spResolve=null; resolve(); };
   _spStop=stop;
   if(!sayLine && !directUrl){ stop(); return; } /* nada para falar (p.ex. opção só de emoji): não trava o avanço */
   const seq=++_spSeq;
   speechPlaying++;
   stopAudio(); clearTimeout(speechTimer);
-  speechTimer=setTimeout(stop, Math.min(Math.max(4000,sayLine.length*130),14000)); // rede de segurança (com teto: voz travada não prende o exercício)
+  speechTimer=setTimeout(stop, 95000);
   const urlP=directUrl ? Promise.resolve(directUrl) : ttsURL(sayLine);
   urlP.then(url=>{
-    if(seq!==_spSeq) return; // si hay otra habla, gana la nueva
-    const audio=new Audio(url);
+    if(seq!==_spSeq || stopped) return; // si hay otra habla, gana la nueva
+    const audioSrc=url.startsWith("content/audio/")&&!url.includes("?")?url+"?v=clean4":url;
+    const audio=new Audio(audioSrc);
     _aud=audio;
+    let started=false;
+    const onStart=()=>{
+      if(seq!==_spSeq || stopped) return;
+      if(!started){ started=true; Mia.talk(true); }
+      clearTimeout(speechTimer);
+      const ms=(Number.isFinite(audio.duration)&&audio.duration>0)
+        ? Math.ceil(audio.duration*1000)+1200
+        : Math.min(Math.max(4500,sayLine.length*140),22000);
+      speechTimer=setTimeout(stop,ms);
+    };
+    audio.onloadedmetadata=()=>{
+      if(seq===_spSeq && !stopped && !audio.paused && Number.isFinite(audio.duration) && audio.duration>0){
+        clearTimeout(speechTimer);
+        speechTimer=setTimeout(stop,Math.ceil(audio.duration*1000)+1200);
+      }
+    };
+    audio.onplaying=onStart;
     audio.onended=()=>{ if(seq===_spSeq) stop(); };
-    audio.onerror=()=>{ if(seq===_spSeq) fallbackSpeak(sayLine,stop,seq); };
-    audio.play().catch(err=>{
+    audio.onerror=()=>{ if(seq===_spSeq) fallbackSpeak(sayLine,stop,seq,exactOnly); };
+    const p=audio.play();
+    if(p&&p.then) p.then(onStart).catch(err=>{
       if(seq!==_spSeq) return;
       if(err && err.name==="NotAllowedError"){
         if(!_audioOK && seq===1){ _pendingGreet={line,directUrl:url}; }
         stop();
         return;
       }
-      fallbackSpeak(sayLine,stop,seq);
+      fallbackSpeak(sayLine,stop,seq,exactOnly);
     });
-  }).catch(()=>{ if(seq===_spSeq) fallbackSpeak(sayLine,stop,seq); });
+  }).catch(()=>{ if(seq===_spSeq) fallbackSpeak(sayLine,stop,seq,exactOnly); });
   });
 }
-function fallbackSpeak(line,stop,seq){
-  const fxSrc=matchFxFallback(line);
+function fallbackSpeak(line,stop,seq,exactOnly){
+  const fxSrc=exactOnly?matchExactFx(line):matchFxFallback(line);
   if(fxSrc){
     try{
-      const audio=new Audio(fxSrc);
+      const audioSrc=fxSrc.startsWith("content/audio/")&&!fxSrc.includes("?")?fxSrc+"?v=clean4":fxSrc;
+      const audio=new Audio(audioSrc);
       _aud=audio;
+      let started=false;
+      const onStart=()=>{
+        if(seq!==_spSeq) return;
+        if(!started){ started=true; Mia.talk(true); }
+        clearTimeout(speechTimer);
+        const ms=(Number.isFinite(audio.duration)&&audio.duration>0)
+          ? Math.ceil(audio.duration*1000)+1200
+          : Math.min(Math.max(4500,String(line||"").length*140),22000);
+        speechTimer=setTimeout(stop,ms);
+      };
+      audio.onloadedmetadata=()=>{
+        if(seq===_spSeq && !audio.paused && Number.isFinite(audio.duration) && audio.duration>0){
+          clearTimeout(speechTimer);
+          speechTimer=setTimeout(stop,Math.ceil(audio.duration*1000)+1200);
+        }
+      };
+      audio.onplaying=onStart;
       audio.onended=()=>{ if(seq===_spSeq) stop(); };
       audio.onerror=()=>{ if(seq===_spSeq) stop(); };
-      audio.play().catch(err=>{
+      const p=audio.play();
+      if(p&&p.then) p.then(onStart).catch(err=>{
         if(seq!==_spSeq) return;
         if(err && err.name==="NotAllowedError" && !_audioOK && seq===1){ _pendingGreet={line,directUrl:fxSrc}; }
         stop();
@@ -1598,22 +1664,7 @@ function fallbackSpeak(line,stop,seq){
       return;
     }catch(e){}
   }
-  if(!_audioOK){ if(seq===_spSeq) stop(); return; }
-  synthFallback(line,stop,seq);
-}
-function synthFallback(line,stop,seq){
-  try{
-    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){ if(seq===_spSeq) stop(); return; }
-    speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(line);
-    const voice=esVoice(); if(voice) u.voice=voice;
-    u.lang="es-ES"; u.rate=0.95; u.pitch=1.45;
-    let started=false;
-    u.onstart=()=>{started=true;};
-    u.onend=()=>{ if(seq===_spSeq&&started) stop(); };
-    u.onerror=()=>{ if(seq===_spSeq&&started) stop(); };
-    speechSynthesis.speak(u);
-  }catch(e){/* sin voz: solo boca+globo */}
+  if(seq===_spSeq) stop();
 }
 
 /* ============== UI ============== */
@@ -1701,6 +1752,8 @@ function paintExercise(ex,after,timer){
   ex=withDif(ex);
   curEx=ex; exAnswered=false;
   $("exQ").textContent=ex.q; $("exFb").textContent=""; $("exFb").className="feedback";
+  prefetchTTS(ex.q);
+  $("exQ").style.cursor="pointer"; $("exQ").title="Toca para escuchar a Mía"; $("exQ").onclick=()=>speak(ex.q);
   const box=$("exOpts"); box.innerHTML=""; box.className="opts";
   if(Mia && Mia.avoidText) requestAnimationFrame(()=>Mia.avoidText(520));
   if(ex.tipo==="ordenar") return paintOrdenar(ex,box,after);
@@ -2898,6 +2951,7 @@ function addMsg(role,text){
     const w=document.createElement("div"); w.className="msg-bw";
     const nm=document.createElement("span"); nm.className="msg-nm"; nm.textContent="Mía";
     const b=document.createElement("div"); b.className="bubble"; b.textContent=text;
+    b.style.cursor="pointer"; b.title="Toca para escuchar a Mía"; b.onclick=()=>speakChat(text);
     w.appendChild(nm); w.appendChild(b); d.appendChild(av); d.appendChild(w);
   }else{
     const b=document.createElement("div"); b.className="bubble"; b.textContent=text;
@@ -2905,13 +2959,36 @@ function addMsg(role,text){
   }
   log.appendChild(d); log.scrollTop=log.scrollHeight; return d;
 }
+function splitChatSentences(text){
+  return String(text||"").trim().split(/(?<=[.!?])\s+(?=[¡¿A-ZÁÉÍÓÚÑa-záéíóúñ0-9])/).map(s=>s.trim()).filter(Boolean);
+}
+async function speakChat(reply){
+  if(!reply) return;
+  if(matchExactFx(reply)) return speak(reply,undefined,true);
+  const parts=splitChatSentences(reply);
+  if(parts.length<=1) return speak(reply,undefined,true);
+  parts.forEach(p=>prefetchTTS(p));
+  for(let i=0;i<parts.length;i++){
+    const curSeq=_spSeq;
+    await speak(parts[i],undefined,true);
+    if(_spSeq!==curSeq+1 && i<parts.length-1) break;
+  }
+}
 /* pide a resposta ao gato. Separado de sendChat porque o micrófono pode lanzala por adiantado,
    mentres a nena aínda está a rematar a frase (ver o bloque do micrófono). */
-function askChat(text, signal){
-  return fetch(BACKEND_URL+"/chat",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({text:text, name:state.name||"", messages:chatHist.slice(-12)}), signal:signal})
-    .then(r=>{ if(!r.ok) throw 0; return r.json(); })
-    .then(d=>((d&&d.text)||"").trim()||"No te he entendido… ¿me lo repites tú?");
+async function askChat(text, signal){
+  const opts={method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({text:text, name:state.name||"", messages:chatHist.slice(-12)}), signal:signal};
+  let r;
+  try{
+    r=await fetch(LOCAL_BACKEND_URL+"/chat",opts);
+  }catch(e){
+    if((e&&e.name==="AbortError") || BACKEND_URL===LOCAL_BACKEND_URL) throw e;
+    r=await fetch(CLOUD_BACKEND_URL+"/chat",opts);
+  }
+  if(!r.ok) throw 0;
+  const d=await r.json();
+  return ((d&&d.text)||"").trim()||"No te he entendido… ¿me lo repites tú?";
 }
 async function sendChat(text, pre){
   text=(text||"").trim(); if(!text||chatBusy) return;
@@ -2925,7 +3002,7 @@ async function sendChat(text, pre){
     if(!reply) reply=await askChat(text);
     chatHist.push({role:"user",content:text},{role:"assistant",content:reply});
     if(chatHist.length>16) chatHist=chatHist.slice(-16);
-    addMsg("cat",reply); speak(reply);
+    addMsg("cat",reply); speakChat(reply);
   }catch(e){ addMsg("mia","¡Uy! No llegué a internet… inténtalo otra vez."); }
   chatBusy=false; $("chatTyping").style.display="none"; $("btnChatSend").disabled=false;
 }
@@ -2936,7 +3013,7 @@ $("chatName").addEventListener("keydown",e=>{
   const v=$("chatName").value.trim(); if(!v) return;
   state.name=v.slice(0,24); save(); $("nameRow").style.display="none"; $("chatName").value="";
   addMsg("mia","¡Encantada de conocerte, "+state.name+"! ¿Qué hacemos hoy? Juegos, chistes o escuela.");
-  speak("¡Hola "+state.name+"! Soy Mía, la princesa");
+  speakChat("¡Hola, "+state.name+"! Soy Mía, la princesa.");
 });
 $("btnEditName").onclick=()=>{ const r=$("nameRow"); const show=r.style.display==="none"; r.style.display=show?"":"none"; if(show){ $("chatName").value=state.name||""; $("chatName").focus(); } };
 /* micrófono continuo: toca 🎤 una vez y la niña habla con el gato; el micro sigue encendido hasta
@@ -2949,7 +3026,7 @@ $("btnEditName").onclick=()=>{ const r=$("nameRow"); const show=r.style.display=
   const GAP_FINAL=800;   /* margen de silencio tras un resultado final: cierra el turno de la niña */
   const GAP_PAUSE=1700;  /* solo hay resultados interinos (sigue hablando): tope de espera */
   const SPEC_MS=350;     /* petición adelantada: el gato piensa mientras acaba el silencio */
-  const HINT="Tu gato tutor te escucha 🎤 — tómate tu tiempo, espera a que termines de hablar.";
+  const HINT="La princesa Mía te escucha 🎤 — tómate tu tiempo, espera a que termines de hablar.";
   const btn=$("btnMic");
   let micOn=false, rec=null, calmPoll=0, silenceT=0, specT=0, pending="", lastInterim="", spec=null;
   const setUI=(on,hint)=>{
@@ -2983,7 +3060,7 @@ $("btnEditName").onclick=()=>{ const r=$("nameRow"); const show=r.style.display=
     const t=turnText();
     const pre=takeSpec(t);
     pending=""; lastInterim="";
-    if(t){ setUI(true,"El gato está pensando… 🐾"); sendChat(t, pre); }
+    if(t){ setUI(true,"Mía está pensando… 👑"); sendChat(t, pre); }
     else if(micOn) setUI(true,"Te escucho… tómate tu tiempo 🐱");
   };
   const stopMic=()=>{
@@ -3192,7 +3269,7 @@ $("btnBlitz").onclick=()=>{
 };
 /* ======= 🎓 Generación con IA (backend Cloud Run + fallback offline) ======= */
 async function generarIA(texto,topicos){
-  const ctrl=new AbortController(); const to=setTimeout(()=>ctrl.abort(),60000);
+  const ctrl=new AbortController(); const to=setTimeout(()=>ctrl.abort(),90000);
   try{
     const r=await fetch(BACKEND_URL+"/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text:texto||"",topics:topicos||""}),signal:ctrl.signal});
     if(!r.ok) return null;
@@ -3239,7 +3316,9 @@ $("btnExamenRev2").onclick=()=>{ if(!state.examen2.length){toast("Genera primero
 renderWallet(); renderSubjects(); renderShop(); renderReport(); renderAvatar(); updateExamUI();
 renderBoard(); renderBoardBar(); initChat(); setTab("ex");
 Mia.init();
-speak("¡Hola, "+(state.name||"Maitê")+"! "+LINES.greet, FX_AUDIO.saudacao.src);
+const _initName=(state.name||"Maitê").trim();
+const _isMaite=/^mait[eê]$/i.test(_initName);
+speak(_isMaite ? FX_AUDIO.saudacao_maite.text : ("¡Hola, "+_initName+"! Soy Mía, la princesa. Elige una materia y aprendemos juntas."), _isMaite ? FX_AUDIO.saudacao_maite.src : undefined);
 </script>
 <style>
 .mascot .avatar{background:linear-gradient(145deg,#ffe9b0,#ffd166);overflow:visible}
