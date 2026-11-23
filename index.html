@@ -1047,7 +1047,7 @@ fetch("content/ejercicios-libro.json",{cache:"no-cache"}).then(r=>r.ok?r.json():
   Object.keys(SUBJECTS).forEach(k=>{
     if(!BOOK[k]) return;
     const gen=SUBJECTS[k].gen;
-    SUBJECTS[k].gen=function(){ bookTurn[k]=(bookTurn[k]||0)+1; const b=bookPick(k,curDifVal()); return withDif((b&&bookTurn[k]%3)?b:gen()); };
+    SUBJECTS[k].gen=function(){ const b=bookPick(k,curDifVal()); return withDif(b||gen()); };
   });
 }).catch(()=>{});
 function genFoto(){const c=state.custom;return withDif(c.length?pick(c):{q:"¡Toma una foto primero! 📷",a:"📷",opts:["📷","🆗","⭐","🎈"]});}
