@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="gl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comparativo Opcións 1, 2 e 3 — Mía Profesora</title>
+  <style>
+    @font-face {
+      font-family: 'Fredoka';
+      src: url('../assets/fonts/fredoka-latin.woff2') format('woff2');
+      font-weight: 400 700;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Nunito';
+      src: url('../assets/fonts/nunito-latin.woff2') format('woff2');
+      font-weight: 400 800;
+      font-display: swap;
+    }
+    :root {
+      --bg: #120d1d;
+      --surface: #1b142b;
+      --card: #241b38;
+      --border: #3c2e5e;
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --accent: #a78bfa;
+      --gold: #fde047;
+      --green: #4ade80;
+      --red: #f87171;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Nunito', system-ui, sans-serif;
+      background: radial-gradient(circle at top right, #2a1d47, var(--bg) 55%);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 24px 16px 64px;
+    }
+    .container { max-width: 1180px; margin: 0 auto; }
+    header {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    h1, h2, h3 { font-family: 'Fredoka', sans-serif; margin: 0 0 8px; }
+    h1 { font-size: clamp(1.6rem, 3vw, 2.2rem); color: var(--gold); }
+    .case-strip {
+      display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px;
+    }
+    .pill {
+      background: #2c2146; border: 1px solid var(--border);
+      padding: 4px 12px; border-radius: 999px; font-size: 0.85rem; color: var(--muted);
+    }
+    .pill.ok { border-color: #166534; background: #14532d; color: #bbf7d0; }
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 22px;
+      margin-bottom: 24px;
+    }
+    .section-head {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px; margin-bottom: 16px;
+    }
+    .tag {
+      font-size: 0.78rem; font-weight: 800; letter-spacing: .04em;
+      padding: 4px 10px; border-radius: 8px; background: #352654; color: #d8b4fe;
+    }
+    /* Option 1 Interactive Stage */
+    .stage {
+      position: relative;
+      background: #251b38;
+      border: 2px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      min-height: 410px;
+      display: grid;
+      grid-template-columns: 1.5fr 0.9fr;
+      gap: 16px;
+      padding: 20px;
+      align-items: stretch;
+    }
+    @media (max-width: 820px) {
+      .stage { grid-template-columns: 1fr; }
+    }
+    .board {
+      background: #151123;
+      border: 2px solid #4c3973;
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .board-title { font-family: 'Fredoka', sans-serif; font-size: 1.7rem; margin: 10px 0 4px; }
+    .board-highlight {
+      background: #241a3d; border: 1.5px solid var(--accent);
+      border-radius: 12px; padding: 12px 14px; margin: 10px 0;
+      font-family: 'Fredoka', sans-serif; font-size: 1.15rem; color: var(--gold);
+    }
+    .bullet-card {
+      background: #1c1630; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px;
+      border-left: 5px solid var(--accent);
+    }
+    .bullet-card strong { display: block; font-size: 0.85rem; }
+    .mia-stage {
+      display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+      background: radial-gradient(circle at center, #362852 0%, transparent 70%);
+      border-radius: 14px; padding: 8px; position: relative;
+    }
+    .mia-stage img, .mia-stage video {
+      max-height: 330px; width: auto; object-fit: contain;
+    }
+    .mia-caption {
+      font-size: 0.85rem; color: #e2e8f0; background: rgba(15, 11, 26, 0.82);
+      padding: 8px 12px; border-radius: 10px; margin-top: 8px; text-align: center;
+      border: 1px solid var(--border);
+    }
+    .controls {
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 14px;
+    }
+    button {
+      font-family: 'Nunito', sans-serif; font-weight: 700; font-size: 0.92rem;
+      background: #6d28d9; color: white; border: none; border-radius: 10px;
+      padding: 9px 16px; cursor: pointer; transition: transform .1s, background .15s;
+    }
+    button:hover { background: #7c3aed; }
+    button.secondary { background: #2e2348; border: 1px solid var(--border); }
+    button.secondary.active { background: #4c3582; border-color: var(--accent); }
+    .progress-bar {
+      flex: 1; min-width: 140px; height: 8px; background: #140f21;
+      border-radius: 999px; overflow: hidden;
+    }
+    .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #a78bfa, #4ade80); transition: width .15s linear; }
+    /* Quiz */
+    .quiz-box {
+      margin-top: 18px; background: #161124; border: 1.5px solid #4c3973;
+      border-radius: 16px; padding: 18px;
+    }
+    .quiz-q { margin-bottom: 14px; }
+    .quiz-opts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .quiz-opt {
+      background: #241b38; border: 1px solid var(--border); color: var(--text);
+      padding: 8px 14px; border-radius: 10px; cursor: pointer;
+    }
+    .quiz-opt.correct { background: #14532d; border-color: var(--green); color: #bbf7d0; }
+    .quiz-opt.wrong { background: #7f1d1d; border-color: var(--red); color: #fecaca; }
+    .quiz-feedback { font-size: 0.9rem; margin-top: 6px; font-weight: 700; }
+    /* Video Option 2 & 3 */
+    .video-frame video {
+      width: 100%; max-width: 900px; display: block; margin: 0 auto;
+      border-radius: 14px; border: 2px solid var(--border); background: #000;
+    }
+    .meta-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    /* Diagnostic Option 3 */
+    .diag-box {
+      background: #161124; border: 1.5px solid #7f1d1d; border-radius: 14px; padding: 16px;
+    }
+    .diag-banner {
+      font-family: 'Fredoka', sans-serif; color: #fca5a5; font-size: 1.1rem; margin-bottom: 6px;
+    }
+    .diag-card {
+      background: #1f1730; border: 1px solid #3c2e5e; border-radius: 12px; padding: 12px; margin: 10px 0;
+    }
+    .diag-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .badge-fail { background: #7f1d1d; color: #fecaca; font-size: 0.75rem; padding: 2px 8px; border-radius: 6px; font-weight: 800; }
+    .diag-err {
+      background: #0f0b18; color: #fca5a5; padding: 10px; border-radius: 8px;
+      overflow-x: auto; font-size: 0.8rem; margin: 8px 0 0; white-space: pre-wrap;
+    }
+    .muted { color: var(--muted); }
+    .small { font-size: 0.86rem; }
+    /* Comparison Table */
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.92rem; }
+    th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { color: var(--gold); font-family: 'Fredoka', sans-serif; font-weight: 600; }
+    tr:last-child td { border-bottom: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Comparativo Real: Opcións 1, 2 e 3 — Mía Profesora</h1>
+      <p class="muted" style="margin:0;">Mesmo guión didáctico (3.º de Primaria · Ciencias Naturais) e mesma voz real en galego para avaliar calidade visual, latencia, custo e viabilidade.</p>
+      <div class="case-strip">
+        <span class="pill">Pregunta: «Onde se produce o zume elaborado?»</span>
+        <span class="pill">Erro da alumna: «Na raíz»</span>
+        <span class="pill ok">Correcto: «Nas follas»</span>
+      </div>
+    </header>
+
+    <!-- OPCIÓN 1 -->
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <span class="tag">OPCIÓN 1 · INTERACTIVA EN TEMPO REAL</span>
+          <h2 style="margin-top:6px;">Player HTML5 + Lousa Sincronizada + Mía + Mini-Quiz</h2>
+        </div>
+        <div class="meta-pills" style="margin:0;">
+          <span class="pill ok">Latencia de vídeo: 0s</span>
+          <span class="pill">Custo vídeo: $0</span>
+        </div>
+      </div>
+
+      <div class="stage">
+        <div class="board">
+          <div>
+            <span class="tag" id="o1-tag"></span>
+            <div class="board-title" id="o1-title"></div>
+            <div class="muted" id="o1-sub"></div>
+            <div class="board-highlight" id="o1-hl"></div>
+            <div id="o1-bullets"></div>
+          </div>
+          <div class="muted small" id="o1-footer"></div>
+        </div>
+
+        <div class="mia-stage">
+          <video id="o1-mia-talk" src="../assets/mia/mia-talk.webm" loop muted playsinline style="display:none;"></video>
+          <img id="o1-mia-idle" src="../assets/mia/mia.webp" alt="Mía profesora" />
+          <div class="mia-caption" id="o1-caption">Preme «Reproducir» para escoitar a Mía.</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="btn-play">▶ Reproducir todo</button>
+        <button id="btn-pause" class="secondary">⏸ Pausar</button>
+        <button class="secondary scene-btn active" data-idx="0">Cena 1</button>
+        <button class="secondary scene-btn" data-idx="1">Cena 2</button>
+        <button class="secondary scene-btn" data-idx="2">Cena 3</button>
+        <div class="progress-bar"><div class="progress-fill" id="o1-progress"></div></div>
+        <span class="muted small" id="o1-time">0.0s</span>
+      </div>
+
+      <div class="quiz-box" id="quiz-box">
+        <h3 style="color: var(--gold); margin-bottom: 10px;">Mini-Quiz de Comprobación (2 preguntas)</h3>
+        <div class="quiz-q" data-q="1">
+          <div><strong>1. Onde se produce o zume elaborado da planta?</strong></div>
+          <div class="quiz-opts">
+            <button class="quiz-opt" data-ok="false">Na raíz</button>
+            <button class="quiz-opt" data-ok="true">Nas follas</button>
+            <button class="quiz-opt" data-ok="false">No talo subterráneo</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+        <div class="quiz-q" data-q="2">
+          <div><strong>2. Que colle a raíz do chan para enviar cara arriba?</strong></div>
+          <div class="quiz-opts">
+            <button class="quiz-opt" data-ok="true">Auga e sales minerais (zume bruto)</button>
+            <button class="quiz-opt" data-ok="false">Luz solar directa</button>
+            <button class="quiz-opt" data-ok="false">Zume elaborado xa cociñado</button>
+          </div>
+          <div class="quiz-feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- OPCIÓN 2 -->
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <span class="tag">OPCIÓN 2 · VÍDEO MP4 REAL (LOCAL / CLOUD RUN)</span>
+          <h2 style="margin-top:6px;">Pillow + ffmpeg + VP9 Alpha (Mía) + Voz Real</h2>
+        </div>
+        <div class="meta-pills" style="margin:0;">
+          <span class="pill ok">Validado con ffprobe</span>
+          <span class="pill">Resolución: 1280×720</span>
+          <span class="pill">Duración: 22.887s</span>
+          <span class="pill">Tamaño: 1593 KB</span>
+          <span class="pill">Render: 4.14s</span>
+        </div>
+      </div>
+      <div class="video-frame">
+        <video controls preload="metadata" src="opcao2-mia-lousa.mp4"></video>
+      </div>
+    </section>
+
+    <!-- OPCIÓN 3 -->
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <span class="tag">OPCIÓN 3 · LIP-SYNC NEURAL OPEN-SOURCE</span>
+          <h2 style="margin-top:6px;">Proba Real: EchoMimic &amp; MuseTalk 1.5 (Cena 2)</h2>
+        </div>
+      </div>
+      
+        <div class="diag-box">
+          <div class="diag-banner">Diagnóstico Empírico — Non simulado</div>
+          <p class="muted">As dúas APIs públicas de HuggingFace Spaces foron probadas con <code>mia_512.png</code> e <code>audio/cena2.wav</code> (16 kHz mono) e rexeitaron/fallaron na execución real:</p>
+          
+            <div class="diag-card">
+              <div class="diag-head">
+                <strong>EchoMimic</strong>
+                <span class="badge-fail">FALLOU (2.23s)</span>
+              </div>
+              <div class="diag-url"><code>https://fffiloni-echomimic.hf.space</code></div>
+              <pre class="diag-err">Gradio SSE error: {"error": "The requested GPU duration (200s) is larger than the maximum allowed", "duration": 10, "visible": true, "title": "ZeroGPU illegal duration"}</pre>
+            </div>
+            
+            <div class="diag-card">
+              <div class="diag-head">
+                <strong>MuseTalk 1.5</strong>
+                <span class="badge-fail">FALLOU (122.1s)</span>
+              </div>
+              <div class="diag-url"><code>https://henrybit-musetalk-1-5.hf.space</code></div>
+              <pre class="diag-err">Timeout total (120s) no stream SSE</pre>
+            </div>
+            
+          <p class="muted small">Conclusión técnica: depender de Spaces públicos gratuítos sen GPU dedicada rompe o SLA educativo (&lt;30s) e introduce erros de cota/cola/compatibilidade de modelo.</p>
+        </div>
+        
+    </section>
+
+    <!-- TABLA COMPARATIVA -->
+    <section class="section">
+      <h2>Comparativa Técnica e de Produto</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Criterio</th>
+            <th>Opción 1 (Player Interactivo)</th>
+            <th>Opción 2 (MP4 Pillow + ffmpeg)</th>
+            <th>Opción 3 (Lip-Sync Neural Open-Source)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Custo por vídeo</strong></td>
+            <td>Só TTS (~$0.001–$0.004)</td>
+            <td>Só TTS + CPU lixeira (~$0.002)</td>
+            <td>GPU dedicada (~$0.02–$0.08/clip) ou cola gratuíta inestable</td>
+          </tr>
+          <tr>
+            <td><strong>Latencia ata empezar</strong></td>
+            <td>&lt; 2s (streaming de audio)</td>
+            <td>4.14s render total en CPU</td>
+            <td>60s–180s+ (ou fallo por cota/cola en HF Spaces)</td>
+          </tr>
+          <tr>
+            <td><strong>Sincronía labial / Avatar</strong></td>
+            <td>Loop WebM con alfa ao falar</td>
+            <td>Loop WebM VP9 alfa (1280×720)</td>
+            <td>Lip-sync real cando o servizo GPU está dispoñible</td>
+          </tr>
+          <tr>
+            <td><strong>Interactividade</strong></td>
+            <td>Alta (quiz integrado no mesmo fluxo)</td>
+            <td>Baixa (vídeo pasivo; quiz á parte)</td>
+            <td>Baixa (vídeo pasivo)</td>
+          </tr>
+          <tr>
+            <td><strong>Pros / Contras</strong></td>
+            <td>+ Inmediata, lixeira e interactiva.<br>- Non exporta un único MP4 descargable.</td>
+            <td>+ MP4 portátil 100% fiable e sen GPU.<br>- Menor naturalidade labial cá neural.</td>
+            <td>+ Máis expresividade facial se funciona.<br>- Complexidade operativa e fallos de GPU pública.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <audio id="o1-audio"></audio>
+  <script>
+    const SCENES = [{"id": "cena1", "tag": "3.º PRIMARIA · CIENCIAS NATURAIS", "title": "¡Ola, Maitê!", "subtitle": "Pregunta do exercicio:", "highlight": "«Onde se produce o zume elaborado?»", "bullets": [["A túa resposta:", "Na raíz", "#f87171"], ["Obxectivo:", "Descubrir xuntas onde fabrica o seu alimento a planta.", "#a7f3d0"]], "footer": "Escoita a Mía e observa a lousa...", "text": "¡Ola, Maitê! Hoxe imos repasar xuntas onde fabrican o seu alimento as plantas.", "audio": "audio/cena1.mp3", "duration": 6.458}, {"id": "cena2", "tag": "A COCIÑA DA PLANTA", "title": "Raíz vs. Folla", "subtitle": "Cada parte da planta ten o seu traballo:", "highlight": "Raíz (auga do chan)  ->  Folla + Sol (alimento)", "bullets": [["1. Na raíz:", "Colle auga e sales minerais do chan (zume bruto).", "#93c5fd"], ["2. Na folla:", "Coa luz do sol cociña o alimento da planta.", "#fde047"], ["Resposta correcta:", "O zume elaborado nace NAS FOLLAS.", "#4ade80"]], "footer": "Zume elaborado = alimento listo nas follas", "text": "A raíz colle auga do chan, pero é a folla quen cociña o alimento co sol. Por iso o zume elaborado nace nas follas.", "audio": "audio/cena2.mp3", "duration": 9.406}, {"id": "cena3", "tag": "RESUMO CHAVE", "title": "¡Moi ben, Maitê!", "subtitle": "Para non esquecer nunca:", "highlight": "«A folla é a cociña da planta»", "bullets": [["Lembra:", "A raíz bebe auga; a folla cociña o zume elaborado.", "#c4b5fd"], ["Seguinte paso:", "Agora imos facer un pequeno quiz de 2 preguntas.", "#4ade80"]], "footer": "Listas para practicar?", "text": "¡Moi ben, Maitê! Lembra: a folla é a cociña da planta. Agora imos facer un pequeno quiz.", "audio": "audio/cena3.mp3", "duration": 6.993}];
+    let currentIdx = 0;
+    let isPlaying = false;
+
+    const audioEl = document.getElementById('o1-audio');
+    const talkVid = document.getElementById('o1-mia-talk');
+    const idleImg = document.getElementById('o1-mia-idle');
+    const progressFill = document.getElementById('o1-progress');
+    const timeLabel = document.getElementById('o1-time');
+
+    function renderScene(idx) {
+      currentIdx = idx;
+      const s = SCENES[idx];
+      document.getElementById('o1-tag').textContent = s.tag;
+      document.getElementById('o1-title').textContent = s.title;
+      document.getElementById('o1-sub').textContent = s.subtitle;
+      document.getElementById('o1-hl').textContent = s.highlight;
+      document.getElementById('o1-footer').textContent = s.footer;
+      document.getElementById('o1-caption').textContent = s.text;
+
+      const bulletsEl = document.getElementById('o1-bullets');
+      bulletsEl.innerHTML = '';
+      for (const [label, body, color] of s.bullets) {
+        const div = document.createElement('div');
+        div.className = 'bullet-card';
+        div.style.borderLeftColor = color;
+        div.innerHTML = `<strong style="color:${color}">${label}</strong><span>${body}</span>`;
+        bulletsEl.appendChild(div);
+      }
+
+      document.querySelectorAll('.scene-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', i === idx);
+      });
+      progressFill.style.width = '0%';
+      timeLabel.textContent = `0.0s / ${s.duration.toFixed(1)}s`;
+    }
+
+    function setSpeaking(speaking) {
+      if (speaking) {
+        idleImg.style.display = 'none';
+        talkVid.style.display = 'block';
+        talkVid.play().catch(() => {});
+      } else {
+        talkVid.pause();
+        talkVid.style.display = 'none';
+        idleImg.style.display = 'block';
+      }
+    }
+
+    function playScene(idx) {
+      renderScene(idx);
+      isPlaying = true;
+      audioEl.src = SCENES[idx].audio;
+      audioEl.play().then(() => setSpeaking(true)).catch(() => setSpeaking(false));
+    }
+
+    audioEl.addEventListener('timeupdate', () => {
+      const dur = audioEl.duration || SCENES[currentIdx].duration || 1;
+      const pct = Math.min(100, (audioEl.currentTime / dur) * 100);
+      progressFill.style.width = `${pct}%`;
+      timeLabel.textContent = `${audioEl.currentTime.toFixed(1)}s / ${dur.toFixed(1)}s`;
+    });
+
+    audioEl.addEventListener('ended', () => {
+      if (isPlaying && currentIdx < SCENES.length - 1) {
+        playScene(currentIdx + 1);
+      } else {
+        isPlaying = false;
+        setSpeaking(false);
+        document.getElementById('quiz-box').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+
+    document.getElementById('btn-play').addEventListener('click', () => playScene(0));
+    document.getElementById('btn-pause').addEventListener('click', () => {
+      isPlaying = false;
+      audioEl.pause();
+      setSpeaking(false);
+    });
+
+    document.querySelectorAll('.scene-btn').forEach((btn) => {
+      btn.addEventListener('click', () => playScene(Number(btn.dataset.idx)));
+    });
+
+    document.querySelectorAll('.quiz-q').forEach((qEl) => {
+      const fb = qEl.querySelector('.quiz-feedback');
+      qEl.querySelectorAll('.quiz-opt').forEach((opt) => {
+        opt.addEventListener('click', () => {
+          qEl.querySelectorAll('.quiz-opt').forEach((b) => b.classList.remove('correct', 'wrong'));
+          const ok = opt.dataset.ok === 'true';
+          opt.classList.add(ok ? 'correct' : 'wrong');
+          fb.textContent = ok
+            ? '¡Correcto! Moi ben entendido.'
+            : 'Case! Lembra que a raíz colle auga e a folla cociña o zume elaborado.';
+          fb.style.color = ok ? '#4ade80' : '#fca5a5';
+        });
+      });
+    });
+
+    renderScene(0);
+  </script>
+</body>
+</html>

@@ -74,3 +74,16 @@ mantendo custo zero em repouso (`min-instances=0`) e sem acordar a GPU em chamad
 `gs://estudo-tts-cache-514315` montado em `/cache`, fora do repositório Git; `estudo-exames` segue
 separado em CPU leve para `/chat`, `/ocr`, `/generate` e `/exam`; os 29 FX locais em `content/audio/fx/`
 continuam gratuitos e instantâneos no cliente.
+
+## DEC-007 · Vídeo explicativo apresentado pela Mía sobre erros da última sessão + mini-quiz (2026-11-23)
+
+**Decisão:** implementar um estúdio explicativo in-app apresentado pela Mía (`POST /explain` em
+`backend/app.py` + `estudo-tts` OmniVoice + lousa animada + mini-quiz pós-vídeo) para revisar os erros
+da última sessão ao revisitar o app (~$0,12/mês em chamadas de texto/cache).
+**Motivo:** entregar uma revisão audiovisual acolhedora, rápida e sob controle no cliente, aproveitando a
+identidade da Mía e o serviço de voz já em produção, sem dependência frágil nem custo fixo elevado.
+**Alternativas descartadas:** NotebookLM (sem API pública de consumidor e dependente de cookies frágeis);
+APIs pagas de avatar 3D ($30–$105/mês, inviáveis para o orçamento do projeto).
+**Consequência:** o fluxo de revisão fica integrado ao app com custo marginal mínimo; fica planejado o
+upgrade `VID-02` (poses/clipes curtos extras transparentes VP9 alpha da Mía apresentadora) após validação
+do teste comparativo das Opções 1/2/3.

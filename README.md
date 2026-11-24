@@ -17,6 +17,7 @@ Alvo: 3.º de Primaria no sistema espanhol (CEIP Plurilingüe Xosé Fernández L
   [`tools/escola-ocr/README.md`](tools/escola-ocr/README.md).
 - **Chat com o mascote** (`/chat`): conversa curta com a Mía/Gatuno; o gato só fala em onomatopeias.
 - **Voz** (`/tts`): leitura em voz alta das perguntas; as frases também podem ser ouvidas em modo offline.
+- **Vídeo explicativo da Mía** (`/explain`): ao voltar com erros da última sessão, um estúdio animado exibe lousa + voz da Mía explicando cada erro e fecha com um mini-quiz de fixação.
 - **Modo offline**: se o backend não responde, o app cai em `extractExercises` local e continua a funcionar.
 
 ## Stack
@@ -49,6 +50,7 @@ Depois abre `index.html`. Para apontar o front a outro backend, muda a constante
 | `/exam` | POST | 30 | Exame completo a partir de fotos/texto (cota OSA-04) |
 | `/ocr` | POST | 30 | Transcreve fotos do livro/caderno (corpo até 8 MB) |
 | `/chat` | POST | 120 | Conversa com o mascote |
+| `/explain` | POST | 30 | Roteiro de vídeo explicativo + mini-quiz sobre erros da última sessão |
 | `/tts` | GET (`/tts?text=...`) | — | Voz sintetizada (MP3) |
 
 Notas de segurança: corpo máximo 200 KB (8 MB no `/ocr`), CORS restrito ao

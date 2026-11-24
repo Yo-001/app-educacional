@@ -401,6 +401,89 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--accent)!
 input[type=file]{padding:6px}
 .pbar{background:var(--paper-2)}
 .pbar>div{background:linear-gradient(90deg,var(--accent),var(--gold))}
+/* ===== MÍA STUDIO: banner, aviso persistente, reprodutor e mini-quiz ===== */
+body.vid-open #mia{display:none!important}
+.vid-banner{width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;margin:0 0 12px;
+  border-radius:var(--r3);background:linear-gradient(135deg,#fff6e5,#ffe7ee);
+  border:2px solid #f4c2cf;box-shadow:var(--rim)}
+.vid-banner-av{width:46px;height:46px;border-radius:50%;object-fit:cover;object-position:50% 14%;
+  border:2px solid var(--surface);box-shadow:0 3px 10px rgba(43,29,46,.16);flex:0 0 auto;background:#fff}
+.vid-banner-txt{flex:1;min-width:0}
+.vid-banner-txt b{display:block;font:600 15.5px/1.2 var(--font-display);color:var(--ink)}
+.vid-banner-txt span{display:block;font-size:12.5px;color:var(--muted);font-weight:700;margin-top:2px}
+.vid-banner-btn{flex:0 0 auto;padding:10px 14px;border-radius:var(--pill);background:var(--accent);color:#fff;
+  font-weight:800;font-size:13.5px;box-shadow:0 6px 14px -8px rgba(190,25,69,.85);white-space:nowrap}
+.vid-banner-btn:active{transform:scale(.97)}
+.vid-modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:14px}
+.vid-modal.open{display:flex}
+#vidNoticeModal{z-index:120}
+#vidPlayerModal{z-index:130}
+.vid-backdrop{position:absolute;inset:0;background:rgba(28,18,36,.58);backdrop-filter:blur(3px)}
+.vid-notice-card{position:relative;z-index:1;width:100%;max-width:420px;background:var(--surface);
+  border-radius:var(--r4);border:2px solid var(--line);box-shadow:0 24px 60px rgba(22,12,28,.35);padding:20px}
+.vid-notice-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.vid-notice-av{width:58px;height:58px;border-radius:50%;object-fit:cover;object-position:50% 14%;
+  border:3px solid var(--accent-soft);background:#fff;flex:0 0 auto}
+.vid-notice-head h2{margin:0;font:600 21px/1.15 var(--font-display);color:var(--ink)}
+.vid-notice-sub{font-size:14px;color:var(--muted);font-weight:700;margin:0 0 12px;line-height:1.35}
+.vid-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.vid-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:var(--pill);
+  background:var(--paper-2);border:1px solid var(--line);font-size:12.5px;font-weight:800;color:var(--ink)}
+.vid-notice-actions{display:flex;flex-direction:column;gap:8px}
+.vid-player-card{position:relative;z-index:1;width:100%;max-width:720px;max-height:92vh;overflow-y:auto;
+  background:var(--surface);border-radius:var(--r4);border:2px solid var(--line);
+  box-shadow:0 28px 70px rgba(15,10,25,.45);padding:14px;display:flex;flex-direction:column;gap:10px}
+.vid-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.vid-top-title{font:600 18px/1.2 var(--font-display);color:var(--ink);margin:0}
+.vid-top-sub{font-size:12px;font-weight:700;color:var(--muted)}
+.vid-close-x{width:36px;height:36px;border-radius:50%;background:var(--paper-2);border:1px solid var(--line);
+  font-weight:800;font-size:16px;display:grid;place-items:center;flex:0 0 auto}
+.vid-prog{display:flex;gap:5px}
+.vid-seg{flex:1;height:7px;border-radius:var(--pill);background:var(--paper-2);overflow:hidden}
+.vid-seg.done{background:var(--good)}
+.vid-seg.active{background:var(--accent)}
+.vid-stage{display:grid;grid-template-columns:minmax(0,62fr) minmax(0,38fr);gap:10px;align-items:stretch;min-height:260px}
+.vid-board{background:linear-gradient(160deg,#1f1c2e,#2f2848);color:#fff;border-radius:var(--r3);
+  padding:14px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.vid-board-badge{display:inline-flex;align-self:flex-start;padding:4px 10px;border-radius:var(--pill);
+  background:rgba(255,255,255,.14);font-size:12px;font-weight:800;color:#ffe6a7}
+.vid-board-title{font:600 18px/1.22 var(--font-display);margin:0;color:#fff}
+.vid-board-pts{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px;font-size:13.5px;line-height:1.35;color:#eef0ff}
+.vid-cmp{display:flex;flex-direction:column;gap:6px}
+.vid-cmp-row{padding:8px 10px;border-radius:10px;font-size:13px;font-weight:700;line-height:1.3}
+.vid-cmp-row.wrong{background:rgba(197,44,42,.24);border:1px solid rgba(255,135,135,.4);color:#ffd8d6}
+.vid-cmp-row.right{background:rgba(0,123,63,.28);border:1px solid rgba(114,239,170,.45);color:#d6ffe7}
+.vid-tip{padding:8px 10px;border-radius:10px;background:rgba(236,179,60,.18);border:1px solid rgba(236,179,60,.4);
+  font-size:12.5px;font-weight:700;color:#ffecb8;line-height:1.3}
+.vid-caption{padding:8px 10px;border-radius:10px;background:rgba(0,0,0,.28);font-size:12.5px;color:#e6e9ff;line-height:1.35}
+.vid-presenter{position:relative;border-radius:var(--r3);border:1px solid var(--line);overflow:hidden;
+  background:radial-gradient(circle at 50% 28%,#fff2f6,#f4dff9 65%,#e4d0f5);
+  display:flex;align-items:flex-end;justify-content:center;min-height:240px}
+.vid-presenter[data-pose="intro"]{background:radial-gradient(circle at 50% 28%,#fff6e6,#ffe3ec 68%,#f5d7f0)}
+.vid-presenter[data-pose="outro"]{background:radial-gradient(circle at 50% 28%,#e8fff1,#ddf2ff 68%,#e8dcff)}
+.vid-presenter[data-pose="quiz"]{background:radial-gradient(circle at 50% 28%,#fff7dc,#ffe6e6 68%,#efe0ff)}
+.vid-presenter img,.vid-presenter video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+  object-position:50% bottom;pointer-events:none;transition:opacity .25s ease}
+.vid-presenter video{opacity:0}
+.vid-presenter.talking img{opacity:0}
+.vid-presenter.talking video{opacity:1}
+.vid-ctrls{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.vid-ctrl-btn{min-width:44px;height:42px;padding:0 12px;border-radius:var(--r2);background:var(--paper-2);
+  border:1px solid var(--line);font-weight:800;font-size:16px;display:inline-flex;align-items:center;justify-content:center}
+.vid-ctrl-btn.main{background:var(--accent);border-color:var(--accent);color:#fff;min-width:56px}
+.vid-quiz-q{font:600 16.5px/1.25 var(--font-display);color:#fff;margin:0}
+.vid-quiz-opts{display:flex;flex-direction:column;gap:7px}
+.vid-quiz-opt{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.22);
+  color:#fff;font-weight:800;font-size:14px;text-align:left}
+.vid-quiz-opt.ok{background:rgba(0,165,86,.4);border-color:#68f0aa}
+.vid-quiz-opt.no{background:rgba(215,55,55,.4);border-color:#ff9494;opacity:.7}
+.vid-quiz-fb{font-size:13.5px;font-weight:800;min-height:20px;color:#ffe6a7}
+.vid-done-actions{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+@media (max-width:420px){
+  .vid-stage{grid-template-columns:minmax(0,58fr) minmax(0,42fr);min-height:220px}
+  .vid-board{padding:11px}
+}
 </style>
 </head>
 <body>
@@ -625,6 +708,7 @@ input[type=file]{padding:6px}
     <div id="exIntro">
       <aside class="note"><span class="tape"></span><b>¡Hola!</b> Soy Mía, la princesa. Elige una asignatura, responde bien y gana monedas para tus premios 👑</aside>
       <h2 class="h2">¿Qué toca <mark>hoy</mark>?</h2>
+      <div id="vidBanner" class="vid-banner" style="display:none" role="region" aria-label="Vídeo de repaso de Mía"></div>
       <div class="grid-subj" id="subjects"></div>
       <div class="utils">
         <button class="util" id="btnPractice"><svg><use href="#i-repeat"/></svg><span>Práctica<b>tus fotos · 24</b></span></button>
@@ -858,14 +942,64 @@ input[type=file]{padding:6px}
   <button class="mia-tap" id="miaTap" type="button" aria-label="Hablar con Mía"></button>
 </div>
 
+<!-- AVISO PERSISTENTE DE VÍDEO PENDIENTE -->
+<div id="vidNoticeModal" class="vid-modal" aria-hidden="true">
+  <div class="vid-backdrop" id="vidNoticeBackdrop"></div>
+  <div class="vid-notice-card" role="dialog" aria-modal="true" aria-labelledby="vidNoticeTitle">
+    <div class="vid-notice-head">
+      <img class="vid-notice-av" src="assets/mia/mia.webp" alt="Mía">
+      <div>
+        <h2 id="vidNoticeTitle">🎬 ¡Tu vídeo con Mía está listo!</h2>
+      </div>
+    </div>
+    <p class="vid-notice-sub" id="vidNoticeSub"></p>
+    <div class="vid-chips" id="vidNoticeChips"></div>
+    <div class="vid-notice-actions">
+      <button type="button" class="btn-primary" id="btnVidNow" style="margin-top:0">▶ Ver ahora</button>
+      <button type="button" class="ghost" id="btnVidLater" style="padding:12px">Ver después</button>
+    </div>
+  </div>
+</div>
+
+<!-- REPRODUCTOR MÍA STUDIO + MINI-QUIZ -->
+<div id="vidPlayerModal" class="vid-modal" aria-hidden="true">
+  <div class="vid-backdrop" id="vidPlayerBackdrop"></div>
+  <div class="vid-player-card" role="dialog" aria-modal="true" aria-labelledby="vidPlayerTitle">
+    <div class="vid-top">
+      <div>
+        <h2 class="vid-top-title" id="vidPlayerTitle">🎬 Mía Studio</h2>
+        <div class="vid-top-sub" id="vidPlayerSub"></div>
+      </div>
+      <button type="button" class="vid-close-x" id="btnVidTopClose" aria-label="Cerrar vídeo">✕</button>
+    </div>
+    <div class="vid-prog" id="vidProgress"></div>
+    <div class="vid-stage">
+      <div class="vid-board" id="vidBoard"></div>
+      <div class="vid-presenter" id="vidPresenter" data-pose="intro">
+        <img id="vidMiaImg" src="assets/mia/mia.webp" alt="Mía" draggable="false">
+        <video id="vidMiaVid" muted loop playsinline preload="auto" src="assets/mia/mia-talk.webm"></video>
+      </div>
+    </div>
+    <div class="vid-ctrls" id="vidCtrls">
+      <button type="button" class="vid-ctrl-btn" id="btnVidPrev" aria-label="Escena anterior" title="Anterior">⏮</button>
+      <button type="button" class="vid-ctrl-btn main" id="btnVidPlay" aria-label="Pausar o reproducir" title="Reproducir / Pausar">⏯</button>
+      <button type="button" class="vid-ctrl-btn" id="btnVidNext" aria-label="Siguiente escena" title="Siguiente">⏭</button>
+      <button type="button" class="vid-ctrl-btn" id="btnVidReplay" aria-label="Repetir vídeo" title="Repetir">🔁</button>
+      <button type="button" class="vid-ctrl-btn" id="btnVidClose" aria-label="Cerrar" title="Cerrar">✕</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ============== ESTADO ============== */
 const LS_KEY="estudo_v1";
 const LS_VER=1;
+let APP_SESSION_ID="s_"+Date.now()+"_"+Math.random().toString(36).slice(2,7);
+const REVISIT_IDLE_MS=5*60*1000;
 function defaultState(){
   return {v:LS_VER, coins:0, totalEarned:0, totalSpent:0, exDone:0, exRight:0,
     streakDay:"", streak:0, bestStreak:0, lastDay:"", name:"Maitê", owned:[], wornHat:null, worn:{}, board:[], lastUnlockedAt:null, custom:[], examen:[], examen1:[], examen2:[],
-    subjectStats:{}, curDif:1, difStreak:0};
+    subjectStats:{}, curDif:1, difStreak:0, activeSession:null, pendingVideo:null};
 }
 /* Exercises generated by the assistant from the homework photos (Ciencias
    Naturales, 2026-11-13). Reinforcement based on the material, not copies
@@ -972,6 +1106,15 @@ function load(){
     if(!st.subjectStats||typeof st.subjectStats!=="object"||Array.isArray(st.subjectStats)) st.subjectStats={};
     if(![1,2,3].includes(st.curDif)) st.curDif=1;
     if(typeof st.difStreak!=="number"||!Number.isFinite(st.difStreak)) st.difStreak=0;
+    if(!st.activeSession||typeof st.activeSession!=="object"||Array.isArray(st.activeSession)||typeof st.activeSession.id!=="string"){
+      st.activeSession=null;
+    } else {
+      if(typeof st.activeSession.total!=="number"||!Number.isFinite(st.activeSession.total)) st.activeSession.total=0;
+      if(!Array.isArray(st.activeSession.errors)) st.activeSession.errors=[];
+    }
+    if(!st.pendingVideo||typeof st.pendingVideo!=="object"||Array.isArray(st.pendingVideo)||!Array.isArray(st.pendingVideo.errors)){
+      st.pendingVideo=null;
+    }
     return withFoto(st);}
   catch(e){return withFoto(defaultState());}
 }
@@ -1373,7 +1516,7 @@ const Mia=(()=>{
                "¡Qué bien lo estás haciendo!",
                "¿Jugamos un poquito más?",
                "¡Hola! ¡Qué ganas de aprender jugando juntos!"];
-  const OBS_SEL=".top,#speech,.note,.h2,.q,.opts,.feedback,#btnNextEx,#exercise .row,.grid-subj,.utils,#chatLog,.composer,#chatTyping,#card-rev .row,#cats,#goal,#items,#board,#stkBar,#card-cam textarea,#card-cam input,#card-examen textarea,.rep,.verdict,.co-art,.mem,.fallbox,.simon,.tres,.aho,.keys,.g2048,.mines,[role='dialog'],.modal,.toast.on";
+  const OBS_SEL=".top,#speech,.note,.h2,#vidBanner,.q,.opts,.feedback,#btnNextEx,#exercise .row,.grid-subj,.utils,#chatLog,.composer,#chatTyping,#card-rev .row,#cats,#goal,#items,#board,#stkBar,#card-cam textarea,#card-cam input,#card-examen textarea,.rep,.verdict,.co-art,.mem,.fallbox,.simon,.tres,.aho,.keys,.g2048,.mines,[role='dialog'],.modal,.toast.on";
   const still=matchMedia("(prefers-reduced-motion: reduce)");
   const rnd=(a,b)=>a+Math.random()*(b-a);
   let el=null,box=null,vid=null,ready=false,canAnim=false,wantTalk=false,timer=0,ct=0,off=0,x=0,y=0,tutorMode=false;
@@ -1687,6 +1830,7 @@ const $=id=>document.getElementById(id);
 /* ============== ABAS DE NAVEGACIÓN ============== */
 const GAME_CARDS=["card-color","card-mem","card-lluvia","card-simon","card-sumas","card-tres","card-aho","card-2048","card-minas"];
 function setTab(id){
+  if(typeof closeVideoPlayer==="function") closeVideoPlayer();
   document.body.dataset.tab=id;
   [...document.querySelectorAll("#nav button")].forEach(b=>b.classList.toggle("on",b.dataset.tab===id));
   [...document.querySelectorAll(".card")].forEach(c=>{
@@ -1755,7 +1899,7 @@ function startExTimer(sec,box,after){
     if(t<=0){ stopExTimer(); if(!exAnswered){ exAnswered=true;
       [...box.children].forEach(x=>{ if(x.textContent===curEx.a) x.className="opt ok"; });
       const fb=$("exFb"); fb.textContent="¡Se acabó el tiempo! 😱 La respuesta era: "+curEx.a; fb.className="feedback bad";
-      const p=registerResult(false,"¡Se acabó el tiempo! La respuesta correcta es: "+curEx.a); if(after) after(false,p);
+      const p=registerResult(false,"¡Se acabó el tiempo! La respuesta correcta es: "+curEx.a,{given:""}); if(after) after(false,p);
     } }
   },1000);
 }
@@ -1789,8 +1933,8 @@ function paintExercise(ex,after,timer){
       const fb=$("exFb"); fb.textContent=ok?("¡Bien! +10 🪙"):("Casi… la correcta está en verde 👇"); fb.className="feedback "+(ok?"good":"bad");
       const tk=exToken;
       const p=ok
-        ? registerResult(true)
-        : registerResult(false,"erro_1").then(()=>{ if(tk===exToken) return speak("La respuesta correcta es: "+ex.a); });
+        ? registerResult(true,undefined,{given:o})
+        : registerResult(false,"erro_1",{given:o}).then(()=>{ if(tk===exToken) return speak("La respuesta correcta es: "+ex.a); });
       if(after) after(ok,p);
     };
     box.appendChild(b);
@@ -1809,7 +1953,7 @@ function paintOrdenar(ex,box,after){
       if(it.i===pos){ b.className="opt ok"; b.disabled=true; pos++;
         if(pos===ex.pasos.length){ done=true; stopExTimer(); const ok=errs===0;
           fb.textContent=ok?"¡Bien! +10 🪙":"Listo ✓ (con algunos errores)"; fb.className="feedback "+(ok?"good":"bad");
-          const p=registerResult(ok); if(after) after(ok,p);
+          const p=registerResult(ok,undefined,{given:ok?(ex.a||""):"(orden incorrecto)"}); if(after) after(ok,p);
         } else { fb.textContent="✓ Paso "+pos+" de "+ex.pasos.length; fb.className="feedback good"; }
       } else { errs++; b.className="opt no"; setTimeout(()=>{ if(!done) b.className="opt"; },350);
         fb.textContent="✗ Revisa el orden…"; fb.className="feedback bad"; }
@@ -1834,7 +1978,7 @@ function paintParejas(ex,box,after){
         fb.textContent="✓ Pareja "+matched+" de "+ex.pares.length; fb.className="feedback good";
         if(matched===ex.pares.length){ done=true; stopExTimer(); const ok=errs===0;
           fb.textContent=ok?"¡Bien! +10 🪙":"Listo ✓ (con algunos errores)"; fb.className="feedback "+(ok?"good":"bad");
-          const p=registerResult(ok); if(after) after(ok,p);
+          const p=registerResult(ok,undefined,{given:ok?(ex.a||""):"(parejas con errores)"}); if(after) after(ok,p);
         }
       } else { errs++; busy=true; const prev=sel.b; sel=null;
         setTimeout(()=>{ prev.textContent="❓"; prev.className="opt"; b.textContent="❓"; b.className="opt"; busy=false; },900);
@@ -1971,7 +2115,7 @@ function showAnswerCard(box,a){
   const card=document.createElement("div"); card.className="opt"; card.style.cursor="default"; card.textContent=a;
   box.appendChild(card);
 }
-function discFinish(box,ex,after,ok,prefix,showCard){
+function discFinish(box,ex,after,ok,prefix,showCard,given){
   if(exAnswered) return; exAnswered=true; stopExTimer();
   const fb=$("exFb");
   if(ok){ fb.textContent=(prefix||"")+"¡Muy bien! +10 🪙"; fb.className="feedback good"; }
@@ -1980,9 +2124,10 @@ function discFinish(box,ex,after,ok,prefix,showCard){
     fb.textContent=(prefix||"")+"La respuesta era: "+ex.a; fb.className="feedback bad";
   }
   const tk=exToken;
+  const g=typeof given==="string"?given:"";
   const p=ok
-    ? registerResult(true)
-    : registerResult(false,"erro_1").then(()=>{ if(tk===exToken) return speak("La respuesta correcta es: "+ex.a); });
+    ? registerResult(true,undefined,{given:g})
+    : registerResult(false,"erro_1",{given:g}).then(()=>{ if(tk===exToken) return speak("La respuesta correcta es: "+ex.a); });
   if(after) after(ok,p);
 }
 /* discursiva por voz: botão do microfone escuta a resposta (Web Speech API) e compara com a certa */
@@ -2007,7 +2152,7 @@ function paintDis(ex,box,after){
       const alts=[]; for(const r of e.results){ for(const a of r) alts.push(a.transcript); }
       const hit=alts.find(t=>answersMatch(ex.a,t));
       const said=alts[0]||"";
-      discFinish(box,ex,after,!!hit,said?("Oí «"+said+"». "):"");
+      discFinish(box,ex,after,!!hit,said?("Oí «"+said+"». "):"",undefined,said);
     };
     rec.onerror=e=>{
       if(exAnswered) return;
@@ -2025,8 +2170,8 @@ function paintDis(ex,box,after){
     const row=document.createElement("div"); row.className="row";
     const yes=document.createElement("button"); yes.className="opt ok"; yes.style.textAlign="center"; yes.textContent="✅ Sí, la sabía";
     const no=document.createElement("button"); no.className="opt no"; no.style.textAlign="center"; no.textContent="❌ No la sabía";
-    yes.onclick=()=>discFinish(box,ex,after,true,null,false);
-    no.onclick=()=>discFinish(box,ex,after,false,null,false);
+    yes.onclick=()=>discFinish(box,ex,after,true,null,false,ex.a||"");
+    no.onclick=()=>discFinish(box,ex,after,false,null,false,"");
     row.appendChild(yes); row.appendChild(no); box.appendChild(row);
     fb.textContent="¿Te acordabas?"; fb.className="feedback";
   };
@@ -2049,10 +2194,10 @@ function paintEscri(ex,box,after){
     e.preventDefault(); if(exAnswered) return;
     const v=(input.value||"").trim(); if(!v){ input.focus(); return; }
     const ok=answersMatch(ex.a,v);
-    discFinish(box,ex,after,ok,"Escribiste «"+v+"». ");
+    discFinish(box,ex,after,ok,"Escribiste «"+v+"». ",undefined,v);
   };
   const reveal=document.createElement("button"); reveal.className="opt"; reveal.textContent="👀 No la sé";
-  reveal.onclick=()=>{ if(exAnswered) return; discFinish(box,ex,after,false,"No pasa nada. "); };
+  reveal.onclick=()=>{ if(exAnswered) return; discFinish(box,ex,after,false,"No pasa nada. ",undefined,""); };
   box.appendChild(form); box.appendChild(reveal);
   try{ input.focus({preventScroll:true}); }catch(e){ try{ input.focus(); }catch(_){} }
 }
@@ -2122,9 +2267,43 @@ function catCheer(ok){
   }
   if(window.Gato && typeof window.Gato.feliz==="function") window.Gato.feliz();
 }
-function registerResult(ok,say){
+function ensureActiveSession(){
+  if(!state.activeSession||typeof state.activeSession!=="object"||Array.isArray(state.activeSession)||state.activeSession.id!==APP_SESSION_ID){
+    state.activeSession={id:APP_SESSION_ID,startedAt:Date.now(),lastAt:Date.now(),total:0,errors:[]};
+  }
+  if(!Array.isArray(state.activeSession.errors)) state.activeSession.errors=[];
+  if(typeof state.activeSession.total!=="number"||!Number.isFinite(state.activeSession.total)) state.activeSession.total=0;
+  return state.activeSession;
+}
+function recordSessionResult(ok,meta){
+  const ses=ensureActiveSession();
+  ses.total++;
+  ses.lastAt=Date.now();
+  if(!ok && curEx && curEx.q){
+    const subj=(curSubj&&SUBJECTS[curSubj])?curSubj:(curEx.tema==="da foto 📷"?"foto":"repaso");
+    const info=SUBJECTS[subj]||{em:"📚",nm:deckLabel||"Repaso"};
+    const given=(meta&&typeof meta.given==="string")?meta.given.slice(0,200):"";
+    const entry={
+      q:String(curEx.q),
+      expected:String(curEx.a||""),
+      given,
+      subj,
+      subjNm:info.nm,
+      subjEm:info.em,
+      tema:curEx.tema||deckLabel||"",
+      tipo:curEx.tipo||"mc",
+      opts:Array.isArray(curEx.opts)?curEx.opts.slice(0,4):[],
+      ts:Date.now()
+    };
+    const idx=ses.errors.findIndex(e=>e&&e.q===entry.q);
+    if(idx>=0) ses.errors[idx]=entry;
+    else if(ses.errors.length<8) ses.errors.push(entry);
+  }
+}
+function registerResult(ok,say,meta){
   attempts=0; // nuevo ejercicio (showEx)
   state.exDone++;
+  recordSessionResult(ok,meta);
   if(curSubj&&SUBJECTS[curSubj]){
     if(!state.subjectStats||typeof state.subjectStats!=="object"||Array.isArray(state.subjectStats)) state.subjectStats={};
     const s=state.subjectStats[curSubj]||{done:0,right:0,grade:10};
@@ -3184,7 +3363,7 @@ $("btnNextEx").onclick=()=>{
   const go=advGo; hideNext(); go();
 };
 $("btnBack").onclick=()=>{ curSubj=null; deckQ=[]; stopExTimer(); const ei=document.getElementById("exIntro"); if(ei) ei.style.display=""; $("btnNew").style.display=""; $("exercise").style.display="none"; $("subjects").style.display=""; syncTutor(); };
-$("btnReset").onclick=()=>{ if(confirm("¿Empezar de nuevo? Borra monedas y desbloqueos.")){ state=defaultState(); save(); renderWallet(); renderShop(); renderReport(); renderAvatar(); } };
+$("btnReset").onclick=()=>{ if(confirm("¿Empezar de nuevo? Borra monedas y desbloqueos.")){ state=defaultState(); save(); if(typeof closeVideoNotice==="function") closeVideoNotice(); if(typeof closeVideoPlayer==="function") closeVideoPlayer(); if(typeof renderVideoBanner==="function") renderVideoBanner(); renderWallet(); renderShop(); renderReport(); renderAvatar(); } };
 
 /* ======= CÁMARA: foto → texto → ejercicios ======= */
 function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
@@ -3328,12 +3507,672 @@ $("btnExamenPracticar").onclick=()=>{ if(!state.examen.length){toast("Genera pri
 $("btnExamenRev1").onclick=()=>{ if(!state.examen1.length){toast("Genera primero los ejercicios del examen 🎓");return;} startDeck(state.examen1,"Revisión 1 (examen)",30); };
 $("btnExamenRev2").onclick=()=>{ if(!state.examen2.length){toast("Genera primero los ejercicios del examen 🎓");return;} startDeck(state.examen2,"Revisión 2 (examen)",30); };
 
+/* ======= MÍA STUDIO: promoción de repaso, aviso, banner, reproductor y mini-quiz ======= */
+function stopAllSpeech(){
+  _spSeq++;
+  _pendingGreet=null;
+  if(_spStop){ const s=_spStop; _spStop=null; try{ s(); }catch(e){} }
+  stopAudio();
+  const b=$("speech"); if(b) b.style.display="none";
+  if(Mia&&Mia.talk) Mia.talk(false);
+}
+function promoteRevisitVideo(){
+  if(state.activeSession && state.activeSession.id!==APP_SESSION_ID){
+    const errs=Array.isArray(state.activeSession.errors)?state.activeSession.errors:[];
+    const promoted=errs.length>0;
+    if(promoted){
+      state.pendingVideo={
+        id:"vid_"+state.activeSession.id,
+        createdAt:Date.now(),
+        openedAt:null,
+        watchedAt:null,
+        rewarded:false,
+        errors:errs.slice(0,6),
+        lesson:null
+      };
+    }
+    state.activeSession=null;
+    save();
+    return promoted;
+  }
+  return false;
+}
+function buildQuizFromErrors(errors){
+  const list=Array.isArray(errors)?errors.filter(e=>e&&e.q&&e.expected):[];
+  const out=[];
+  for(let i=0;i<list.length && out.length<3;i++){
+    const e=list[i];
+    const ans=String(e.expected);
+    const seen=new Set([ans]);
+    const opts=[ans];
+    if(Array.isArray(e.opts)){
+      for(let j=0;j<e.opts.length && opts.length<4;j++){
+        const o=String(e.opts[j]||"").trim();
+        if(o && !seen.has(o)){ seen.add(o); opts.push(o); }
+      }
+    }
+    if(opts.length<2 && e.given){
+      const g=String(e.given).trim();
+      if(g && !seen.has(g)){ seen.add(g); opts.push(g); }
+    }
+    if(opts.length<2){
+      const alt="Ninguna de las anteriores";
+      if(!seen.has(alt)) opts.push(alt);
+    }
+    for(let k=opts.length-1;k>0;k--){
+      const j=Math.floor(Math.random()*(k+1));
+      const tmp=opts[k]; opts[k]=opts[j]; opts[j]=tmp;
+    }
+    out.push({q:String(e.q),a:ans,opts});
+  }
+  return out;
+}
+function buildLocalLesson(errors,name){
+  const nm=(name||"Maitê").trim()||"Maitê";
+  const cleanNm=cleanForTTS(nm)||"amiga";
+  const list=Array.isArray(errors)?errors.filter(e=>e&&e.q&&e.expected).slice(0,6):[];
+  const subjs=[];
+  const seenSubj=new Set();
+  list.forEach(e=>{
+    const s=(e.subjNm||"Repaso").trim();
+    if(s && !seenSubj.has(s)){ seenSubj.add(s); subjs.push(s); }
+  });
+  const nErr=list.length;
+  const scenes=[{
+    kind:"intro",
+    badge:"Mía Studio",
+    title:"¡Hola, "+nm+"!",
+    narration:"Hola "+cleanNm+". Vamos a repasar "+(nErr===1?"una pregunta":"estas "+nErr+" preguntas")+" juntas con mucha calma.",
+    points:["Repaso rápido de tus últimos fallos","Al final tienes un Mini-Quiz de 10 monedas"],
+    wrong:"",
+    right:"",
+    tip:"Escucha cada pista y verás qué fácil es."
+  }];
+  list.slice(0,3).forEach(e=>{
+    const badge=(e.subjEm?e.subjEm+" ":"")+(e.subjNm||"Repaso");
+    const qClean=cleanForTTS(e.q);
+    const aClean=cleanForTTS(e.expected);
+    scenes.push({
+      kind:"explain",
+      badge,
+      title:String(e.q),
+      narration:"En la pregunta: "+qClean+". La respuesta correcta es: "+aClean+".",
+      points:e.tema?["Tema: "+String(e.tema)]:[],
+      wrong:e.given?("Respondiste: "+String(e.given)):"Sin respuesta",
+      right:"Correcta: "+String(e.expected),
+      tip:"Fíjate bien en esta respuesta para recordarla a la primera."
+    });
+  });
+  scenes.push({
+    kind:"outro",
+    badge:"Reto final",
+    title:"¡A por el Mini-Quiz!",
+    narration:"Muy bien "+cleanNm+". Ahora responde el mini quiz para ganar diez monedas.",
+    points:["Ya has repasado las respuestas","Responde el Mini-Quiz de Mía"],
+    wrong:"",
+    right:"",
+    tip:"Sin prisas, tú ya sabes esto."
+  });
+  return {
+    title:"Repaso con Mía",
+    summary:subjs.length?("Repaso de "+subjs.join(", ")):"Repaso personalizado",
+    scenes,
+    quiz:buildQuizFromErrors(list)
+  };
+}
+let _lessonFetchId=null, _lessonFetchP=null;
+function prefetchPendingLesson(){
+  const pv=state.pendingVideo;
+  if(!pv||!Array.isArray(pv.errors)||!pv.errors.length) return Promise.resolve(null);
+  warmCloudTTS();
+  if(pv.lesson && Array.isArray(pv.lesson.scenes) && pv.lesson.scenes.length>=2){
+    if(pv.lesson.scenes[0]&&pv.lesson.scenes[0].narration) prefetchTTS(pv.lesson.scenes[0].narration);
+    if(pv.lesson.scenes[1]&&pv.lesson.scenes[1].narration) prefetchTTS(pv.lesson.scenes[1].narration);
+    return Promise.resolve(pv.lesson);
+  }
+  if(_lessonFetchP && _lessonFetchId===pv.id) return _lessonFetchP;
+  const targetId=pv.id;
+  _lessonFetchId=targetId;
+  const ctrl=typeof AbortController!=="undefined"?new AbortController():null;
+  const to=ctrl?setTimeout(()=>ctrl.abort(),22000):null;
+  _lessonFetchP=fetch(BACKEND_URL+"/explain",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({name:(state.name||"Maitê").trim(),errors:pv.errors.slice(0,6)}),
+    signal:ctrl?ctrl.signal:undefined
+  }).then(r=>r.ok?r.json():null).then(d=>{
+    if(to) clearTimeout(to);
+    const l=d&&d.lesson;
+    if(l && Array.isArray(l.scenes) && l.scenes.length>=2){
+      if(state.pendingVideo && state.pendingVideo.id===targetId){
+        state.pendingVideo.lesson=l;
+        save();
+      }
+      if(l.scenes[0]&&l.scenes[0].narration) prefetchTTS(l.scenes[0].narration);
+      if(l.scenes[1]&&l.scenes[1].narration) prefetchTTS(l.scenes[1].narration);
+      return l;
+    }
+    return null;
+  }).catch(()=>{
+    if(to) clearTimeout(to);
+    return null;
+  }).finally(()=>{
+    if(_lessonFetchId===targetId){ _lessonFetchP=null; }
+  });
+  return _lessonFetchP;
+}
+function renderVideoBanner(){
+  const ban=$("vidBanner");
+  if(!ban) return;
+  const pv=state.pendingVideo;
+  const show=!!(pv && !pv.watchedAt && Array.isArray(pv.errors) && pv.errors.length>0);
+  if(!show){
+    ban.style.display="none";
+    ban.replaceChildren();
+    return;
+  }
+  ban.replaceChildren();
+  const av=document.createElement("img");
+  av.className="vid-banner-av";
+  av.src="assets/mia/mia.webp";
+  av.alt="Mía";
+  const txt=document.createElement("div");
+  txt.className="vid-banner-txt";
+  const b=document.createElement("b");
+  b.textContent="🎬 Vídeo de repaso con Mía";
+  const sp=document.createElement("span");
+  const n=pv.errors.length;
+  sp.textContent=(n===1?"1 pregunta para repasar":" "+n+" preguntas para repasar").trim()+(pv.rewarded?"":" · +10 🪙 al terminar");
+  txt.appendChild(b); txt.appendChild(sp);
+  const btn=document.createElement("button");
+  btn.type="button";
+  btn.className="vid-banner-btn";
+  btn.id="btnVidBannerPlay";
+  btn.textContent="▶ Ver ahora";
+  btn.onclick=startPendingVideoNow;
+  ban.appendChild(av); ban.appendChild(txt); ban.appendChild(btn);
+  ban.style.display="";
+  if(Mia&&Mia.avoidText) requestAnimationFrame(()=>Mia.avoidText(420));
+}
+function openVideoNotice(){
+  const m=$("vidNoticeModal"), pv=state.pendingVideo;
+  if(!m||!pv||!Array.isArray(pv.errors)||!pv.errors.length) return false;
+  const sub=$("vidNoticeSub"), chips=$("vidNoticeChips");
+  if(sub){
+    const n=pv.errors.length;
+    sub.textContent="Preparé un mini vídeo explicando "+(n===1?"1 pregunta":"las "+n+" preguntas")+" de tu última sesión. Al terminar ganas +10 🪙.";
+  }
+  if(chips){
+    chips.replaceChildren();
+    const bySubj=new Map();
+    pv.errors.forEach(e=>{
+      const key=(e.subjEm?e.subjEm+" ":"")+(e.subjNm||"Repaso");
+      bySubj.set(key,(bySubj.get(key)||0)+1);
+    });
+    bySubj.forEach((cnt,label)=>{
+      const ch=document.createElement("span");
+      ch.className="vid-chip";
+      ch.textContent=label+" · "+cnt;
+      chips.appendChild(ch);
+    });
+  }
+  m.classList.add("open");
+  m.setAttribute("aria-hidden","false");
+  prefetchPendingLesson();
+  return true;
+}
+function closeVideoNotice(){
+  const m=$("vidNoticeModal");
+  if(m){
+    m.classList.remove("open");
+    m.setAttribute("aria-hidden","true");
+  }
+  renderVideoBanner();
+}
+function maybeShowPendingVideoNotice(){
+  const pv=state.pendingVideo;
+  if(pv && !pv.openedAt && Array.isArray(pv.errors) && pv.errors.length>0){
+    return openVideoNotice();
+  }
+  if(pv && !pv.watchedAt && Array.isArray(pv.errors) && pv.errors.length>0 && !pv.lesson){
+    prefetchPendingLesson();
+  }
+  return false;
+}
+function startPendingVideoNow(){
+  const pv=state.pendingVideo;
+  if(!pv||!Array.isArray(pv.errors)||!pv.errors.length) return;
+  pv.openedAt=Date.now();
+  save();
+  _pendingGreet=null;
+  _audioOK=true;
+  stopAllSpeech();
+  closeVideoNotice();
+  openVideoPlayer();
+}
+
+let _vidRunId=0, _vidAudio=null, _vidTimer=null, _vidLesson=null, _vidSceneIdx=0, _vidPaused=false, _vidInQuiz=false;
+let _vidMiaInit=false, _vidMiaCanAnim=false;
+function initVidMia(){
+  if(_vidMiaInit) return;
+  _vidMiaInit=true;
+  const v=$("vidMiaVid");
+  if(!v) return;
+  const still=matchMedia("(prefers-reduced-motion: reduce)");
+  const check=()=>{
+    try{
+      const c=document.createElement("canvas"); c.width=c.height=16;
+      const g=c.getContext("2d"); g.drawImage(v,0,0,16,16);
+      _vidMiaCanAnim=!still.matches && g.getImageData(0,0,1,1).data[3]<250;
+    }catch(e){ _vidMiaCanAnim=!still.matches && location.protocol==="file:"; }
+    if(!_vidMiaCanAnim){ try{ v.remove(); }catch(e){} }
+  };
+  if(v.readyState>=2) check(); else v.addEventListener("loadeddata",check,{once:true});
+}
+function setVidMiaTalking(on){
+  const p=$("vidPresenter"), v=$("vidMiaVid");
+  const active=!!(on && _vidMiaCanAnim);
+  if(p) p.classList.toggle("talking",active);
+  if(v && _vidMiaCanAnim){
+    try{
+      if(active){ if(v.paused){ const pr=v.play(); if(pr&&pr.catch) pr.catch(()=>{}); } }
+      else v.pause();
+    }catch(e){}
+  }
+}
+function stopVidMedia(){
+  clearTimeout(_vidTimer); _vidTimer=null;
+  if(_vidAudio){ try{ _vidAudio.onended=null; _vidAudio.onerror=null; _vidAudio.onplaying=null; _vidAudio.pause(); }catch(e){} _vidAudio=null; }
+  setVidMiaTalking(false);
+}
+function renderVidProgress(total,curIdx,inQuiz){
+  const box=$("vidProgress");
+  if(!box) return;
+  box.replaceChildren();
+  const segCount=Math.max(1,total);
+  for(let i=0;i<segCount;i++){
+    const seg=document.createElement("div");
+    seg.className="vid-seg"+((inQuiz||i<curIdx)?" done":(i===curIdx?" active":""));
+    box.appendChild(seg);
+  }
+}
+function renderSceneBoard(scene){
+  const board=$("vidBoard");
+  if(!board) return;
+  board.replaceChildren();
+  if(scene.badge){
+    const badge=document.createElement("div");
+    badge.className="vid-board-badge";
+    badge.textContent=scene.badge;
+    board.appendChild(badge);
+  }
+  const title=document.createElement("h3");
+  title.className="vid-board-title";
+  title.textContent=scene.title||"Repaso con Mía";
+  board.appendChild(title);
+  if(scene.wrong || scene.right){
+    const cmp=document.createElement("div");
+    cmp.className="vid-cmp";
+    if(scene.wrong){
+      const w=document.createElement("div");
+      w.className="vid-cmp-row wrong";
+      w.textContent="✗ "+scene.wrong;
+      cmp.appendChild(w);
+    }
+    if(scene.right){
+      const r=document.createElement("div");
+      r.className="vid-cmp-row right";
+      r.textContent="✓ "+scene.right;
+      cmp.appendChild(r);
+    }
+    board.appendChild(cmp);
+  }
+  if(Array.isArray(scene.points) && scene.points.length){
+    const ul=document.createElement("ul");
+    ul.className="vid-board-pts";
+    scene.points.slice(0,3).forEach(pt=>{
+      const li=document.createElement("li");
+      li.textContent=String(pt);
+      ul.appendChild(li);
+    });
+    board.appendChild(ul);
+  }
+  if(scene.tip){
+    const tip=document.createElement("div");
+    tip.className="vid-tip";
+    tip.textContent="💡 "+scene.tip;
+    board.appendChild(tip);
+  }
+  if(scene.narration){
+    const cap=document.createElement("div");
+    cap.className="vid-caption";
+    cap.textContent=scene.narration;
+    board.appendChild(cap);
+  }
+}
+function updateVidControls(){
+  const playBtn=$("btnVidPlay"), ctrls=$("vidCtrls");
+  if(playBtn) playBtn.textContent=_vidPaused?"▶":"⏸";
+  if(ctrls) ctrls.style.display=_vidInQuiz?"none":"";
+}
+function vidReadingMs(text){
+  const len=String(text||"").length;
+  return Math.min(Math.max(4000,len*85),11000);
+}
+function scheduleVidAdvance(runId,ms){
+  clearTimeout(_vidTimer);
+  _vidTimer=setTimeout(()=>{
+    if(runId!==_vidRunId || _vidPaused || _vidInQuiz) return;
+    advanceVidScene(runId);
+  },ms);
+}
+function advanceVidScene(runId){
+  if(runId!==_vidRunId || !_vidLesson) return;
+  const next=_vidSceneIdx+1;
+  if(next<_vidLesson.scenes.length) playVidScene(next);
+  else startVidMiniQuiz();
+}
+function playVidScene(idx){
+  if(!_vidLesson || !Array.isArray(_vidLesson.scenes) || !_vidLesson.scenes.length) return;
+  const runId=++_vidRunId;
+  stopVidMedia();
+  _vidInQuiz=false;
+  _vidPaused=false;
+  _vidSceneIdx=Math.max(0,Math.min(idx,_vidLesson.scenes.length-1));
+  const scene=_vidLesson.scenes[_vidSceneIdx];
+  const sub=$("vidPlayerSub"), pres=$("vidPresenter");
+  if(sub) sub.textContent=(_vidLesson.title||"Mía Studio")+" · Escena "+(_vidSceneIdx+1)+"/"+_vidLesson.scenes.length;
+  if(pres) pres.dataset.pose=scene.kind||"explain";
+  renderVidProgress(_vidLesson.scenes.length,_vidSceneIdx,false);
+  renderSceneBoard(scene);
+  updateVidControls();
+  const nextSc=_vidLesson.scenes[_vidSceneIdx+1];
+  if(nextSc && nextSc.narration) prefetchTTS(nextSc.narration);
+  const narr=String(scene.narration||"").trim();
+  if(!narr){
+    scheduleVidAdvance(runId,4000);
+    return;
+  }
+  const fallbackMs=vidReadingMs(narr);
+  ttsURL(narr).then(url=>{
+    if(runId!==_vidRunId || _vidInQuiz) return;
+    const src=url.startsWith("content/audio/")&&!url.includes("?")?url+"?v=clean4":url;
+    const audio=new Audio(src);
+    _vidAudio=audio;
+    let ended=false;
+    const finish=()=>{
+      if(ended || runId!==_vidRunId) return;
+      ended=true;
+      setVidMiaTalking(false);
+      if(!_vidPaused) advanceVidScene(runId);
+    };
+    audio.onplaying=()=>{ if(runId===_vidRunId && !_vidPaused) setVidMiaTalking(true); };
+    audio.onended=finish;
+    audio.onerror=()=>{
+      if(runId!==_vidRunId || ended) return;
+      setVidMiaTalking(false);
+      if(!_vidPaused) scheduleVidAdvance(runId,fallbackMs);
+    };
+    if(!_vidPaused){
+      const p=audio.play();
+      if(p && p.catch) p.catch(()=>{
+        if(runId!==_vidRunId || ended) return;
+        setVidMiaTalking(false);
+        if(!_vidPaused) scheduleVidAdvance(runId,fallbackMs);
+      });
+    }
+  }).catch(()=>{
+    if(runId!==_vidRunId || _vidInQuiz) return;
+    setVidMiaTalking(false);
+    if(!_vidPaused) scheduleVidAdvance(runId,fallbackMs);
+  });
+}
+function startVidMiniQuiz(){
+  const pv=state.pendingVideo;
+  const runId=++_vidRunId;
+  stopVidMedia();
+  _vidInQuiz=true;
+  _vidPaused=false;
+  updateVidControls();
+  const pres=$("vidPresenter"), sub=$("vidPlayerSub");
+  if(pres) pres.dataset.pose="quiz";
+  if(sub) sub.textContent="Mini-Quiz da Mía · ¡+10 🪙 al terminar!";
+  const rawQuiz=_vidLesson && Array.isArray(_vidLesson.quiz) ? _vidLesson.quiz.filter(q=>q&&q.q&&q.a&&Array.isArray(q.opts)&&q.opts.length>=2&&q.opts.includes(q.a)) : [];
+  const items=rawQuiz.length ? rawQuiz.slice(0,3) : buildQuizFromErrors(pv?pv.errors:[]);
+  if(!items.length){
+    finishVidMiniQuiz(0,0);
+    return;
+  }
+  renderVidProgress(_vidLesson?_vidLesson.scenes.length:items.length,_vidLesson?_vidLesson.scenes.length:items.length,true);
+  let qi=0, score=0;
+  function paintQuizQ(){
+    if(runId!==_vidRunId) return;
+    const item=items[qi];
+    const board=$("vidBoard");
+    if(!board) return;
+    board.replaceChildren();
+    const badge=document.createElement("div");
+    badge.className="vid-board-badge";
+    badge.textContent="Mini-Quiz da Mía · "+(qi+1)+"/"+items.length;
+    const qEl=document.createElement("h3");
+    qEl.className="vid-quiz-q";
+    qEl.textContent=item.q;
+    const optsBox=document.createElement("div");
+    optsBox.className="vid-quiz-opts";
+    const fb=document.createElement("div");
+    fb.className="vid-quiz-fb";
+    const opts=item.opts.slice();
+    for(let k=opts.length-1;k>0;k--){
+      const j=Math.floor(Math.random()*(k+1));
+      const t=opts[k]; opts[k]=opts[j]; opts[j]=t;
+    }
+    let locked=false;
+    opts.forEach(optText=>{
+      const b=document.createElement("button");
+      b.type="button";
+      b.className="vid-quiz-opt";
+      b.textContent=optText;
+      b.onclick=()=>{
+        if(locked || runId!==_vidRunId) return;
+        locked=true;
+        const ok=optText===item.a;
+        if(ok) score++;
+        b.classList.add(ok?"ok":"no");
+        if(!ok){
+          [...optsBox.children].forEach(ch=>{ if(ch.textContent===item.a) ch.classList.add("ok"); });
+        }
+        fb.textContent=ok?"✅ ¡Muy bien!":"💡 La correcta es: "+item.a;
+        clearTimeout(_vidTimer);
+        _vidTimer=setTimeout(()=>{
+          if(runId!==_vidRunId) return;
+          qi++;
+          if(qi<items.length) paintQuizQ();
+          else finishVidMiniQuiz(score,items.length);
+        },1100);
+      };
+      optsBox.appendChild(b);
+    });
+    board.appendChild(badge);
+    board.appendChild(qEl);
+    board.appendChild(optsBox);
+    board.appendChild(fb);
+  }
+  paintQuizQ();
+}
+function finishVidMiniQuiz(score,total){
+  const pv=state.pendingVideo;
+  if(pv){
+    pv.watchedAt=Date.now();
+    if(!pv.rewarded){
+      pv.rewarded=true;
+      earn(10,"vídeo y quiz de Mía",true);
+    }
+    save();
+  }
+  confetti();
+  renderVideoBanner();
+  const board=$("vidBoard"), sub=$("vidPlayerSub"), pres=$("vidPresenter");
+  if(pres) pres.dataset.pose="outro";
+  if(sub) sub.textContent="¡Repaso completado!";
+  if(!board) return;
+  board.replaceChildren();
+  const badge=document.createElement("div");
+  badge.className="vid-board-badge";
+  badge.textContent="🏆 ¡Mini-Quiz completado!";
+  const title=document.createElement("h3");
+  title.className="vid-board-title";
+  title.textContent=total>0?("Acertaste "+score+" de "+total+" ⭐"):"¡Has visto todo el repaso! ⭐";
+  const tip=document.createElement("div");
+  tip.className="vid-tip";
+  tip.textContent="🪙 +10 monedas por completar el vídeo y el quiz de Mía";
+  const actions=document.createElement("div");
+  actions.className="vid-done-actions";
+  const btnDone=document.createElement("button");
+  btnDone.type="button";
+  btnDone.className="btn-primary";
+  btnDone.style.marginTop="0";
+  btnDone.textContent="✅ ¡Listo! Volver a estudiar";
+  btnDone.onclick=closeVideoPlayer;
+  const btnAgain=document.createElement("button");
+  btnAgain.type="button";
+  btnAgain.className="ghost";
+  btnAgain.style.cssText="padding:11px;background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.28)";
+  btnAgain.textContent="🔁 Ver vídeo otra vez";
+  btnAgain.onclick=()=>{ _vidInQuiz=false; _vidPaused=false; playVidScene(0); };
+  actions.appendChild(btnDone);
+  actions.appendChild(btnAgain);
+  board.appendChild(badge);
+  board.appendChild(title);
+  board.appendChild(tip);
+  board.appendChild(actions);
+}
+async function openVideoPlayer(){
+  const m=$("vidPlayerModal"), pv=state.pendingVideo;
+  if(!m||!pv||!Array.isArray(pv.errors)||!pv.errors.length) return;
+  const runId=++_vidRunId;
+  stopVidMedia();
+  _vidInQuiz=false;
+  _vidPaused=false;
+  initVidMia();
+  m.classList.add("open");
+  m.setAttribute("aria-hidden","false");
+  document.body.classList.add("vid-open");
+  const board=$("vidBoard"), sub=$("vidPlayerSub"), pres=$("vidPresenter");
+  if(pres) pres.dataset.pose="intro";
+  if(sub) sub.textContent="Preparando explicación…";
+  if(board){
+    board.replaceChildren();
+    const t=document.createElement("h3");
+    t.className="vid-board-title";
+    t.textContent="Preparando tu vídeo con Mía… ✨";
+    board.appendChild(t);
+  }
+  updateVidControls();
+  let lesson=pv.lesson;
+  if(!lesson || !Array.isArray(lesson.scenes) || lesson.scenes.length<2){
+    const fetched=await Promise.race([
+      prefetchPendingLesson(),
+      new Promise(res=>setTimeout(()=>res(null),10000))
+    ]);
+    if(runId!==_vidRunId) return;
+    lesson=fetched || buildLocalLesson(pv.errors,state.name);
+  }
+  if(runId!==_vidRunId) return;
+  _vidLesson=lesson;
+  playVidScene(0);
+}
+function closeVideoPlayer(){
+  _vidRunId++;
+  stopVidMedia();
+  _vidPaused=false;
+  _vidInQuiz=false;
+  const m=$("vidPlayerModal");
+  if(m){
+    m.classList.remove("open");
+    m.setAttribute("aria-hidden","true");
+  }
+  document.body.classList.remove("vid-open");
+  renderVideoBanner();
+  if(Mia&&Mia.avoidText) requestAnimationFrame(()=>Mia.avoidText(420));
+}
+
+if($("btnVidNow")) $("btnVidNow").onclick=startPendingVideoNow;
+if($("btnVidLater")) $("btnVidLater").onclick=closeVideoNotice;
+if($("vidNoticeBackdrop")) $("vidNoticeBackdrop").onclick=closeVideoNotice;
+if($("btnVidClose")) $("btnVidClose").onclick=closeVideoPlayer;
+if($("btnVidTopClose")) $("btnVidTopClose").onclick=closeVideoPlayer;
+if($("vidPlayerBackdrop")) $("vidPlayerBackdrop").onclick=closeVideoPlayer;
+if($("btnVidPrev")) $("btnVidPrev").onclick=()=>{
+  if(!_vidLesson) return;
+  if(_vidInQuiz){ _vidInQuiz=false; playVidScene(_vidLesson.scenes.length-1); return; }
+  playVidScene(Math.max(0,_vidSceneIdx-1));
+};
+if($("btnVidNext")) $("btnVidNext").onclick=()=>{
+  if(!_vidLesson || _vidInQuiz) return;
+  advanceVidScene(_vidRunId);
+};
+if($("btnVidReplay")) $("btnVidReplay").onclick=()=>{
+  if(!_vidLesson) return;
+  _vidInQuiz=false; _vidPaused=false;
+  playVidScene(0);
+};
+if($("btnVidPlay")) $("btnVidPlay").onclick=()=>{
+  if(!_vidLesson || _vidInQuiz) return;
+  _vidPaused=!_vidPaused;
+  updateVidControls();
+  if(_vidPaused){
+    clearTimeout(_vidTimer); _vidTimer=null;
+    if(_vidAudio){ try{ _vidAudio.pause(); }catch(e){} }
+    setVidMiaTalking(false);
+  }else{
+    if(_vidAudio && !_vidAudio.ended){
+      const p=_vidAudio.play();
+      if(p && p.catch) p.catch(()=>scheduleVidAdvance(_vidRunId,3500));
+    }else{
+      const sc=_vidLesson.scenes[_vidSceneIdx];
+      scheduleVidAdvance(_vidRunId,sc?vidReadingMs(sc.narration):3500);
+    }
+  }
+};
+document.addEventListener("keydown",e=>{
+  if(e.key!=="Escape") return;
+  const pm=$("vidPlayerModal"), nm=$("vidNoticeModal");
+  if(pm && pm.classList.contains("open")) closeVideoPlayer();
+  else if(nm && nm.classList.contains("open")) closeVideoNotice();
+});
+
+let _revisitHiddenAt=0;
+document.addEventListener("visibilitychange",()=>{
+  if(document.hidden){
+    _revisitHiddenAt=Date.now();
+    return;
+  }
+  const hiddenFor=_revisitHiddenAt?(Date.now()-_revisitHiddenAt):0;
+  _revisitHiddenAt=0;
+  const exEl=$("exercise");
+  const exClosed=!exEl || exEl.style.display==="none";
+  const pm=$("vidPlayerModal");
+  const playerClosed=!pm || !pm.classList.contains("open");
+  if(hiddenFor>=REVISIT_IDLE_MS && exClosed && playerClosed){
+    APP_SESSION_ID="s_"+Date.now()+"_"+Math.random().toString(36).slice(2,7);
+    if(promoteRevisitVideo()){
+      renderVideoBanner();
+      maybeShowPendingVideoNotice();
+    }
+  }
+});
+
+promoteRevisitVideo();
 renderWallet(); renderSubjects(); renderShop(); renderReport(); renderAvatar(); updateExamUI();
 renderBoard(); renderBoardBar(); initChat(); setTab("ex");
+renderVideoBanner();
 Mia.init();
-const _initName=(state.name||"Maitê").trim();
-const _isMaite=/^mait[eê]$/i.test(_initName);
-speak(_isMaite ? FX_AUDIO.saudacao_maite.text : ("¡Hola, "+_initName+"! Soy Mía, la princesa. Elige una materia y aprendemos juntas."), _isMaite ? FX_AUDIO.saudacao_maite.src : undefined);
+const _openedVidNotice=maybeShowPendingVideoNotice();
+if(!_openedVidNotice){
+  const _initName=(state.name||"Maitê").trim();
+  const _isMaite=/^mait[eê]$/i.test(_initName);
+  speak(_isMaite ? FX_AUDIO.saudacao_maite.text : ("¡Hola, "+_initName+"! Soy Mía, la princesa. Elige una materia y aprendemos juntas."), _isMaite ? FX_AUDIO.saudacao_maite.src : undefined);
+}
 </script>
 <style>
 .mascot .avatar{background:linear-gradient(145deg,#ffe9b0,#ffd166);overflow:visible}

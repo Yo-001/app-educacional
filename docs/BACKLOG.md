@@ -31,6 +31,13 @@ Toda tarefa `feito` registra o commit. Prioridade: `P0` (destrava o produto) →
 | OSA-05 | Testes automatizados de estado (save/restore, double-click, interleave) | P1 | — | planejado |
 | OSA-06 | Lint/bundle de `android/app/src/main/assets/public/` fora do build web | P2 | — | planejado |
 
+## Frente Vídeo Explicativo
+
+| ID | Tarefa | Pri | Dono | Estado | Evidência |
+|---|---|---|---|---|---|
+| VID-01 | Vídeo explicativo da Mía sobre erros da última sessão + pop-up/banner + mini-quiz de fixação + teste comparativo Opções 1/2/3 | P1 | — | feito | `POST /explain` + estúdio animado em `index.html` + mini-quiz + scripts de teste em `teste-videos/` |
+| VID-02 | Upgrade adicional de poses/clipes da Mía apresentadora: gerar 2-3 clipes curtos extras transparentes VP9 alpha (apontando para a lousa, pensando, comemorando) com custo único ~$0,50 e zero custo recorrente; aplicar somente após validação/decisão do teste dos vídeos Opções 1/2/3 | P2 | — | planejado | depende da validação do teste Opções 1/2/3 (`VID-01`) |
+
 ## Regras de dono
 
 - **Um implementador por vez no `index.html`** — duas frentes na mesma sessão de arquivo é

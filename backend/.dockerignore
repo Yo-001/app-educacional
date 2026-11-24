@@ -1,0 +1,4 @@
+secrets.json
+tts_cache/
+__pycache__/
+*.pyc

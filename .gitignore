@@ -4,3 +4,11 @@ __pycache__/
 tmpfile
 content/audio/raw/
 backend/tts_cache/
+teste-videos/audio/
+teste-videos/slides/
+teste-videos/tmp/
+teste-videos/*.mp4
+teste-videos/slide*.png
+teste-videos/mia_512*
+teste-videos/resultados.json
+.antigravity_sessions/

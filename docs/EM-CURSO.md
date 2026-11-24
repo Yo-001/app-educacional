@@ -20,6 +20,7 @@ Atualizado em 2026-11-18. Base: `029ca95` + `docs/`.
 | OSA-05 | hermes | Base do livro passa a alimentar o app: `respuesta`/`dificultad` guardados na extração (antes `answer=NULL` e `1` fixos), extração por matéria (`extract.py redo <matéria>`) e `escola_db.py export` → `content/ejercicios-libro.json`; o export só deixa passar o que o app consegue corrigir (resposta curta com letra/número) | 269 exercícios na base, **121 corrigíveis** (mates 78, castelhano 38, galego 5); no navegador: escolha múltipla do livro («El prefijo 'des—' indica:» → «¡Muy bien!»), resposta escrita (`6+6` → `12`) e leitura de número («3.617» → «tres mil seiscientos diecisiete») |
 | PRC-03 | — | Atualização da voz da Mía (Amostra 2 limpa `ref_clip_clean.wav` em fp32, remoção total de `edge-tts`/`speechSynthesis`, aba Mía com `speakChat` + boas-vindas pré-geradas + deploy GitHub Pages & Cloud Run) | `py_compile`, validação de `voice-profile.json` (29 arquivos) e `normFxKey` |
 | TTS-01 | — | Publicação do serviço `estudo-tts` (Cloud Run NVIDIA L4 GPU + cache GCS privado `gs://estudo-tts-cache-514315`) e conexão de `index.html` ao TTS na nuvem para todas as abas (fallback local só em file/localhost + `warmCloudTTS()` ao abrir chat) | `GET /health` 200 OK (`device: cuda`, `tts_engine: omnivoice`), `node --check` do `<script>` de `index.html` |
+| VID-01 | — | Vídeo explicativo da Mía sobre erros da última sessão (`POST /explain` + estúdio animado com lousa + pop-up/banner de revisita + mini-quiz de fixação + teste comparativo Opções 1/2/3) | implementação + suíte de geração/comparação em `teste-videos/` |
 
 ## Bloqueado
 
@@ -34,6 +35,7 @@ Atualizado em 2026-11-18. Base: `029ca95` + `docs/`.
 1. **NIV-00** fecha → revisão do mapa → **NIV-01** (JSON piloto + loader + validador).
 2. **PRC-02/03** em paralelo a NIV-01 (não tocam o mesmo trecho: estados da personagem vs. loader de conteúdo) — só depois de PRC-01 fechar, porque as duas mexem em `index.html`.
 3. **OSA-05** (testes de estado) antes de NIV-02, para o desbloqueio não virar regressão silenciosa.
+4. **VID-02** (poses/clipes VP9 alpha extras da Mía apresentadora) — aguardando validação do teste dos vídeos Opções 1/2/3 (`VID-01`).
 
 ## Não começar sem decisão do Leonardo
 

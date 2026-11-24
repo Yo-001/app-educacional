@@ -58,6 +58,7 @@ RATE_LIMIT = 30   # /generate e /ocr, por hora por IP
 CHAT_RATE = 120   # /chat, por hora por IP
 TTS_RATE = 300    # /tts, por hora por IP
 EXAM_RATE = 30    # /exam, por hora por IP
+EXPLAIN_RATE = 30  # /explain, por hora por IP
 WINDOW = 3600
 _hits = {}
 
@@ -715,6 +716,118 @@ def _warmup_omni_worker():
         pass
 
 
+EXPLAIN_SYSTEM = """Eres Mía, una princesa y profesora de 3.º de Primaria en Galicia (España) que prepara un mini-vídeo de repaso para una niña de 8 años llamada {name}.
+
+Recibirás hasta 6 errores de su última sesión (cada uno con subjNm, tema, q, expected, given).
+
+Reglas:
+- Agrupa los errores por tema o concepto y crea un guion de mini-vídeo con entre 3 y 5 escenas:
+  1) Una escena "intro" breve y cariñosa saludando a {name} y presentando lo que vais a repasar.
+  2) De 1 a 3 escenas "explain" explicando POR QUÉ la respuesta correcta tiene sentido, con una regla visual o un ejemplo muy sencillo adaptado a 8 años.
+  3) Una escena "outro" breve y animadora felicitando a {name} para seguir practicando.
+- Idioma: usa el mismo idioma de las preguntas falladas. Si están en gallego, escribe en gallego normativo correcto (nunca portugués ni castellano); si están en castellano, en castellano; si están en inglés, explica en español o gallego destacando las palabras en inglés.
+- Lectura en voz alta (TTS / OmniVoice): en cada escena, "narration" debe tener 1 o 2 frases cortas (máximo 26 palabras en total), sin emojis, sin símbolos raros (nada de →, × ni ÷) y con puntuación fluida.
+- Añade un "quiz" final con 1 a 3 preguntas cortas de opción múltiple para reforzar lo explicado en el vídeo (en el mismo idioma que las preguntas falladas y con vocabulario sencillo para 8 años): cada pregunta tendrá 3 o 4 opciones plausibles en "opts" y "a" debe coincidir exactamente con una de ellas.
+- Responde SOLO con JSON válido con este formato exacto:
+{"title": "Repaso con Mía", "summary": "...", "scenes": [{"kind": "intro|explain|outro", "badge": "Naturales", "title": "...", "narration": "...", "points": ["...", "..."], "wrong": "...", "right": "...", "tip": "..."}], "quiz": [{"q": "...", "a": "...", "opts": ["...", "...", "..."]}]}"""
+
+
+def _as_str(val):
+    return val if isinstance(val, str) else ""
+
+
+def validate_lesson(data):
+    """Valida e normaliza o guion do mini-vídeo de Mía; devolve None se hai <2 escenas válidas."""
+    if not isinstance(data, dict):
+        return None
+    if isinstance(data.get("lesson"), dict):
+        data = data["lesson"]
+    raw_scenes = data.get("scenes")
+    if not isinstance(raw_scenes, list):
+        return None
+    scenes = []
+    for sc in raw_scenes:
+        if not isinstance(sc, dict):
+            continue
+        title = clean_str(_as_str(sc.get("title")), 60)
+        narration = clean_str(_EMOJI_RE.sub("", _as_str(sc.get("narration"))), 260)
+        if not title or not narration:
+            continue
+        kind = sc.get("kind") if sc.get("kind") in ("intro", "explain", "outro") else "explain"
+        badge = clean_str(_as_str(sc.get("badge")), 32)
+        raw_pts = sc.get("points") if isinstance(sc.get("points"), list) else []
+        points = [p for p in (clean_str(_as_str(x), 95) for x in raw_pts) if p][:3]
+        scenes.append({
+            "kind": kind,
+            "badge": badge,
+            "title": title,
+            "narration": narration,
+            "points": points,
+            "wrong": clean_str(_as_str(sc.get("wrong")), 110),
+            "right": clean_str(_as_str(sc.get("right")), 110),
+            "tip": clean_str(_as_str(sc.get("tip")), 120),
+        })
+        if len(scenes) >= 6:
+            break
+    if len(scenes) < 2:
+        return None
+    raw_quiz = data.get("quiz") if isinstance(data.get("quiz"), list) else []
+    valid_quiz = []
+    for item in raw_quiz:
+        if not isinstance(item, dict):
+            continue
+        q = clean_str(_as_str(item.get("q")), 180)
+        a = clean_str(_as_str(item.get("a")), 100)
+        raw_opts = item.get("opts") if isinstance(item.get("opts"), list) else []
+        opts = list(dict.fromkeys(o for o in (clean_str(_as_str(x), 100) for x in raw_opts) if o))
+        if q and a and 2 <= len(opts) <= 4 and a in opts:
+            valid_quiz.append({"q": q, "a": a, "opts": opts})
+            if len(valid_quiz) >= 3:
+                break
+    return {
+        "title": clean_str(_as_str(data.get("title")), 70) or "Vídeo de Mía",
+        "summary": clean_str(_as_str(data.get("summary")), 110),
+        "scenes": scenes,
+        "quiz": valid_quiz,
+    }
+
+
+def call_explain(name, errors):
+    """Gera un guion de mini-vídeo explicando os erros recentes con Mía."""
+    lines = []
+    for i, err in enumerate((errors or [])[:6], 1):
+        lines.append(
+            f"{i}. [{err.get('subjNm') or 'General'} | {err.get('tema') or 'Repaso'}] "
+            f"Pregunta: {err.get('q')} | Respondido: {err.get('given') or '(sin respuesta)'} | "
+            f"Correcto: {err.get('expected')}"
+        )
+    user = "Errores de la última sesión:\n" + "\n".join(lines)
+    payload = json.dumps({
+        "model": MODEL,
+        "response_format": {"type": "json_object"},
+        "temperature": 0.5,
+        "max_tokens": 1200,
+        "messages": [
+            {"role": "system", "content": EXPLAIN_SYSTEM.replace("{name}", name or "pequeña")},
+            {"role": "user", "content": user},
+        ],
+    }).encode("utf-8")
+    req = urllib.request.Request(
+        "https://openrouter.ai/api/v1/chat/completions", data=payload,
+        headers={"Content-Type": "application/json",
+                 "Authorization": "Bearer " + API_KEY,
+                 "HTTP-Referer": "https://yo-001.github.io/estudo-moedas/",
+                 "X-Title": "estudo-exams"})
+    with urllib.request.urlopen(req, timeout=60) as r:
+        data = json.loads(r.read().decode("utf-8", "ignore"))
+    content = data["choices"][0]["message"]["content"]
+    try:
+        parsed = json.loads(content)
+    except Exception:
+        return None
+    return validate_lesson(parsed)
+
+
 def call_model(text, topics):
     user = ("Materias/temas del examen:\n" + (topics or "sin especificar") +
             "\n\nTexto del libro/cuaderno (OCR, puede tener errores):\n" + text[:6000])
@@ -849,12 +962,17 @@ class H(BaseHTTPRequestHandler):
         self.wfile.write(audio)
 
     def do_POST(self):
-        if self.path not in ("/generate", "/ocr", "/chat", "/exam"):
+        if self.path not in ("/generate", "/ocr", "/chat", "/exam", "/explain"):
             return self._json(404, {"error": "no encontrado"})
         ip = self.headers.get("X-Forwarded-For", "desconocido").split(",")[-1].strip()
         now = time.time()
         key = ip + "|" + self.path
-        lim = CHAT_RATE if self.path == "/chat" else (TTS_RATE if self.path == "/tts" else (EXAM_RATE if self.path == "/exam" else RATE_LIMIT))
+        lim = (
+            CHAT_RATE if self.path == "/chat"
+            else (TTS_RATE if self.path == "/tts"
+                  else (EXAM_RATE if self.path == "/exam"
+                        else (EXPLAIN_RATE if self.path == "/explain" else RATE_LIMIT)))
+        )
         hist = [t for t in _hits.get(key, []) if now - t < WINDOW]
         if len(hist) >= lim:
             return self._json(429, {"error": "demasiadas peticiones, prueba en unos minutos"})
@@ -877,6 +995,8 @@ class H(BaseHTTPRequestHandler):
             return self._do_chat(reqj)
         if self.path == "/exam":
             return self._do_exam(reqj)
+        if self.path == "/explain":
+            return self._do_explain(reqj)
         self._do_generate(reqj)
 
     def _do_chat(self, reqj):
@@ -955,6 +1075,41 @@ class H(BaseHTTPRequestHandler):
         if not valid:
             return self._json(502, {"error": "sin ejercicios válidos"})
         return self._json(200, {"ejercicios": valid})
+
+    def _do_explain(self, reqj):
+        raw_errors = reqj.get("errors") if isinstance(reqj.get("errors"), list) else []
+        clean_errors = []
+        for err in raw_errors:
+            if not isinstance(err, dict):
+                continue
+            q = clean_str(_as_str(err.get("q")), 300)
+            expected = clean_str(_as_str(err.get("expected")), 200)
+            if not q or not expected:
+                continue
+            clean_errors.append({
+                "subjNm": clean_str(_as_str(err.get("subjNm")), 60),
+                "tema": clean_str(_as_str(err.get("tema")), 80),
+                "q": q,
+                "expected": expected,
+                "given": clean_str(_as_str(err.get("given")), 200),
+            })
+            if len(clean_errors) >= 6:
+                break
+        if not clean_errors:
+            return self._json(400, {"error": "faltan errores para explicar"})
+        if not API_KEY:
+            return self._json(503, {"error": "explicador no configurado"})
+        name = clean_str(_as_str(reqj.get("name")), 30)
+        try:
+            lesson = call_explain(name, clean_errors)
+        except urllib.error.HTTPError as e:
+            body = e.read().decode("utf-8", "ignore")[:300]
+            return self._json(502, {"error": "OpenRouter " + str(e.code), "detalle": body})
+        except Exception as e:
+            return self._json(502, {"error": "fallo del explicador: " + type(e).__name__})
+        if not lesson:
+            return self._json(502, {"error": "sin guion válido"})
+        return self._json(200, {"lesson": lesson})
 
 
 def main():
