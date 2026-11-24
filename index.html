@@ -2386,7 +2386,7 @@ function recordSessionResult(ok,meta){
   ses.total++;
   ses.lastAt=Date.now();
   if(!ok && curEx && curEx.q){
-    const subj=(curSubj&&SUBJECTS[curSubj])?curSubj:(curEx.tema==="da foto 📷"?"foto":"repaso");
+    const subj=(curSubj&&SUBJECTS[curSubj])?curSubj:((curEx.tema&&SUBJECTS[curEx.tema])?curEx.tema:(curEx.tema==="da foto 📷"?"foto":"repaso"));
     const info=SUBJECTS[subj]||{em:"📚",nm:deckLabel||"Repaso"};
     const given=(meta&&typeof meta.given==="string")?meta.given.slice(0,200):"";
     const entry={
@@ -2399,11 +2399,16 @@ function recordSessionResult(ok,meta){
       tema:curEx.tema||deckLabel||"",
       tipo:curEx.tipo||"mc",
       opts:Array.isArray(curEx.opts)?curEx.opts.slice(0,4):[],
+      exam:!!curEx.exam,
       ts:Date.now()
     };
     const idx=ses.errors.findIndex(e=>e&&e.q===entry.q);
     if(idx>=0) ses.errors[idx]=entry;
     else if(ses.errors.length<8) ses.errors.push(entry);
+    else if(entry.exam){
+      const r=ses.errors.findIndex(e=>!e||!e.exam);
+      if(r>=0) ses.errors[r]=entry;
+    }
   }
 }
 function registerResult(ok,say,meta){
@@ -3629,7 +3634,7 @@ $("btnGenExamen").onclick=async()=>{
   stopCreep2(); progEnd(PBar.examen);
   btn.disabled=false; $("examenStat").textContent="";
   if(!exs.length){toast("No pude generar ejercicios: prueba con otras fotos o escribe más contenido 😺");return;}
-  if(mat) exs.forEach(e=>{ if(e&&!e.tema) e.tema=mat; });
+  exs.forEach(e=>{ if(!e) return; e.exam=true; if(mat && !e.tema) e.tema=mat; });
   state.examen=exs;
   state.examen.materia=mat;
   state.examenMateria=mat;
@@ -3657,13 +3662,14 @@ function promoteRevisitVideo(){
     const errs=Array.isArray(state.activeSession.errors)?state.activeSession.errors:[];
     const promoted=errs.length>0;
     if(promoted){
+      const ordered=[...errs.filter(e=>e&&e.exam),...errs.filter(e=>!e||!e.exam)];
       state.pendingVideo={
         id:"vid_"+state.activeSession.id,
         createdAt:Date.now(),
         openedAt:null,
         watchedAt:null,
         rewarded:false,
-        errors:errs.slice(0,6),
+        errors:ordered.slice(0,6),
         lesson:null
       };
     }

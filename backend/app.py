@@ -929,16 +929,33 @@ def _call_explain_once(model, system_prompt, user_prompt):
     return validate_lesson(parsed)
 
 
-def call_explain(name, errors):
-    """Gera un guion de mini-vídeo explicando os erros recentes con Mía e Gatuno."""
+def _explain_user_prompt(errors):
+    items = (errors or [])[:6]
     lines = []
-    for i, err in enumerate((errors or [])[:6], 1):
+    for i, err in enumerate(items, 1):
+        prefix = "[EXAMEN] " if err.get("exam") else ""
         lines.append(
-            f"{i}. [{err.get('subjNm') or 'General'} | {err.get('tema') or 'Repaso'}] "
+            f"{prefix}{i}. [{err.get('subjNm') or 'General'} | {err.get('tema') or 'Repaso'}] "
             f"Pregunta: {err.get('q')} | Respondido: {err.get('given') or '(sin respuesta)'} | "
             f"Correcto: {err.get('expected')}"
         )
-    user_prompt = "Errores de la última sesión:\n" + "\n".join(lines)
+    prompt = "Errores de la última sesión:\n" + "\n".join(lines)
+    if any(err.get("exam") for err in items):
+        prompt += (
+            "\nIMPORTANTE: los errores marcados [EXAMEN] son de los contenidos de su próximo examen; "
+            "priorízalos y explícalos con ejemplos del nivel de 3.º de Primaria."
+        )
+    if any(err.get("subj") == "ingles" for err in items):
+        prompt += (
+            "\nPara los errores de Inglés, los ejemplos, frases y respuestas que se muestran van en inglés "
+            "(la narración puede seguir en el idioma habitual)."
+        )
+    return prompt
+
+
+def call_explain(name, errors):
+    """Gera un guion de mini-vídeo explicando os erros recentes con Mía e Gatuno."""
+    user_prompt = _explain_user_prompt(errors)
     system_prompt = EXPLAIN_SYSTEM.replace("{name}", name or "pequeña")
     try:
         lesson = _call_explain_once(EXPLAIN_MODEL, system_prompt, user_prompt)
@@ -1219,11 +1236,13 @@ class H(BaseHTTPRequestHandler):
             if not q or not expected:
                 continue
             clean_errors.append({
+                "subj": clean_str(_as_str(err.get("subj")), 20),
                 "subjNm": clean_str(_as_str(err.get("subjNm")), 60),
                 "tema": clean_str(_as_str(err.get("tema")), 80),
                 "q": q,
                 "expected": expected,
                 "given": clean_str(_as_str(err.get("given")), 200),
+                "exam": bool(err.get("exam")),
             })
             if len(clean_errors) >= 6:
                 break
