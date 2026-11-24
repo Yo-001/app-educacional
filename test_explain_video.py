@@ -54,12 +54,13 @@ class ValidateLessonTests(unittest.TestCase):
     def test_accepts_valid_and_strips_emojis_and_caps_points(self):
         res = app.validate_lesson(_sample_lesson())
         self.assertIsNotNone(res)
+        self.assertEqual(res["lessonVer"], 2)
         self.assertEqual(res["title"], "Repaso con Mía")
         self.assertEqual(len(res["scenes"]), 3)
         intro = res["scenes"][0]
         self.assertNotIn("✨", intro["narration"])
         self.assertNotIn("🌸", intro["narration"])
-        self.assertEqual(intro["points"], ["Raíz", "Talo", "Folla"])
+        self.assertEqual(intro["points"], ["Raíz", "Talo"])
         self.assertNotIn("💧", res["scenes"][1]["narration"])
 
     def test_accepts_wrapped_lesson_and_defaults(self):
@@ -143,6 +144,82 @@ class ValidateLessonTests(unittest.TestCase):
         self.assertIsNotNone(res)
         self.assertEqual(len(res["quiz"]), 3)
         self.assertEqual([x["q"] for x in res["quiz"]], ["Pregunta 0", "Pregunta 1", "Pregunta 2"])
+
+    def test_visual_normalization_preserves_valid_and_caps_items(self):
+        lesson = {
+            "title": "As plantas",
+            "scenes": [
+                {
+                    "kind": "explain",
+                    "title": "Partes",
+                    "narration": "Cada parte ten a súa función.",
+                    "visual": {
+                        "type": "diagram",
+                        "theme": "plants",
+                        "icon": "🌿",
+                        "items": [
+                            {"emoji": "🌱", "label": "Raíz", "role": "step"},
+                            {"emoji": "🪵", "label": "Talo", "role": "good"},
+                            {"emoji": "", "label": "", "role": "bad"},
+                            "non-dict",
+                            {"emoji": "🍃", "label": "Folla", "role": "invalid-role"},
+                            {"emoji": "🍎", "label": "Froito", "role": "accent"},
+                        ],
+                        "formula": "36 + 17 = 53",
+                        "highlight": "Nas follas",
+                    },
+                },
+                {
+                    "kind": "outro",
+                    "title": "Moi ben!",
+                    "narration": "Fixéchelo xenial!",
+                    "visual": {"type": "celebrate", "theme": "math", "highlight": "Mini-Quiz!"},
+                },
+            ],
+        }
+        res = app.validate_lesson(lesson)
+        self.assertIsNotNone(res)
+        self.assertEqual(res["lessonVer"], 2)
+        vis = res["scenes"][0]["visual"]
+        self.assertEqual(vis["type"], "diagram")
+        self.assertEqual(vis["theme"], "plants")
+        self.assertEqual(vis["icon"], "🌿")
+        self.assertEqual(vis["formula"], "36 + 17 = 53")
+        self.assertEqual(vis["highlight"], "Nas follas")
+        self.assertEqual(
+            vis["items"],
+            [
+                {"emoji": "🌱", "label": "Raíz", "role": "step"},
+                {"emoji": "🪵", "label": "Talo", "role": "good"},
+                {"emoji": "🍃", "label": "Folla", "role": "step"},
+            ],
+        )
+
+    def test_visual_defaults_when_omitted_or_invalid(self):
+        lesson = {
+            "scenes": [
+                {"kind": "intro", "title": "Ola", "narration": "Benvida."},
+                {
+                    "kind": "explain",
+                    "title": "Comparar",
+                    "narration": "Ollo co erro.",
+                    "wrong": "Folla",
+                    "right": "Raíz",
+                    "visual": {"type": "bogus", "theme": "unknown"},
+                },
+                {"kind": "explain", "title": "Paso a paso", "narration": "Así se fai."},
+                {"kind": "outro", "title": "Fin", "narration": "Ata logo."},
+            ]
+        }
+        res = app.validate_lesson(lesson)
+        self.assertIsNotNone(res)
+        self.assertEqual(res["lessonVer"], 2)
+        self.assertEqual(res["scenes"][0]["visual"]["type"], "hero")
+        self.assertEqual(res["scenes"][0]["visual"]["theme"], "stars")
+        self.assertEqual(res["scenes"][1]["visual"]["type"], "compare")
+        self.assertEqual(res["scenes"][1]["visual"]["theme"], "stars")
+        self.assertEqual(res["scenes"][2]["visual"]["type"], "flow")
+        self.assertEqual(res["scenes"][3]["visual"]["type"], "celebrate")
 
 
 class ExplainEndpointTests(unittest.TestCase):

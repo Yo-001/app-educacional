@@ -716,7 +716,7 @@ def _warmup_omni_worker():
         pass
 
 
-EXPLAIN_SYSTEM = """Eres Mía, una princesa y profesora de 3.º de Primaria en Galicia (España) que prepara un mini-vídeo de repaso para una niña de 8 años llamada {name}.
+EXPLAIN_SYSTEM = """Eres Mía, una princesa y profesora de 3.º de Primaria en Galicia (España) que prepara un mini-vídeo de repaso visual-first para una niña de 8 años llamada {name}.
 
 Recibirás hasta 6 errores de su última sesión (cada uno con subjNm, tema, q, expected, given).
 
@@ -727,13 +727,27 @@ Reglas:
   3) Una escena "outro" breve y animadora felicitando a {name} para seguir practicando.
 - Idioma: usa el mismo idioma de las preguntas falladas. Si están en gallego, escribe en gallego normativo correcto (nunca portugués ni castellano); si están en castellano, en castellano; si están en inglés, explica en español o gallego destacando las palabras en inglés.
 - Lectura en voz alta (TTS / OmniVoice): en cada escena, "narration" debe tener 1 o 2 frases cortas (máximo 26 palabras en total), sin emojis, sin símbolos raros (nada de →, × ni ÷) y con puntuación fluida.
+- TEXTO MÍNIMO EN PANTALLA (Mía ya dice la explicación en voz alta):
+  - Prioriza el objeto "visual" en cada escena para ilustrar la idea con iconos y pasos claros.
+  - "title": muy corto (2-4 palabras, máximo 28 caracteres).
+  - "wrong" y "right": cortos (1-4 palabras).
+  - "points" y "tip": opcionales y ultra-cortos (máximo 3-5 palabras cada uno; 0-2 points como máximo).
+- Guía para "visual.type":
+  - En "intro": usa "hero".
+  - En "explain": usa "diagram", "equation", "flow" o "compare".
+  - En "outro": usa "celebrate" (con "highlight": "Mini-Quiz!").
 - Añade un "quiz" final con 1 a 3 preguntas cortas de opción múltiple para reforzar lo explicado en el vídeo (en el mismo idioma que las preguntas falladas y con vocabulario sencillo para 8 años): cada pregunta tendrá 3 o 4 opciones plausibles en "opts" y "a" debe coincidir exactamente con una de ellas.
 - Responde SOLO con JSON válido con este formato exacto:
-{"title": "Repaso con Mía", "summary": "...", "scenes": [{"kind": "intro|explain|outro", "badge": "Naturales", "title": "...", "narration": "...", "points": ["...", "..."], "wrong": "...", "right": "...", "tip": "..."}], "quiz": [{"q": "...", "a": "...", "opts": ["...", "...", "..."]}]}"""
+{"title": "Repaso con Mía", "summary": "...", "scenes": [{"kind": "intro|explain|outro", "badge": "Naturales", "title": "...", "narration": "...", "visual": {"type": "hero|diagram|flow|compare|equation|celebrate", "theme": "plants|animals|earth|math|words|stars", "icon": "🌿", "items": [{"emoji": "🌱", "label": "Raíz", "role": "step|bad|good|accent"}], "formula": "36 + 17 = 53", "highlight": "Nas follas"}, "points": ["..."], "wrong": "...", "right": "...", "tip": "..."}], "quiz": [{"q": "...", "a": "...", "opts": ["...", "...", "..."]}]}"""
 
 
 def _as_str(val):
     return val if isinstance(val, str) else ""
+
+
+_VIS_TYPES = ("hero", "diagram", "flow", "compare", "equation", "celebrate")
+_VIS_THEMES = ("plants", "animals", "earth", "math", "words", "stars")
+_VIS_ROLES = ("step", "bad", "good", "accent")
 
 
 def validate_lesson(data):
@@ -749,23 +763,59 @@ def validate_lesson(data):
     for sc in raw_scenes:
         if not isinstance(sc, dict):
             continue
-        title = clean_str(_as_str(sc.get("title")), 60)
+        title = clean_str(_as_str(sc.get("title")), 48)
         narration = clean_str(_EMOJI_RE.sub("", _as_str(sc.get("narration"))), 260)
         if not title or not narration:
             continue
         kind = sc.get("kind") if sc.get("kind") in ("intro", "explain", "outro") else "explain"
         badge = clean_str(_as_str(sc.get("badge")), 32)
         raw_pts = sc.get("points") if isinstance(sc.get("points"), list) else []
-        points = [p for p in (clean_str(_as_str(x), 95) for x in raw_pts) if p][:3]
+        points = [p for p in (clean_str(_as_str(x), 42) for x in raw_pts) if p][:2]
+        wrong = clean_str(_as_str(sc.get("wrong")), 48)
+        right = clean_str(_as_str(sc.get("right")), 48)
+        tip = clean_str(_as_str(sc.get("tip")), 55)
+
+        raw_vis = sc.get("visual") if isinstance(sc.get("visual"), dict) else {}
+        default_vtype = (
+            "hero" if kind == "intro"
+            else ("celebrate" if kind == "outro" else ("compare" if (wrong or right) else "flow"))
+        )
+        vtype = raw_vis.get("type") if raw_vis.get("type") in _VIS_TYPES else default_vtype
+        vtheme = raw_vis.get("theme") if raw_vis.get("theme") in _VIS_THEMES else "stars"
+        vicon = clean_str(_as_str(raw_vis.get("icon")), 8)
+        raw_vitems = raw_vis.get("items") if isinstance(raw_vis.get("items"), list) else []
+        vitems = []
+        for it in raw_vitems:
+            if not isinstance(it, dict):
+                continue
+            em = clean_str(_as_str(it.get("emoji")), 8)
+            lb = clean_str(_as_str(it.get("label")), 28)
+            if not em and not lb:
+                continue
+            rl = it.get("role") if it.get("role") in _VIS_ROLES else "step"
+            vitems.append({"emoji": em, "label": lb, "role": rl})
+            if len(vitems) >= 3:
+                break
+        vformula = clean_str(_as_str(raw_vis.get("formula")), 36)
+        vhighlight = clean_str(_as_str(raw_vis.get("highlight")), 36)
+
         scenes.append({
             "kind": kind,
             "badge": badge,
             "title": title,
             "narration": narration,
             "points": points,
-            "wrong": clean_str(_as_str(sc.get("wrong")), 110),
-            "right": clean_str(_as_str(sc.get("right")), 110),
-            "tip": clean_str(_as_str(sc.get("tip")), 120),
+            "wrong": wrong,
+            "right": right,
+            "tip": tip,
+            "visual": {
+                "type": vtype,
+                "theme": vtheme,
+                "icon": vicon,
+                "items": vitems,
+                "formula": vformula,
+                "highlight": vhighlight,
+            },
         })
         if len(scenes) >= 6:
             break
@@ -785,6 +835,7 @@ def validate_lesson(data):
             if len(valid_quiz) >= 3:
                 break
     return {
+        "lessonVer": 2,
         "title": clean_str(_as_str(data.get("title")), 70) or "Vídeo de Mía",
         "summary": clean_str(_as_str(data.get("summary")), 110),
         "scenes": scenes,

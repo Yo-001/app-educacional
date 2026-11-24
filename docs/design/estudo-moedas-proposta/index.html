@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estudio y Monedas · propuesta de diseño</title>
+<style>
+@font-face{font-family:"Fredoka";src:url("fonts/fredoka-latin.woff2") format("woff2");font-weight:300 700;font-display:swap}
+@font-face{font-family:"Nunito";src:url("fonts/nunito-latin.woff2") format("woff2");font-weight:300 900;font-display:swap}
+
+:root{
+  --paper:#fbf6ec; --paper-2:#f3eddf; --surface:#fff;
+  --ink:#2b1d2e; --muted:#675a6a; --line:#dfd5e1;
+  --accent:#be1945; --accent-soft:#ffdee0;
+  --gold:#ecb33c; --gold-soft:#ffecc5; --gold-ink:#724400;
+  --good:#007b3f; --good-ink:#005129; --good-soft:#d6f6e0;
+  --bad:#c52c2a; --bad-soft:#ffe7e4;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px;
+  --r1:12px; --r2:16px; --r3:18px; --r4:24px; --pill:999px;
+  --rim:0 0 0 1px var(--line), 0 10px 22px -16px rgba(43,29,46,.55);
+  --page-bg:#241a27; --page-fg:#f7f2f7; --page-muted:#b7abb9; --page-line:rgba(255,255,255,.13);
+  --font-display:"Fredoka",ui-rounded,"Segoe UI",system-ui,sans-serif;
+  --font-text:"Nunito",ui-rounded,"Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--page-bg);color:var(--page-fg);font:400 16px/1.45 var(--font-text);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+svg{display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sprite{position:absolute;width:0;height:0;overflow:hidden}
+
+/* ---------- página de la propuesta ---------- */
+.wrap{max-width:1060px;margin:0 auto;padding:36px 24px 72px}
+.masthead h1{font:600 clamp(27px,3vw,34px)/1.1 var(--font-display);margin:0 0 8px;letter-spacing:-.01em}
+.masthead p{margin:0;max-width:60ch;color:var(--page-muted);font-size:15px}
+.seg{display:inline-flex;gap:4px;background:rgba(255,255,255,.06);border:1px solid var(--page-line);border-radius:var(--pill);padding:4px;margin:24px 0}
+.seg button{padding:9px 18px;border-radius:var(--pill);font-weight:800;font-size:14px;color:var(--page-muted)}
+.seg button[aria-selected="true"]{background:var(--page-fg);color:var(--page-bg)}
+.stage{display:grid;grid-template-columns:390px minmax(0,1fr);gap:44px;align-items:start}
+
+/* ---------- teléfono ---------- */
+.phone{color:var(--ink);width:390px;height:820px;border-radius:34px;background:var(--paper);border:1px solid var(--line);
+  box-shadow:0 30px 70px -34px rgba(43,29,46,.5);overflow:hidden;position:relative;
+  background-image:radial-gradient(circle at 1px 1px,rgba(43,29,46,.055) 1px,transparent 0);background-size:24px 24px}
+.screen{display:none;height:100%;flex-direction:column}
+.screen.on{display:flex}
+
+.app-top{display:flex;align-items:center;gap:12px;padding:20px 16px 8px;flex:0 0 auto}
+.avatar{width:56px;height:56px;flex:0 0 auto;border-radius:50%;background:var(--gold-soft);border:3px solid var(--surface);
+  box-shadow:0 0 0 1px var(--line),0 6px 14px -10px rgba(43,29,46,.8);display:grid;place-items:center;overflow:hidden}
+.avatar svg{width:46px;height:42px}
+.who{min-width:0;line-height:1.15}
+.who b{display:block;font:500 19px/1.1 var(--font-display);letter-spacing:-.01em}
+.who span{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-top:3px}
+.wallet{display:flex;align-items:center;gap:6px;margin-left:auto;background:var(--gold-soft);border:1px solid #f0d9a8;
+  color:var(--gold-ink);font-weight:800;font-size:15px;padding:7px 12px;border-radius:var(--pill);font-variant-numeric:tabular-nums}
+.wallet svg{width:17px;height:17px;color:var(--gold-ink)}
+
+.body{flex:1 1 auto;overflow-y:auto;padding:0 16px 18px;scrollbar-width:none}
+.body::-webkit-scrollbar{display:none}
+.note{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r2) var(--r2) var(--r2) 4px;
+  padding:13px 15px;font-size:14.5px;line-height:1.4;box-shadow:0 2px 0 rgba(43,29,46,.04);margin:10px 0 11px}
+.note b{color:var(--accent)}
+.tape{position:absolute;top:-8px;left:20px;width:62px;height:16px;border-radius:2px;background:rgba(236,179,60,.5);transform:rotate(-3deg)}
+
+.h2{font:600 24px/1.15 var(--font-display);margin:0 0 14px;letter-spacing:-.01em}
+.h2 mark{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 10' preserveAspectRatio='none'%3E%3Cpath d='M2 6Q26 2 50 5T98 4' fill='none' stroke='%23ecb33c' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom/100% 7px;color:inherit;padding:0 2px}
+
+.grid-subj{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.subj{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:96px;
+  padding:12px 8px;background:var(--surface);border:3px solid var(--surface);border-radius:var(--r3);
+  box-shadow:var(--rim);font-weight:800;font-size:15px;text-align:center;letter-spacing:-.01em}
+.subj:active{transform:scale(.97)}
+.subj .ico{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--tint)}
+.subj .ico svg{width:26px;height:26px;color:var(--tint-ink)}
+.subj-wide{grid-column:1/-1;flex-direction:row;justify-content:flex-start;gap:13px;text-align:left;min-height:74px;padding:12px 14px}
+.subj-wide small{display:block;font-weight:600;font-size:13px;color:var(--muted);margin-top:2px;line-height:1.25}
+.s-ingles{--tint:#d2ebff;--tint-ink:#054980}
+.s-mat{--tint:#ece2ff;--tint-ink:#523779}
+.s-cast{--tint:#ffdddb;--tint-ink:#78292e}
+.s-gal{--tint:#fae4c7;--tint-ink:#693c00}
+.s-nat{--tint:#d6f0d6;--tint-ink:#15561d}
+.s-soc{--tint:#c6f2f4;--tint-ink:#00585f}
+.s-foto{--tint:#f6dffb;--tint-ink:#61316c}
+
+.utils{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:9px}
+.util{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 6px;background:var(--surface);
+  border:1px solid var(--line);border-radius:14px;font-size:12px;font-weight:800;line-height:1.15;text-align:center}
+.util svg{width:22px;height:22px;color:var(--accent)}
+.util b{font-size:12px;color:var(--muted);font-weight:700}
+
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:6px 8px 8px;border-top:1px solid var(--line);
+  background:var(--paper);flex:0 0 auto}
+.tabs button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0 5px;border-radius:13px;
+  font-size:12px;font-weight:800;color:var(--muted);letter-spacing:0}
+.tabs svg{width:23px;height:23px}
+.tabs button[aria-current="page"]{color:var(--accent);background:var(--accent-soft)}
+
+/* ---------- ejercicio ---------- */
+.qtop{display:flex;align-items:center;gap:10px;padding:16px 16px 6px;flex:0 0 auto}
+.iconbtn{width:44px;height:44px;border-radius:14px;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;flex:0 0 auto}
+.iconbtn svg{width:22px;height:22px;color:var(--ink)}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:var(--pill);background:var(--surface);
+  border:1px solid var(--line);font-weight:800;font-size:13px}
+.chip .dot{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:var(--tint)}
+.chip .dot svg{width:16px;height:16px;color:var(--tint-ink)}
+.prog{margin:10px 16px 0;flex:0 0 auto}
+.prog-row{display:flex;align-items:baseline;justify-content:space-between;font-weight:800;font-size:13px;color:var(--muted);margin-bottom:6px}
+.prog-row b{color:var(--ink)}
+.prog-row .plus{display:inline-flex;align-items:center;gap:4px;color:var(--gold-ink);background:var(--gold-soft);
+  border-radius:var(--pill);padding:2px 9px;font-size:12px}
+.prog-row .plus svg{width:13px;height:13px}
+.bar{height:10px;border-radius:var(--pill);background:var(--paper-2);overflow:hidden;box-shadow:inset 0 0 0 1px rgba(43,29,46,.05)}
+.bar i{display:block;height:100%;border-radius:var(--pill);background:var(--accent)}
+.steps{display:flex;gap:4px}
+.steps i{flex:1;height:9px;border-radius:var(--pill);background:var(--paper-2);box-shadow:inset 0 0 0 1px rgba(43,29,46,.05)}
+.steps i.on{background:var(--accent);box-shadow:none}
+.bar.sm{height:8px;margin-top:8px}
+
+.q{font:600 34px/1.15 var(--font-display);letter-spacing:-.015em;margin:26px 0 22px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:center;justify-content:space-between;height:60px;padding:0 20px;border-radius:var(--r2);
+  background:var(--surface);border:2px solid var(--line);font-weight:800;font-size:19px;box-shadow:0 2px 0 rgba(43,29,46,.04)}
+.opt:active{transform:scale(.99)}
+.opt svg{width:22px;height:22px;color:var(--good);opacity:0}
+.opt.is-right{border-color:var(--good);background:var(--good-soft)}
+.opt.is-right svg{opacity:1}
+.opt.is-dim{opacity:.6}
+
+.fb{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:18px;padding:12px;border-radius:14px;
+  font-weight:800;font-size:16px}
+.fb.ok{background:var(--good-soft);color:var(--good-ink)}
+.fb svg{width:18px;height:18px}
+.btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:56px;border-radius:var(--r2);
+  background:var(--accent);color:#fff;font-weight:800;font-size:17px;margin-top:14px;box-shadow:0 10px 22px -14px rgba(190,25,69,.9)}
+.btn-primary:active{transform:scale(.99)}
+.btn-primary svg{width:20px;height:20px}
+.link{width:100%;padding:14px 0 4px;font-weight:800;font-size:14px;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- tienda ---------- */
+.chips{display:flex;flex-wrap:nowrap;gap:4px;padding:2px 0 8px}
+.filtro{padding:9px 10px;border-radius:var(--pill);background:var(--surface);border:1px solid var(--line);font-weight:800;font-size:12.5px;white-space:nowrap}
+.filtro[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.goal{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r3);background:var(--gold-soft);
+  border:1px solid #f0d9a8;margin:10px 0 16px}
+.goal .art{width:44px;height:44px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-size:25px;flex:0 0 auto}
+.goal b{display:block;font-size:14px}
+.goal span{display:block;font-size:12.5px;color:var(--gold-ink);font-weight:700;margin-top:1px}
+.goal .bar{margin-top:7px}
+.goal .bar i{background:var(--gold)}
+
+.shop{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cromo{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 10px 10px;
+  background:var(--surface);border:3px solid var(--surface);border-radius:var(--r3);box-shadow:var(--rim);text-align:center}
+.cromo.rare{background:#fffdf6}
+.cromo .art{width:74px;height:74px;border-radius:50%;background:var(--paper-2);display:grid;place-items:center;font-size:39px;line-height:1}
+.cromo .nm{font-weight:800;font-size:14px;line-height:1.2;letter-spacing:-.01em}
+.cromo .price{display:flex;align-items:center;gap:4px;font-weight:800;font-size:13px;color:var(--gold-ink)}
+.cromo .price svg{width:14px;height:14px}
+.tag{position:absolute;top:9px;right:9px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--gold-ink);background:var(--gold-soft);border:1px solid #f0d9a8;padding:3px 7px;border-radius:var(--pill)}
+.buy{width:100%;height:42px;border-radius:13px;background:var(--accent);color:#fff;font-weight:800;font-size:13px;
+  display:flex;align-items:center;justify-content:center;gap:5px}
+.buy svg{width:14px;height:14px}
+.buy:disabled{background:var(--paper-2);color:var(--muted);box-shadow:inset 0 0 0 1px var(--line)}
+.buy.owned{background:var(--good-soft);color:var(--good-ink)}
+
+/* ---------- gato ---------- */
+.chat{display:flex;flex-direction:column;justify-content:flex-end;gap:10px;padding-top:8px;flex:1 1 auto}
+.msg{display:flex;max-width:88%}
+.msg.me{align-self:flex-end;justify-content:flex-end}
+.bubble{padding:11px 15px;border-radius:var(--r2);background:var(--surface);border:1px solid var(--line);
+  font-size:15px;line-height:1.4;box-shadow:0 2px 0 rgba(43,29,46,.04)}
+.msg.cat .bubble{border-bottom-left-radius:4px}
+.msg.me .bubble{background:var(--accent-soft);border-color:#f6c9d2;border-bottom-right-radius:4px;font-weight:600}
+.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.quick button{padding:9px 13px;border-radius:var(--pill);background:var(--surface);border:1px solid var(--line);font-size:13px;font-weight:700}
+.composer{display:flex;gap:8px;padding:12px 0 2px;margin-top:auto}
+.composer input{flex:1;height:48px;border-radius:var(--pill);border:1px solid var(--line);background:var(--surface);
+  padding:0 16px;font:inherit;font-size:15px;color:var(--ink);min-width:0}
+.composer input::placeholder{color:var(--muted)}
+.send{width:48px;height:48px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;flex:0 0 auto}
+.send svg{width:20px;height:20px}
+
+.toast{position:absolute;left:50%;bottom:84px;transform:translate(-50%,10px);background:var(--ink);color:var(--paper);
+  font-size:13px;font-weight:700;padding:9px 14px;border-radius:var(--pill);opacity:0;pointer-events:none;transition:.18s;white-space:nowrap}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- notas ---------- */
+.notes{position:sticky;top:28px}
+.notes h2{font:600 23px/1.2 var(--font-display);margin:0 0 4px;letter-spacing:-.01em}
+.notes .sub{color:var(--page-muted);font-size:14px;margin:0 0 18px}
+.notes ul{margin:0 0 18px;padding:0;list-style:none}
+.notes li{position:relative;padding-left:20px;margin-bottom:11px;font-size:14.5px;line-height:1.45;color:#ece4ee}
+.notes li:before{content:"";position:absolute;left:2px;top:7px;width:7px;height:7px;border-radius:2px;background:#ff7d9c}
+.notes li b{font-weight:800}
+.notes .why{padding:13px 15px;border-radius:14px;background:rgba(236,179,60,.14);font-size:14px;line-height:1.45;color:#f2e0b4}
+.notes .why b{color:#ffd487}
+
+/* ---------- sistema ---------- */
+.system{margin-top:56px;border-top:1px solid var(--page-line);padding-top:34px;display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:44px}
+.system h3{font:600 18px/1.2 var(--font-display);margin:0 0 14px}
+.sw{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.sw div{border-radius:10px;overflow:hidden;border:1px solid var(--page-line);background:rgba(255,255,255,.05)}
+.sw i{display:block;height:40px}
+.sw span{display:block;font-size:11px;font-weight:700;padding:5px 6px;color:var(--page-muted);font-variant-numeric:tabular-nums}
+.spec{font-size:22px;line-height:1.2;margin:0 0 2px}
+.spec.d{font-family:var(--font-display);font-weight:600}
+.spec.t{font-family:var(--font-text);font-weight:800}
+.spec small{display:block;font-family:var(--font-text);font-size:11.5px;font-weight:700;color:var(--page-muted);margin-top:2px}
+.rules{margin:0;padding-left:17px;font-size:13.5px;line-height:1.5;color:#ece4ee}
+.rules li{margin-bottom:7px}
+
+@media (max-width:900px){
+  .stage{grid-template-columns:minmax(0,1fr);gap:28px}
+  .phone{width:100%;max-width:390px;margin:0 auto;height:760px}
+  .notes{position:static}
+  .system{grid-template-columns:1fr;gap:26px}
+}
+@media (max-width:420px){
+  .wrap{padding:22px 14px 52px}
+  .phone{height:720px;border-radius:26px}
+  .seg{width:100%;justify-content:space-between}
+  .seg button{padding:9px 10px;font-size:13px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<!-- impeccable-disable nested-cards: el marco del teléfono es presentación de la maqueta, no interfaz de la app -->
+<body>
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-bag" viewBox="0 0 24 24"><path d="M6.5 9h11l1.3 11h-13.6z"/><path d="M9 9V7a3 3 0 0 1 6 0v2"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22.5z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22.5z"/></symbol>
+  <symbol id="i-pack" viewBox="0 0 24 24"><path d="M6 9.5A6 6 0 0 1 18 9.5V19a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><path d="M9 9.5V7a3 3 0 0 1 6 0v2.5"/><path d="M9.5 14h5"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24"><path d="M4 8h11a4 4 0 0 1 4 4v1"/><path d="M7 5 4 8l3 3"/><path d="M20 16H9a4 4 0 0 1-4-4v-1"/><path d="M17 13l3 3-3 3"/></symbol>
+  <symbol id="i-cat" viewBox="0 0 24 24"><path d="M4 5.5h16v9.5H9l-5 4z"/><path d="M7.5 5.5 6.5 2.5l3.2 2"/><path d="M16.5 5.5l1-3-3.2 2"/></symbol>
+  <symbol id="i-people" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><circle cx="17" cy="10" r="2.4"/><path d="M15 20a4.6 4.6 0 0 1 5.6-4.2"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.6 2.3 4 5.4 4 8.5s-1.4 6.2-4 8.5c-2.6-2.3-4-5.4-4-8.5s1.4-6.2 4-8.5z"/></symbol>
+  <symbol id="i-math" viewBox="0 0 24 24"><path d="M7 5.5v9"/><path d="M2.5 10h9"/><path d="M14.5 14.5l6 6"/><path d="M20.5 14.5l-6 6"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20l3.2-.7L19 7.5a2.3 2.3 0 0 0-3.3-3.3L4 16.8z"/><path d="M14.3 5.9l3.8 3.8"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6.5 21V4"/><path d="M6.5 4h11l-2.4 4 2.4 4h-11z"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8.5 4.6-12.7 14-13.5C20 14 15.4 19 5 19z"/><path d="M5 19c3-4.8 6.4-7.6 10.5-9.5"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14"/><path d="M15 6v14"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3.5 8.5h3l1.6-2.4h7.8L17.5 8.5h3v11h-17z"/><circle cx="12" cy="14" r="3.4"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.5 2.5 5.5 14H11l-1 7.5L18.5 10H13z"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.7 0 2.2-1.1 1.4-2.2-.7-1 .1-2.3 1.4-2.3H17a4 4 0 0 0 4-4c0-5.2-4-9.5-9-9.5z"/><circle cx="8" cy="10" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="7.6" r="1.1" fill="currentColor" stroke="none"/><circle cx="15.8" cy="10" r="1.1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-coin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.9l1.3 2.7 2.9.4-2.1 2 .5 2.9-2.6-1.4-2.6 1.4.5-2.9-2.1-2 2.9-.4z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.6l4.6 4.6L19 7.4"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4.5 12h14"/><path d="M13 6.5l5.5 5.5L13 17.5"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M14.5 6 9 12l5.5 6"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 11.4 20.5 4l-6.2 16.5-2.6-6.4z"/><path d="M11.7 14.1 20.5 4"/></symbol>
+  <symbol id="i-dumbbell" viewBox="0 0 24 24"><path d="M4 9.5v5"/><path d="M7 7v10"/><path d="M17 7v10"/><path d="M20 9.5v5"/><path d="M7 12h10"/></symbol>
+</svg>
+
+<div class="wrap">
+  <header class="masthead">
+    <h1>Estudio y Monedas, versión cuaderno</h1>
+    <p>Propuesta de diseño para la app de 8 años. Mismo comportamiento y mismos datos: cambia la piel, los iconos y la jerarquía. Elige una pantalla para verla.</p>
+  </header>
+
+  <div class="seg" role="tablist" aria-label="Pantallas de la propuesta">
+    <button role="tab" aria-selected="true" data-go="inicio">Inicio</button>
+    <button role="tab" aria-selected="false" data-go="ejercicio">Ejercicio</button>
+    <button role="tab" aria-selected="false" data-go="tienda">Tienda</button>
+    <button role="tab" aria-selected="false" data-go="gato">Gato</button>
+  </div>
+
+  <div class="stage">
+    <div class="phone">
+      <section class="screen on" id="scr-inicio" aria-label="Pantalla de inicio">
+        <header class="app-top">
+          <div class="avatar" aria-hidden="true">
+            <svg viewBox="0 0 220 200"><defs><radialGradient id="cf" cx="42%" cy="34%" r="82%"><stop offset="0" stop-color="#ffe3ad"/><stop offset="58%" stop-color="#ffb75c"/><stop offset="100%" stop-color="#f59a33"/></radialGradient><radialGradient id="cc" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ff9d9d" stop-opacity=".8"/><stop offset="100%" stop-color="#ff9d9d" stop-opacity="0"/></radialGradient></defs>
+              <path d="M46 64 L38 10 L94 36 Z" fill="url(#cf)" stroke="#e08a26" stroke-width="3"/><path d="M174 64 L182 10 L126 36 Z" fill="url(#cf)" stroke="#e08a26" stroke-width="3"/><path d="M54 48 L52 22 L78 36 Z" fill="#ffb3c1"/><path d="M166 48 L168 22 L142 36 Z" fill="#ffb3c1"/><circle cx="110" cy="114" r="78" fill="url(#cf)" stroke="#e08a26" stroke-width="3"/><path d="M92 42 q4 14 0 22 M110 40 v22 M128 42 q-4 14 0 22" stroke="#e08a26" stroke-width="4" stroke-linecap="round" fill="none"/><circle cx="58" cy="142" r="17" fill="url(#cc)"/><circle cx="162" cy="142" r="17" fill="url(#cc)"/><ellipse cx="76" cy="108" rx="11" ry="13" fill="#fff"/><circle cx="77" cy="110" r="6.5" fill="#2b1d0e"/><circle cx="79" cy="106" r="2.3" fill="#fff"/><ellipse cx="144" cy="108" rx="11" ry="13" fill="#fff"/><circle cx="143" cy="110" r="6.5" fill="#2b1d0e"/><circle cx="141" cy="106" r="2.3" fill="#fff"/><path d="M104 130 h12 l-6 8 z" fill="#ff7b93"/><path d="M110 138 q-6 8 -14 2 M110 138 q6 8 14 2" stroke="#8a5a12" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="who"><b>Mi cuaderno</b><span>Nivel 2 · 147 monedas ganadas</span></div>
+          <div class="wallet"><svg><use href="#i-coin"/></svg><span>92</span></div>
+        </header>
+
+        <div class="body">
+          <div class="note"><span class="tape" aria-hidden="true"></span>¡Miau! Elige una materia y empezamos. Cada acierto son <b>10 monedas</b>.</div>
+          <h2 class="h2">¿Qué toca <mark>hoy</mark>?</h2>
+          <div class="grid-subj">
+            <button class="subj s-ingles" data-demo><span class="ico"><svg><use href="#i-globe"/></svg></span>Inglés</button>
+            <button class="subj s-mat" data-demo><span class="ico"><svg><use href="#i-math"/></svg></span>Matemáticas</button>
+            <button class="subj s-cast" data-demo><span class="ico"><svg><use href="#i-pen"/></svg></span>Castellano</button>
+            <button class="subj s-gal" data-demo><span class="ico"><svg><use href="#i-flag"/></svg></span>Gallego</button>
+            <button class="subj s-nat" data-demo><span class="ico"><svg><use href="#i-leaf"/></svg></span>Naturales</button>
+            <button class="subj s-soc" data-demo><span class="ico"><svg><use href="#i-map"/></svg></span>Sociales</button>
+            <button class="subj subj-wide s-foto" data-demo><span class="ico"><svg><use href="#i-camera"/></svg></span><span>Foto de la tarea<small>Convierte tus deberes en ejercicios</small></span></button>
+          </div>
+          <div class="utils">
+            <button class="util" data-demo><svg><use href="#i-dumbbell"/></svg>Práctica<b>24 fotos</b></button>
+            <button class="util" data-demo><svg><use href="#i-bolt"/></svg>Relámpago<b>12 seguidas</b></button>
+            <button class="util" data-demo><svg><use href="#i-palette"/></svg>Colorear<b>y aprender</b></button>
+          </div>
+        </div>
+
+        <nav class="tabs" aria-label="Secciones">
+          <button aria-current="page" data-go="inicio"><svg><use href="#i-pack"/></svg>Ejercicios</button>
+          <button data-demo><svg><use href="#i-repeat"/></svg>Repaso</button>
+          <button data-go="gato"><svg><use href="#i-cat"/></svg>Gato</button>
+          <button data-go="tienda"><svg><use href="#i-bag"/></svg>Tienda</button>
+          <button data-demo><svg><use href="#i-people"/></svg>Papás</button>
+        </nav>
+      </section>
+
+      <section class="screen" id="scr-ejercicio" aria-label="Pantalla de ejercicio">
+        <div class="qtop">
+          <button class="iconbtn" aria-label="Cambiar materia" data-go="inicio"><svg><use href="#i-back"/></svg></button>
+          <span class="chip s-mat"><span class="dot"><svg><use href="#i-math"/></svg></span>Matemáticas</span>
+          <div class="wallet"><svg><use href="#i-coin"/></svg><span>92</span></div>
+        </div>
+        <div class="prog">
+          <div class="prog-row"><span>Pregunta <b>3</b> de 10</span><span class="plus"><svg><use href="#i-coin"/></svg>+10</span></div>
+          <div class="steps" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <div class="body">
+          <div class="q">5 × 8 = ?</div>
+          <div class="opts">
+            <button class="opt is-dim">42</button>
+            <button class="opt is-dim">39</button>
+            <button class="opt is-right">40<svg><use href="#i-check"/></svg></button>
+            <button class="opt is-dim">41</button>
+          </div>
+          <div class="fb ok"><svg><use href="#i-check"/></svg>¡Muy bien! +10 monedas</div>
+          <button class="btn-primary">Siguiente<svg><use href="#i-arrow"/></svg></button>
+          <button class="link" data-go="inicio">Cambiar materia</button>
+        </div>
+        <nav class="tabs" aria-label="Secciones">
+          <button aria-current="page" data-go="inicio"><svg><use href="#i-pack"/></svg>Ejercicios</button>
+          <button data-demo><svg><use href="#i-repeat"/></svg>Repaso</button>
+          <button data-go="gato"><svg><use href="#i-cat"/></svg>Gato</button>
+          <button data-go="tienda"><svg><use href="#i-bag"/></svg>Tienda</button>
+          <button data-demo><svg><use href="#i-people"/></svg>Papás</button>
+        </nav>
+      </section>
+
+      <section class="screen" id="scr-tienda" aria-label="Pantalla de tienda">
+        <header class="app-top">
+          <div class="who"><b>Tienda</b><span>Cambia monedas por pegatinas</span></div>
+          <div class="wallet"><svg><use href="#i-coin"/></svg><span>92</span></div>
+        </header>
+        <div class="body">
+          <div class="chips" role="group" aria-label="Categorías">
+            <button class="filtro" aria-pressed="true">Todos</button>
+            <button class="filtro" aria-pressed="false">Juegos</button>
+            <button class="filtro" aria-pressed="false">Pegatinas</button>
+            <button class="filtro" aria-pressed="false">Ropa</button>
+            <button class="filtro" aria-pressed="false">Accesorios</button>
+          </div>
+          <div class="goal">
+            <div class="art" aria-hidden="true">🐉</div>
+            <div style="flex:1">
+              <b>Pegatina Dragón</b>
+              <span>Te faltan 38 monedas</span>
+              <div class="bar sm"><i style="width:71%"></i></div>
+            </div>
+          </div>
+          <div class="shop">
+            <article class="cromo rare">
+              <span class="tag">Raro</span>
+              <div class="art" aria-hidden="true">🦄</div>
+              <div class="nm">Pegatina Unicornio</div>
+              <div class="price"><svg><use href="#i-coin"/></svg>80</div>
+              <button class="buy">Comprar</button>
+            </article>
+            <article class="cromo rare">
+              <span class="tag">Raro</span>
+              <div class="art" aria-hidden="true">🐼</div>
+              <div class="nm">Pegatina Panda</div>
+              <div class="price"><svg><use href="#i-coin"/></svg>120</div>
+              <button class="buy" disabled><svg><use href="#i-coin"/></svg>Faltan 28</button>
+            </article>
+            <article class="cromo">
+              <div class="art" aria-hidden="true">🧢</div>
+              <div class="nm">Gorra azul</div>
+              <div class="price"><svg><use href="#i-coin"/></svg>30</div>
+              <button class="buy">Comprar</button>
+            </article>
+            <article class="cromo rare">
+              <span class="tag">Raro</span>
+              <div class="art" aria-hidden="true">👑</div>
+              <div class="nm">Corona real</div>
+              <div class="price"><svg><use href="#i-coin"/></svg>110</div>
+              <button class="buy" disabled><svg><use href="#i-coin"/></svg>Faltan 18</button>
+            </article>
+          </div>
+        </div>
+        <nav class="tabs" aria-label="Secciones">
+          <button data-go="inicio"><svg><use href="#i-pack"/></svg>Ejercicios</button>
+          <button data-demo><svg><use href="#i-repeat"/></svg>Repaso</button>
+          <button data-go="gato"><svg><use href="#i-cat"/></svg>Gato</button>
+          <button aria-current="page" data-go="tienda"><svg><use href="#i-bag"/></svg>Tienda</button>
+          <button data-demo><svg><use href="#i-people"/></svg>Papás</button>
+        </nav>
+      </section>
+
+      <section class="screen" id="scr-gato" aria-label="Pantalla del gato">
+        <header class="app-top">
+          <div class="avatar" aria-hidden="true">
+            <svg viewBox="0 0 220 200"><defs><radialGradient id="cf2" cx="42%" cy="34%" r="82%"><stop offset="0" stop-color="#ffe3ad"/><stop offset="58%" stop-color="#ffb75c"/><stop offset="100%" stop-color="#f59a33"/></radialGradient><radialGradient id="cc2" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ff9d9d" stop-opacity=".8"/><stop offset="100%" stop-color="#ff9d9d" stop-opacity="0"/></radialGradient></defs>
+              <path d="M46 64 L38 10 L94 36 Z" fill="url(#cf2)" stroke="#e08a26" stroke-width="3"/><path d="M174 64 L182 10 L126 36 Z" fill="url(#cf2)" stroke="#e08a26" stroke-width="3"/><path d="M54 48 L52 22 L78 36 Z" fill="#ffb3c1"/><path d="M166 48 L168 22 L142 36 Z" fill="#ffb3c1"/><circle cx="110" cy="114" r="78" fill="url(#cf2)" stroke="#e08a26" stroke-width="3"/><path d="M92 42 q4 14 0 22 M110 40 v22 M128 42 q-4 14 0 22" stroke="#e08a26" stroke-width="4" stroke-linecap="round" fill="none"/><circle cx="58" cy="142" r="17" fill="url(#cc2)"/><circle cx="162" cy="142" r="17" fill="url(#cc2)"/><ellipse cx="76" cy="108" rx="11" ry="13" fill="#fff"/><circle cx="77" cy="110" r="6.5" fill="#2b1d0e"/><circle cx="79" cy="106" r="2.3" fill="#fff"/><ellipse cx="144" cy="108" rx="11" ry="13" fill="#fff"/><circle cx="143" cy="110" r="6.5" fill="#2b1d0e"/><circle cx="141" cy="106" r="2.3" fill="#fff"/><path d="M104 130 h12 l-6 8 z" fill="#ff7b93"/><path d="M110 138 q-6 8 -14 2 M110 138 q6 8 14 2" stroke="#8a5a12" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="who"><b>Gatuno</b><span>Tu gato tutor</span></div>
+          <div class="wallet"><svg><use href="#i-coin"/></svg><span>92</span></div>
+        </header>
+        <div class="body" style="display:flex;flex-direction:column">
+          <div class="chat">
+            <div class="msg cat"><div class="bubble">¡Miau! ¿En qué te ayudo hoy?</div></div>
+            <div class="msg me"><div class="bubble">¿Me ayudas con la tabla del 8?</div></div>
+            <div class="msg cat"><div class="bubble">¡Claro! 8 × 5 = 40. ¿Y 8 × 6? Dímelo y te digo si vas bien.</div></div>
+            <div class="quick">
+              <button data-demo>8 × 6 = ?</button>
+              <button data-demo>Cuéntame un chiste</button>
+            </div>
+          </div>
+          <div class="composer">
+            <input type="text" placeholder="Escribe o dicta…" aria-label="Mensaje para Gatuno">
+            <button class="send" aria-label="Enviar" data-demo><svg><use href="#i-send"/></svg></button>
+          </div>
+        </div>
+        <nav class="tabs" aria-label="Secciones">
+          <button data-go="inicio"><svg><use href="#i-pack"/></svg>Ejercicios</button>
+          <button data-demo><svg><use href="#i-repeat"/></svg>Repaso</button>
+          <button aria-current="page" data-go="gato"><svg><use href="#i-cat"/></svg>Gato</button>
+          <button data-go="tienda"><svg><use href="#i-bag"/></svg>Tienda</button>
+          <button data-demo><svg><use href="#i-people"/></svg>Papás</button>
+        </nav>
+      </section>
+
+      <div class="toast" id="toast" role="status"></div>
+    </div>
+
+    <aside class="notes">
+      <div data-notes="inicio">
+        <h2>Inicio: una decisión por pantalla</h2>
+        <p class="sub">La materia es lo único importante aquí. Todo lo demás baja de peso.</p>
+        <ul>
+          <li><b>Un solo mundo:</b> papel crema, tinta ciruela y cinta adhesiva. Nada de azul genérico ni degradados.</li>
+          <li><b>Iconos dibujados</b> (trazo 2 px) en lugar de emoji: se leen igual a 22 px y no cambian según el sistema.</li>
+          <li><b>Toques de 96 px</b> de alto y nombres a <b>15 px</b> en negrita. Sin texto pequeño en zonas de toque.</li>
+          <li><b>Foto de la tarea</b> ocupa la fila entera: deja de quedar coja en la cuadrícula.</li>
+        </ul>
+        <p class="why"><b>Por qué:</b> a los 8 años se escanea por forma y color, no por lectura. Un menú de 7 cromos con iconos grandes se resuelve en dos segundos.</p>
+      </div>
+
+      <div data-notes="ejercicio" hidden>
+        <h2>Ejercicio: la pregunta manda</h2>
+        <p class="sub">Sin cabecera grande ni adornos mientras se responde.</p>
+        <ul>
+          <li><b>Pregunta a 34 px</b> en Fredoka; opciones de 60 px con número a 19 px.</li>
+          <li><b>Progreso visible</b> (3 de 10) y monedas a ganar: la niña sabe cuánto falta.</li>
+          <li><b>Acierto con tres señales</b>: color, icono de check y texto. Nunca solo color.</li>
+          <li><b>Un botón primario</b> (Siguiente). Cambiar de materia queda como enlace discreto.</li>
+        </ul>
+        <p class="why"><b>Por qué:</b> cada elemento extra en esta pantalla compite con el cálculo. El refuerzo inmediato es lo que sostiene la sesión.</p>
+      </div>
+
+      <div data-notes="tienda" hidden>
+        <h2>Tienda: la pegatina es el producto</h2>
+        <p class="sub">Los cromos se ven como objetos: borde blanco, sombra y etiqueta de raro.</p>
+        <ul>
+          <li><b>Estado honesto:</b> en vez de un botón apagado, dice <b>“Faltan 28”</b>. Se entiende sin leer una regla.</li>
+          <li><b>Meta cercana arriba</b> con barra de progreso: convierte el saldo en un plan.</li>
+          <li><b>Categorías</b> como filtros de una sola línea, sin scroll vertical extra.</li>
+        </ul>
+        <p class="why"><b>Por qué:</b> la tienda enseña a ahorrar. Un botón gris sin explicación solo parece roto.</p>
+      </div>
+
+      <div data-notes="gato" hidden>
+        <h2>Gato: conversación legible</h2>
+        <p class="sub">El tutor sigue siendo el mismo personaje, ahora con burbujas claras.</p>
+        <ul>
+          <li><b>Burbuja del gato</b> a la izquierda con pico; la de ella a la derecha en rosa suave.</li>
+          <li><b>Respuestas sugeridas</b> para que no tenga que escribir si no quiere.</li>
+          <li><b>Campo de 48 px</b> con botón redondo; el dictado del sistema sigue disponible.</li>
+        </ul>
+        <p class="why"><b>Por qué:</b> escribir en una tablet es lento. Tocar una sugerencia mantiene la conversación viva.</p>
+      </div>
+    </aside>
+  </div>
+
+  <section class="system">
+    <div>
+      <h3>Color</h3>
+      <div class="sw">
+        <div><i style="background:#fbf6ec"></i><span>papel<br>#fbf6ec</span></div>
+        <div><i style="background:#2b1d2e"></i><span>tinta<br>#2b1d2e</span></div>
+        <div><i style="background:#be1945"></i><span>acento<br>#be1945</span></div>
+        <div><i style="background:#ecb33c"></i><span>moneda<br>#ecb33c</span></div>
+        <div><i style="background:#007b3f"></i><span>acierto<br>#007b3f</span></div>
+        <div><i style="background:#c52c2a"></i><span>error<br>#c52c2a</span></div>
+        <div><i style="background:#ffdee0"></i><span>rosa suave<br>#ffdee0</span></div>
+        <div><i style="background:#f3eddf"></i><span>papel 2<br>#f3eddf</span></div>
+      </div>
+      <p style="font-size:12.5px;color:var(--page-muted);line-height:1.5;margin:10px 0 0">Contrastes medidos: tinta/papel 14,8 · texto suave/papel 6,0 · blanco/acento 6,2 · acierto/papel 5,0.</p>
+    </div>
+    <div>
+      <h3>Tipografía</h3>
+      <p class="spec d">Fredoka 600<small>Títulos y pregunta</small></p>
+      <p class="spec t" style="margin-top:12px">Nunito 800<small>Botones, nombres, precios</small></p>
+      <p class="spec t" style="font-weight:600;margin-top:12px">Nunito 600<small>Texto y burbujas</small></p>
+      <p style="font-size:12.5px;color:var(--page-muted);margin:10px 0 0">Ambas OFL, servidas desde el propio repo (69 KB). Sin Google Fonts en tiempo de uso: la app sigue funcionando sin red.</p>
+    </div>
+    <div>
+      <h3>Reglas que se aplican</h3>
+      <ul class="rules">
+        <li>Máximo cuatro tamaños de texto por pantalla.</li>
+        <li>Toques de 48 px o más; el principal, 56 px.</li>
+        <li>Espaciado en múltiplos de 4; radios 12 / 16 / 18.</li>
+        <li>Un solo botón primario por pantalla.</li>
+        <li>Nada de emoji como icono de interfaz. El emoji queda como contenido (pegatinas).</li>
+        <li>Animación solo para dar respuesta, y se apaga con <i>reduced motion</i>.</li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+<script>
+const screens = [...document.querySelectorAll(".screen")];
+const notes = [...document.querySelectorAll("[data-notes]")];
+const segs = [...document.querySelectorAll(".seg [data-go]")];
+const toastEl = document.getElementById("toast");
+let toastTimer;
+function toast(msg){
+  toastEl.textContent = msg; toastEl.classList.add("on");
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>toastEl.classList.remove("on"), 1600);
+}
+function go(id){
+  screens.forEach(s=>s.classList.toggle("on", s.id === "scr-" + id));
+  notes.forEach(n=>{ n.hidden = n.dataset.notes !== id; });
+  segs.forEach(b=>b.setAttribute("aria-selected", String(b.dataset.go === id)));
+  document.querySelectorAll(".tabs button").forEach(b=>{
+    if (b.dataset.go === id) b.setAttribute("aria-current","page");
+    else b.removeAttribute("aria-current");
+  });
+}
+document.addEventListener("click", e=>{
+  const nav = e.target.closest("[data-go]");
+  if (nav){ go(nav.dataset.go); return; }
+  if (e.target.closest("[data-demo]")) toast("Demo: esta parte no cambia en la propuesta");
+});
+go("inicio");
+</script>
+</body>
+</html>
