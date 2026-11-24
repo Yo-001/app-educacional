@@ -880,8 +880,12 @@ def call_explain(name, errors):
 
 
 def call_model(text, topics):
-    user = ("Materias/temas del examen:\n" + (topics or "sin especificar") +
-            "\n\nTexto del libro/cuaderno (OCR, puede tener errores):\n" + text[:6000])
+    if len(text.strip()) < 80:
+        user = ("Materias/temas del examen:\n" + (topics or "sin especificar") +
+                "\n\nNo hay texto del libro: genera los ejercicios a partir de estos temas, con vocabulario y gramática típicos de primaria para esos temas (p.ej. si es inglés, ejercicios en inglés).")
+    else:
+        user = ("Materias/temas del examen:\n" + (topics or "sin especificar") +
+                "\n\nTexto del libro/cuaderno (OCR, puede tener errores):\n" + text[:6000])
     payload = json.dumps({
         "model": MODEL,
         "response_format": {"type": "json_object"},
@@ -1092,12 +1096,13 @@ class H(BaseHTTPRequestHandler):
 
     def _do_generate(self, reqj):
         text = clean_str(reqj.get("text", ""), 12000)
-        if len(text) < 80:
+        topics = clean_str(reqj.get("topics", ""), 2000)
+        if len(text) < 80 and len(topics.strip()) < 3:
             return self._json(400, {"error": "Texto muito curto: suba fotos do livro/cuaderno ou escreva o conteúdo."})
         if not API_KEY:
             return self._json(503, {"error": "generador no configurado"})
         try:
-            items = call_model(text, clean_str(reqj.get("topics", ""), 2000))
+            items = call_model(text, topics)
         except urllib.error.HTTPError as e:
             body = e.read().decode("utf-8", "ignore")[:300]
             return self._json(502, {"error": "OpenRouter " + str(e.code), "detalle": body})
@@ -1111,12 +1116,13 @@ class H(BaseHTTPRequestHandler):
     def _do_exam(self, reqj):
         """Gera exercícios via IA com rate limit por IP e dia."""
         text = clean_str(reqj.get("text", ""), 12000)
-        if len(text) < 80:
+        topics = clean_str(reqj.get("topics", ""), 2000)
+        if len(text) < 80 and len(topics.strip()) < 3:
             return self._json(400, {"error": "Texto muito curto: suba fotos do livro/cuaderno ou escreva o conteúdo."})
         if not API_KEY:
             return self._json(503, {"error": "generador no configurado"})
         try:
-            items = call_model(text, clean_str(reqj.get("topics", ""), 2000))
+            items = call_model(text, topics)
         except urllib.error.HTTPError as e:
             body = e.read().decode("utf-8", "ignore")[:300]
             return self._json(502, {"error": "OpenRouter " + str(e.code), "detalle": body})

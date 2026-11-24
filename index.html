@@ -3574,7 +3574,8 @@ $("btnGenExamen").onclick=async()=>{
   let exs=await generarIA(ocr,top,mat);
   if(!exs){
     exs=extractExercises(ocr+"\n"+top);
-    if(!exs.length&&mat&&SUBJECTS[mat]){
+    if(mat&&SUBJECTS[mat]&&exs.length<4){
+      exs=[];
       for(let i=0;i<6;i++) exs.push(withDif(SUBJECTS[mat].gen()));
     }
   }
