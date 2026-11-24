@@ -51,6 +51,7 @@ def _load_api_key():
 
 MODEL = "openai/gpt-4o-mini"           # geração de exercícios, OCR principal e chat (barato: ~$0.15/1M in, $0.6/1M out)
 OCR_MODEL = "google/gemini-2.5-flash"  # OCR de reserva: não recusa fotos com pessoas (o gpt-4o-mini recusa, mas traduz galego→português)
+EXPLAIN_MODEL = "google/gemini-2.5-flash"  # guion de vídeo animado (Mía e Gatuno) com fallback a MODEL
 API_KEY = _load_api_key()
 MAX_BODY = 200_000
 MAX_BODY_OCR = 8_000_000  # fotos comprimidas chegan a ~1 MB cada
@@ -62,18 +63,65 @@ EXPLAIN_RATE = 30  # /explain, por hora por IP
 WINDOW = 3600
 _hits = {}
 
-SYSTEM = """Eres una profesora de 3.º de Primaria en Galicia (España). Generas ejercicios de refuerzo EN GALEGO para una niña de 8 años, a partir del texto del libro y el cuaderno que te paso y de las materias del examen indicadas.
+SUBJECT_PROFILES = {
+    "ingles": (
+        "inglés (English)",
+        "Nivel A1 de 3.º de Primaria en España (LOMLOE). TODO el contenido (enunciados, opciones, respuestas, pasos y parejas) en inglés sencillo, EXCEPTO las etiquetas 'Verdadeiro'/'Falso' de tipo vf (enunciado vf: 'Read: «...» True or false?'). Evalúa la LENGUA inglesa y nunca curiosidades en otro idioma. Trabaja exactamente los contenidos pedidos combinando gramática + vocabulario (ej. 'have got': I/you/we/they have got, he/she/it has got, haven't/hasn't got, Have you got...? / Has it got...?, short answers Yes, I have / No, it hasn't; con animals: partes del cuerpo tail, wings, legs, fur, feathers, beak, etc.; tipos: completar con have/has got, elegir frase correcta, ordenar palabras, parejas palabra-significado o descripción).",
+    ),
+    "mat": (
+        "galego",
+        "Matemáticas 3.º Primaria (LOMLOE): cálculo mental e escrito, números ata 9999, sumas, restas, multiplicacións, divisións, fraccións básicas e problemas da vida cotiá.",
+    ),
+    "cast": (
+        "castellano",
+        "Lengua Castellana 3.º Primaria (LOMLOE): gramática (sustantivos, adjetivos, verbos, sinónimos/antónimos), ortografía (b/v, g/j, r/rr, acentuación) y comprensión lectora. TODO en castellano correcto.",
+    ),
+    "gal": (
+        "galego",
+        "Lingua Galega 3.º Primaria (LOMLOE): gramática, ortografía normativa galega, vocabulario e comprensión lectora.",
+    ),
+    "nat": (
+        "galego",
+        "Ciencias da Natureza 3.º Primaria (LOMLOE): seres vivos, animais, plantas, corpo humano, saúde e materia.",
+    ),
+    "soc": (
+        "galego",
+        "Ciencias Sociais 3.º Primaria (LOMLOE): relevo, clima, auga, localidade, poboación e tempo histórico.",
+    ),
+}
+
+
+def build_system(subject=""):
+    subj = (subject or "").strip().lower()
+    if subj in SUBJECT_PROFILES:
+        idioma, guia = SUBJECT_PROFILES[subj]
+        subject_block = (
+            f"\nMateria: {subj}. Currículo LOMLOE 3.º Primaria: {guia}. "
+            "Céntrate SOLO en los contenidos indicados; nada de adivinanzas ni cultura general fuera del tema.\n"
+        )
+    else:
+        idioma = "galego"
+        subject_block = ""
+    lang_note = (
+        "Galego correcto (normativa galega, non castelán nin portugués)."
+        if idioma == "galego"
+        else f"Usa {idioma} correcto y natural."
+    )
+    return f"""Eres una profesora de 3.º de Primaria en Galicia (España). Generas ejercicios de refuerzo en {idioma} para una niña de 8 años, a partir del texto del libro y el cuaderno que te paso y de las materias del examen indicadas.{subject_block}
 
 Reglas:
-- TODO el contenido va en galego: enunciados, opciones, respuestas, pasos y parejas. Los nombres de los campos JSON siguen en castellano (q, a, opts, pasos, pares, tipo).
+- TODO el contenido va en {idioma}: enunciados, opciones, respuestas, pasos y parejas. Los nombres de los campos JSON siguen en castellano (q, a, opts, pasos, pares, tipo).
 - Genera 16 ejercicios que cubran los temas. Sin repetir preguntas.
 - Mezcla los tipos:
-  1) Opción múltiple: {"q":"...","a":"...","opts":["...","...","...","..."]} — «a» debe ser EXACTAMENTE una de las opts; los otros tres distractores plausibles y de la misma categoría (nada absurdo ni gracioso).
-  2) Verdadero/falso: {"q":"Le: «...» ¿Verdadeiro ou falso?","tipo":"vf","a":"Verdadeiro","opts":["Verdadeiro","Falso"]}
-  3) Ordenar: {"q":"Toca as etapas ..., en orde:","tipo":"ordenar","pasos":["paso 1","paso 2","paso 3"],"a":"paso 1 → paso 2 → paso 3"}
-  4) Parejas: {"q":"Toca as parellas: une cada ... coa súa ...:","tipo":"parejas","pares":[["termo","definición"],["termo","definición"],["termo","definición"]],"a":"resumo curto"}
-- Frases cortas y vocabulario de 8 años. Galego correcto (normativa galega, non castelán nin portugués). Nada de preguntas tontas.
-- Responde SOLO con JSON válido: {"ejercicios":[...16 objetos...]} sin texto adicional."""
+  1) Opción múltiple: {{"q":"...","a":"...","opts":["...","...","...","..."]}} — «a» debe ser EXACTAMENTE una de las opts; los otros tres distractores plausibles y de la misma categoría (nada absurdo ni gracioso).
+  2) Verdadero/falso: {{"q":"Le: «...» ¿Verdadeiro ou falso?","tipo":"vf","a":"Verdadeiro","opts":["Verdadeiro","Falso"]}} (mantén SIEMPRE las etiquetas "Verdadeiro" y "Falso" en «a» y «opts»).
+  3) Ordenar: {{"q":"Toca as etapas ..., en orde:","tipo":"ordenar","pasos":["paso 1","paso 2","paso 3"],"a":"paso 1 → paso 2 → paso 3"}}
+  4) Parejas: {{"q":"Toca as parellas: une cada ... coa súa ...:","tipo":"parejas","pares":[["termo","definición"],["termo","definición"],["termo","definición"]],"a":"resumo curto"}}
+- Frases cortas y vocabulario de 8 años. {lang_note} Nada de preguntas tontas.
+- Responde SOLO con JSON válido: {{"ejercicios":[...16 objetos...]}} sin texto adicional."""
+
+
+SYSTEM = build_system("")
 
 
 def clean_str(s, n=4000):
@@ -716,42 +764,48 @@ def _warmup_omni_worker():
         pass
 
 
-EXPLAIN_SYSTEM = """Eres Mía, una princesa y profesora de 3.º de Primaria en Galicia (España) que prepara un mini-vídeo de repaso visual-first para una niña de 8 años llamada {name}.
+EXPLAIN_SYSTEM = """Eres el guionista de un mini-episodio de dibujos animados (estilo Bluey / Khan Academy Kids) protagonizado por Mía (una princesa alegre y cercana) y Gatuno (su gato curioso y un poco despistado) para enseñar a {name}, una niña de 8 años.
 
 Recibirás hasta 6 errores de su última sesión (cada uno con subjNm, tema, q, expected, given).
 
-Reglas:
-- Agrupa los errores por tema o concepto y crea un guion de mini-vídeo con entre 3 y 5 escenas:
-  1) Una escena "intro" breve y cariñosa saludando a {name} y presentando lo que vais a repasar.
-  2) De 1 a 3 escenas "explain" explicando POR QUÉ la respuesta correcta tiene sentido, con una regla visual o un ejemplo muy sencillo adaptado a 8 años.
-  3) Una escena "outro" breve y animadora felicitando a {name} para seguir practicando.
-- Idioma: usa el mismo idioma de las preguntas falladas. Si están en gallego, escribe en gallego normativo correcto (nunca portugués ni castellano); si están en castellano, en castellano; si están en inglés, explica en español o gallego destacando las palabras en inglés.
-- Lectura en voz alta (TTS / OmniVoice): en cada escena, "narration" debe tener 1 o 2 frases cortas (máximo 26 palabras en total), sin emojis, sin símbolos raros (nada de →, × ni ÷) y con puntuación fluida.
-- TEXTO MÍNIMO EN PANTALLA (Mía ya dice la explicación en voz alta):
-  - Prioriza el objeto "visual" en cada escena para ilustrar la idea con iconos y pasos claros.
-  - "title": muy corto (2-4 palabras, máximo 28 caracteres).
-  - "wrong" y "right": cortos (1-4 palabras).
-  - "points" y "tip": opcionales y ultra-cortos (máximo 3-5 palabras cada uno; 0-2 points como máximo).
-- Guía para "visual.type":
-  - En "intro": usa "hero".
-  - En "explain": usa "diagram", "equation", "flow" o "compare".
-  - En "outro": usa "celebrate" (con "highlight": "Mini-Quiz!").
-- Añade un "quiz" final con 1 a 3 preguntas cortas de opción múltiple para reforzar lo explicado en el vídeo (en el mismo idioma que las preguntas falladas y con vocabulario sencillo para 8 años): cada pregunta tendrá 3 o 4 opciones plausibles en "opts" y "a" debe coincidir exactamente con una de ellas.
-- Responde SOLO con JSON válido con este formato exacto:
-{"title": "Repaso con Mía", "summary": "...", "scenes": [{"kind": "intro|explain|outro", "badge": "Naturales", "title": "...", "narration": "...", "visual": {"type": "hero|diagram|flow|compare|equation|celebrate", "theme": "plants|animals|earth|math|words|stars", "icon": "🌿", "items": [{"emoji": "🌱", "label": "Raíz", "role": "step|bad|good|accent"}], "formula": "36 + 17 = 53", "highlight": "Nas follas"}, "points": ["..."], "wrong": "...", "right": "...", "tip": "..."}], "quiz": [{"q": "...", "a": "...", "opts": ["...", "...", "..."]}]}"""
+Estructura obligatoria de 4 escenas (o 5 escenas si hay 2 temas muy distintos, añadiendo una pareja "analogy"+"apply" para el segundo tema):
+1) "kind": "intro" — Saludo alegre y cercano con Mía y Gatuno presentando qué van a descubrir hoy con {name}.
+2) "kind": "analogy" — OBLIGATORIO usar una analogía concreta del mundo infantil (cocina, palliña/pajita, mochila, frascos de chuches, bloques LEGO, huevo sorpresa, botón mágico de deshacer) explicando POR QUÉ funciona el concepto. Gatuno suele hacer una pregunta curiosa o un pequeño despiste y Mía lo aclara con cariño.
+3) "kind": "apply" — Conecta directamente la analogía con la pregunta fallada, mostrando con calidez por qué la respuesta correcta encaja y sin regañar.
+4) "kind": "outro" — Frase mágica corta de celebración e invitación entusiasta al Mini-Quiz con Gatuno.
+
+Reglas de idioma y voz (TTS / OmniVoice):
+- Idioma: usa estrictamente el idioma de las preguntas falladas. Si están en gallego, escribe en gallego normativo correcto (nunca portugués ni castellano); si están en castellano, en castellano; si están en inglés, explica en español o gallego destacando las palabras en inglés.
+- "narration": 1 a 3 frases cálidas y naturales (máximo 36 palabras en total), SIN emojis, SIN símbolos raros (nada de →, × ni ÷) y con puntuación fluida para leer en voz alta.
+
+Texto mínimo en pantalla (el dibujo y la voz cuentan la historia):
+- "title": muy corto (2-4 palabras, máximo 28 caracteres).
+- "wrong" y "right": cortos (1-4 palabras, útiles sobre todo en "apply").
+- "points" y "tip": opcionales y ultra-cortos (0-2 points, máximo 3-5 palabras cada uno).
+- "visual": {"type": "story|diagram|math_blocks|compare|celebrate", "theme": "plants|animals|earth|math|words|stars", "highlight": "Folla = Cociña!", "formula": "", "beats": [{"emoji": "🥤", "label": "Raíz bebe", "role": "step"}]}
+  - Guía de "visual.type": "story" para "intro" y "analogy"; "diagram", "math_blocks" o "compare" para "apply"; "celebrate" para "outro" (con "highlight": "Mini-Quiz!").
+  - Cada elemento de "beats" (hasta 3) lleva un "emoji" expresivo y un "label" ultra-corto (1-3 palabras, máximo 20 caracteres) con "role": "step|bad|good|accent".
+
+Mini-Quiz OBLIGATORIO:
+- Añade "quiz" con 2 o 3 preguntas cortas de opción múltiple (3 o 4 opciones en "opts" y "a" coincidiendo exactamente con una de ellas) en el mismo idioma de las preguntas falladas y adaptado a 8 años.
+
+Responde SOLO con JSON válido con este formato exacto:
+{"title": "Repaso con Mía e Gatuno", "summary": "...", "scenes": [{"kind": "intro|analogy|apply|outro", "badge": "Naturais", "title": "...", "narration": "...", "visual": {"type": "story|diagram|math_blocks|compare|celebrate", "theme": "plants|animals|earth|math|words|stars", "icon": "🌿", "highlight": "Folla = Cociña!", "formula": "", "beats": [{"emoji": "🥤", "label": "Raíz bebe", "role": "step"}]}, "points": ["..."], "wrong": "...", "right": "...", "tip": "..."}], "quiz": [{"q": "...", "a": "...", "opts": ["...", "...", "..."]}]}"""
 
 
 def _as_str(val):
     return val if isinstance(val, str) else ""
 
 
-_VIS_TYPES = ("hero", "diagram", "flow", "compare", "equation", "celebrate")
+_SCENE_KINDS = ("intro", "analogy", "apply", "explain", "outro")
+_VIS_TYPES = ("story", "diagram", "math_blocks", "compare", "celebrate")
+_VIS_LEGACY = {"hero": "story", "flow": "story", "equation": "math_blocks"}
 _VIS_THEMES = ("plants", "animals", "earth", "math", "words", "stars")
 _VIS_ROLES = ("step", "bad", "good", "accent")
 
 
 def validate_lesson(data):
-    """Valida e normaliza o guion do mini-vídeo de Mía; devolve None se hai <2 escenas válidas."""
+    """Valida e normaliza o guion do mini-vídeo de Mía e Gatuno (lessonVer 3); devolve None se hai <2 escenas válidas."""
     if not isinstance(data, dict):
         return None
     if isinstance(data.get("lesson"), dict):
@@ -764,10 +818,10 @@ def validate_lesson(data):
         if not isinstance(sc, dict):
             continue
         title = clean_str(_as_str(sc.get("title")), 48)
-        narration = clean_str(_EMOJI_RE.sub("", _as_str(sc.get("narration"))), 260)
+        narration = clean_str(_EMOJI_RE.sub("", _as_str(sc.get("narration"))), 340)
         if not title or not narration:
             continue
-        kind = sc.get("kind") if sc.get("kind") in ("intro", "explain", "outro") else "explain"
+        kind = sc.get("kind") if sc.get("kind") in _SCENE_KINDS else "explain"
         badge = clean_str(_as_str(sc.get("badge")), 32)
         raw_pts = sc.get("points") if isinstance(sc.get("points"), list) else []
         points = [p for p in (clean_str(_as_str(x), 42) for x in raw_pts) if p][:2]
@@ -777,27 +831,34 @@ def validate_lesson(data):
 
         raw_vis = sc.get("visual") if isinstance(sc.get("visual"), dict) else {}
         default_vtype = (
-            "hero" if kind == "intro"
-            else ("celebrate" if kind == "outro" else ("compare" if (wrong or right) else "flow"))
+            "story" if kind in ("intro", "analogy")
+            else ("celebrate" if kind == "outro" else ("compare" if (wrong or right) else "story"))
         )
-        vtype = raw_vis.get("type") if raw_vis.get("type") in _VIS_TYPES else default_vtype
+        raw_vtype = _VIS_LEGACY.get(raw_vis.get("type"), raw_vis.get("type"))
+        vtype = raw_vtype if raw_vtype in _VIS_TYPES else default_vtype
         vtheme = raw_vis.get("theme") if raw_vis.get("theme") in _VIS_THEMES else "stars"
         vicon = clean_str(_as_str(raw_vis.get("icon")), 8)
-        raw_vitems = raw_vis.get("items") if isinstance(raw_vis.get("items"), list) else []
-        vitems = []
-        for it in raw_vitems:
-            if not isinstance(it, dict):
-                continue
-            em = clean_str(_as_str(it.get("emoji")), 8)
-            lb = clean_str(_as_str(it.get("label")), 28)
-            if not em and not lb:
-                continue
-            rl = it.get("role") if it.get("role") in _VIS_ROLES else "step"
-            vitems.append({"emoji": em, "label": lb, "role": rl})
-            if len(vitems) >= 3:
+        raw_beats = raw_vis.get("beats") if isinstance(raw_vis.get("beats"), list) and raw_vis.get("beats") else (
+            raw_vis.get("items") if isinstance(raw_vis.get("items"), list) else []
+        )
+        beats = []
+        for it in raw_beats:
+            if isinstance(it, str):
+                lb = clean_str(it, 24)
+                if not lb:
+                    continue
+                beats.append({"emoji": "", "label": lb, "role": "step"})
+            elif isinstance(it, dict):
+                em = clean_str(_as_str(it.get("emoji")), 8)
+                lb = clean_str(_as_str(it.get("label")), 24)
+                if not em and not lb:
+                    continue
+                rl = it.get("role") if it.get("role") in _VIS_ROLES else "step"
+                beats.append({"emoji": em, "label": lb, "role": rl})
+            if len(beats) >= 3:
                 break
-        vformula = clean_str(_as_str(raw_vis.get("formula")), 36)
-        vhighlight = clean_str(_as_str(raw_vis.get("highlight")), 36)
+        vformula = clean_str(_as_str(raw_vis.get("formula")), 32)
+        vhighlight = clean_str(_as_str(raw_vis.get("highlight")), 30)
 
         scenes.append({
             "kind": kind,
@@ -812,7 +873,8 @@ def validate_lesson(data):
                 "type": vtype,
                 "theme": vtheme,
                 "icon": vicon,
-                "items": vitems,
+                "beats": beats,
+                "items": [dict(b) for b in beats],
                 "formula": vformula,
                 "highlight": vhighlight,
             },
@@ -835,7 +897,7 @@ def validate_lesson(data):
             if len(valid_quiz) >= 3:
                 break
     return {
-        "lessonVer": 2,
+        "lessonVer": 3,
         "title": clean_str(_as_str(data.get("title")), 70) or "Vídeo de Mía",
         "summary": clean_str(_as_str(data.get("summary")), 110),
         "scenes": scenes,
@@ -843,24 +905,15 @@ def validate_lesson(data):
     }
 
 
-def call_explain(name, errors):
-    """Gera un guion de mini-vídeo explicando os erros recentes con Mía."""
-    lines = []
-    for i, err in enumerate((errors or [])[:6], 1):
-        lines.append(
-            f"{i}. [{err.get('subjNm') or 'General'} | {err.get('tema') or 'Repaso'}] "
-            f"Pregunta: {err.get('q')} | Respondido: {err.get('given') or '(sin respuesta)'} | "
-            f"Correcto: {err.get('expected')}"
-        )
-    user = "Errores de la última sesión:\n" + "\n".join(lines)
+def _call_explain_once(model, system_prompt, user_prompt):
     payload = json.dumps({
-        "model": MODEL,
+        "model": model,
         "response_format": {"type": "json_object"},
-        "temperature": 0.5,
-        "max_tokens": 1200,
+        "temperature": 0.65,
+        "max_tokens": 1800,
         "messages": [
-            {"role": "system", "content": EXPLAIN_SYSTEM.replace("{name}", name or "pequeña")},
-            {"role": "user", "content": user},
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
         ],
     }).encode("utf-8")
     req = urllib.request.Request(
@@ -872,14 +925,34 @@ def call_explain(name, errors):
     with urllib.request.urlopen(req, timeout=60) as r:
         data = json.loads(r.read().decode("utf-8", "ignore"))
     content = data["choices"][0]["message"]["content"]
-    try:
-        parsed = json.loads(content)
-    except Exception:
-        return None
+    parsed = json.loads(content)
     return validate_lesson(parsed)
 
 
-def call_model(text, topics):
+def call_explain(name, errors):
+    """Gera un guion de mini-vídeo explicando os erros recentes con Mía e Gatuno."""
+    lines = []
+    for i, err in enumerate((errors or [])[:6], 1):
+        lines.append(
+            f"{i}. [{err.get('subjNm') or 'General'} | {err.get('tema') or 'Repaso'}] "
+            f"Pregunta: {err.get('q')} | Respondido: {err.get('given') or '(sin respuesta)'} | "
+            f"Correcto: {err.get('expected')}"
+        )
+    user_prompt = "Errores de la última sesión:\n" + "\n".join(lines)
+    system_prompt = EXPLAIN_SYSTEM.replace("{name}", name or "pequeña")
+    try:
+        lesson = _call_explain_once(EXPLAIN_MODEL, system_prompt, user_prompt)
+        if lesson:
+            return lesson
+    except Exception:
+        pass
+    try:
+        return _call_explain_once(MODEL, system_prompt, user_prompt)
+    except (json.JSONDecodeError, KeyError, IndexError, TypeError):
+        return None
+
+
+def call_model(text, topics, subject=""):
     if len(text.strip()) < 80:
         user = ("Materias/temas del examen:\n" + (topics or "sin especificar") +
                 "\n\nNo hay texto del libro: genera los ejercicios a partir de estos temas, con vocabulario y gramática típicos de primaria para esos temas (p.ej. si es inglés, ejercicios en inglés).")
@@ -891,7 +964,7 @@ def call_model(text, topics):
         "response_format": {"type": "json_object"},
         "temperature": 0.6,
         "max_tokens": 4000,
-        "messages": [{"role": "system", "content": SYSTEM},
+        "messages": [{"role": "system", "content": build_system(subject)},
                      {"role": "user", "content": user}],
     }).encode("utf-8")
     req = urllib.request.Request(
@@ -1097,12 +1170,13 @@ class H(BaseHTTPRequestHandler):
     def _do_generate(self, reqj):
         text = clean_str(reqj.get("text", ""), 12000)
         topics = clean_str(reqj.get("topics", ""), 2000)
+        subject = clean_str(reqj.get("subject", ""), 20).lower()
         if len(text) < 80 and len(topics.strip()) < 3:
             return self._json(400, {"error": "Texto muito curto: suba fotos do livro/cuaderno ou escreva o conteúdo."})
         if not API_KEY:
             return self._json(503, {"error": "generador no configurado"})
         try:
-            items = call_model(text, topics)
+            items = call_model(text, topics, subject)
         except urllib.error.HTTPError as e:
             body = e.read().decode("utf-8", "ignore")[:300]
             return self._json(502, {"error": "OpenRouter " + str(e.code), "detalle": body})
@@ -1117,12 +1191,13 @@ class H(BaseHTTPRequestHandler):
         """Gera exercícios via IA com rate limit por IP e dia."""
         text = clean_str(reqj.get("text", ""), 12000)
         topics = clean_str(reqj.get("topics", ""), 2000)
+        subject = clean_str(reqj.get("subject", ""), 20).lower()
         if len(text) < 80 and len(topics.strip()) < 3:
             return self._json(400, {"error": "Texto muito curto: suba fotos do livro/cuaderno ou escreva o conteúdo."})
         if not API_KEY:
             return self._json(503, {"error": "generador no configurado"})
         try:
-            items = call_model(text, topics)
+            items = call_model(text, topics, subject)
         except urllib.error.HTTPError as e:
             body = e.read().decode("utf-8", "ignore")[:300]
             return self._json(502, {"error": "OpenRouter " + str(e.code), "detalle": body})
