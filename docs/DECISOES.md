@@ -87,3 +87,10 @@ APIs pagas de avatar 3D ($30–$105/mês, inviáveis para o orçamento do projet
 **Consequência:** o fluxo de revisão fica integrado ao app com custo marginal mínimo; fica planejado o
 upgrade `VID-02` (poses/clipes curtos extras transparentes VP9 alpha da Mía apresentadora) após validação
 do teste comparativo das Opções 1/2/3.
+
+
+## DEC-008 · Vídeo da Mía prioriza narrativa visual animada com mínimo de texto e legendas CC opcionais (2026-11-24)
+
+**Decisão:** evoluir o roteiro de `POST /explain` (`lessonVer: 2`) e o palco `.vid-board` de `index.html` para exibir o mínimo de texto em tela (títulos de 2–4 palavras e rótulos curtos), priorizando ilustrações SVG temáticas animadas (`plants`, `animals`, `earth`, `math`, `words`, `stars`), fluxos visuais, comparações `❌ → ✅` e blocos matemáticos, com legendas (`CC`) ocultas por padrão e alternáveis no player.
+**Motivo:** a criança já ouve a explicação completa pela voz da Mía; telas carregadas de texto cansam a leitura e reduzem a atenção aos 8 anos.
+**Consequência:** `validate_lesson` normaliza o bloco `visual` por cena e `index.html` invalida roteiros antigos (`lessonVer !== 2`) em cache local.
