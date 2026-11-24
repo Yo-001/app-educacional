@@ -94,3 +94,10 @@ do teste comparativo das Opções 1/2/3.
 **Decisão:** evoluir o roteiro de `POST /explain` (`lessonVer: 2`) e o palco `.vid-board` de `index.html` para exibir o mínimo de texto em tela (títulos de 2–4 palavras e rótulos curtos), priorizando ilustrações SVG temáticas animadas (`plants`, `animals`, `earth`, `math`, `words`, `stars`), fluxos visuais, comparações `❌ → ✅` e blocos matemáticos, com legendas (`CC`) ocultas por padrão e alternáveis no player.
 **Motivo:** a criança já ouve a explicação completa pela voz da Mía; telas carregadas de texto cansam a leitura e reduzem a atenção aos 8 anos.
 **Consequência:** `validate_lesson` normaliza o bloco `visual` por cena e `index.html` invalida roteiros antigos (`lessonVer !== 2`) em cache local.
+
+
+## DEC-009 · Episódio cartoon unificado com cenários animados, analogias infantis e beats sincronizados (2026-11-24)
+
+**Decisão:** evoluir `POST /explain` para `lessonVer: 3` usando `EXPLAIN_MODEL = "google/gemini-2.5-flash"` (com fallback para `openai/gpt-4o-mini`), estruturando 4 cenas (`intro` → `analogy` infantil → `apply` → `outro`) com `visual.beats` e `quiz` obrigatório; no `index.html`, substituir o palco dividido por um cinema cartoon unificado (`.vid-cinema`) com cenários SVG panorâmicos animados nos 6 temas, Mía + Gatuno no mesmo cenário, stickers sincronizados ao áudio (`normalizeBeat`, corrigindo `[object Object]`) e SFX leves em Web Audio API.
+**Motivo:** telas divididas e escuras com texto escolar não prendiam a atenção da criança de 8 anos; analogias do cotidiano infantil + desenho animado contínuo tornam a revisão envolvente.
+**Consequência:** roteiros antigos (`lessonVer !== 3`) são automaticamente regenerados e `test_explain_video.py` cobre o schema v3 e o fallback de modelo.

@@ -54,7 +54,7 @@ class ValidateLessonTests(unittest.TestCase):
     def test_accepts_valid_and_strips_emojis_and_caps_points(self):
         res = app.validate_lesson(_sample_lesson())
         self.assertIsNotNone(res)
-        self.assertEqual(res["lessonVer"], 2)
+        self.assertEqual(res["lessonVer"], 3)
         self.assertEqual(res["title"], "Repaso con Mía")
         self.assertEqual(len(res["scenes"]), 3)
         intro = res["scenes"][0]
@@ -161,7 +161,7 @@ class ValidateLessonTests(unittest.TestCase):
                             {"emoji": "🌱", "label": "Raíz", "role": "step"},
                             {"emoji": "🪵", "label": "Talo", "role": "good"},
                             {"emoji": "", "label": "", "role": "bad"},
-                            "non-dict",
+                            123,
                             {"emoji": "🍃", "label": "Folla", "role": "invalid-role"},
                             {"emoji": "🍎", "label": "Froito", "role": "accent"},
                         ],
@@ -179,47 +179,167 @@ class ValidateLessonTests(unittest.TestCase):
         }
         res = app.validate_lesson(lesson)
         self.assertIsNotNone(res)
-        self.assertEqual(res["lessonVer"], 2)
+        self.assertEqual(res["lessonVer"], 3)
         vis = res["scenes"][0]["visual"]
         self.assertEqual(vis["type"], "diagram")
         self.assertEqual(vis["theme"], "plants")
         self.assertEqual(vis["icon"], "🌿")
         self.assertEqual(vis["formula"], "36 + 17 = 53")
         self.assertEqual(vis["highlight"], "Nas follas")
-        self.assertEqual(
-            vis["items"],
-            [
-                {"emoji": "🌱", "label": "Raíz", "role": "step"},
-                {"emoji": "🪵", "label": "Talo", "role": "good"},
-                {"emoji": "🍃", "label": "Folla", "role": "step"},
-            ],
-        )
+        expected_beats = [
+            {"emoji": "🌱", "label": "Raíz", "role": "step"},
+            {"emoji": "🪵", "label": "Talo", "role": "good"},
+            {"emoji": "🍃", "label": "Folla", "role": "step"},
+        ]
+        self.assertEqual(vis["beats"], expected_beats)
+        self.assertEqual(vis["items"], expected_beats)
 
     def test_visual_defaults_when_omitted_or_invalid(self):
         lesson = {
             "scenes": [
                 {"kind": "intro", "title": "Ola", "narration": "Benvida."},
                 {
-                    "kind": "explain",
+                    "kind": "apply",
                     "title": "Comparar",
                     "narration": "Ollo co erro.",
                     "wrong": "Folla",
                     "right": "Raíz",
                     "visual": {"type": "bogus", "theme": "unknown"},
                 },
-                {"kind": "explain", "title": "Paso a paso", "narration": "Así se fai."},
+                {"kind": "analogy", "title": "Como unha palliña", "narration": "Así se fai."},
                 {"kind": "outro", "title": "Fin", "narration": "Ata logo."},
             ]
         }
         res = app.validate_lesson(lesson)
         self.assertIsNotNone(res)
-        self.assertEqual(res["lessonVer"], 2)
-        self.assertEqual(res["scenes"][0]["visual"]["type"], "hero")
+        self.assertEqual(res["lessonVer"], 3)
+        self.assertEqual(res["scenes"][0]["visual"]["type"], "story")
         self.assertEqual(res["scenes"][0]["visual"]["theme"], "stars")
+        self.assertEqual(res["scenes"][1]["kind"], "apply")
         self.assertEqual(res["scenes"][1]["visual"]["type"], "compare")
         self.assertEqual(res["scenes"][1]["visual"]["theme"], "stars")
-        self.assertEqual(res["scenes"][2]["visual"]["type"], "flow")
+        self.assertEqual(res["scenes"][2]["kind"], "analogy")
+        self.assertEqual(res["scenes"][2]["visual"]["type"], "story")
         self.assertEqual(res["scenes"][3]["visual"]["type"], "celebrate")
+
+    def test_visual_beats_strings_dicts_and_legacy_type_mapping(self):
+        long_narration = "A" * 330
+        lesson = {
+            "scenes": [
+                {
+                    "kind": "intro",
+                    "title": "Ola!",
+                    "narration": long_narration,
+                    "visual": {"type": "hero", "theme": "plants"},
+                },
+                {
+                    "kind": "analogy",
+                    "title": "A cociña",
+                    "narration": "As follas cociñan a comida.",
+                    "visual": {
+                        "type": "flow",
+                        "theme": "plants",
+                        "highlight": "A" * 40,
+                        "beats": [
+                            "Raíz bebe auga",
+                            {"emoji": "🍃", "label": "Folla cociña moitísimo texto extra", "role": "accent"},
+                            "",
+                            {"emoji": "☀️", "label": "Sol", "role": "bad-role"},
+                            {"emoji": "💧", "label": "Extra", "role": "step"},
+                        ],
+                    },
+                },
+                {
+                    "kind": "apply",
+                    "title": "Na pregunta",
+                    "narration": "Por iso a conta dá 53.",
+                    "visual": {
+                        "type": "equation",
+                        "theme": "math",
+                        "formula": "12345678901234567890123456789012345",
+                    },
+                },
+            ]
+        }
+        res = app.validate_lesson(lesson)
+        self.assertIsNotNone(res)
+        self.assertEqual(res["lessonVer"], 3)
+        self.assertEqual(len(res["scenes"][0]["narration"]), 330)
+        self.assertEqual(res["scenes"][0]["visual"]["type"], "story")
+        vis1 = res["scenes"][1]["visual"]
+        self.assertEqual(vis1["type"], "story")
+        self.assertEqual(len(vis1["highlight"]), 30)
+        self.assertEqual(
+            vis1["beats"],
+            [
+                {"emoji": "", "label": "Raíz bebe auga", "role": "step"},
+                {"emoji": "🍃", "label": "Folla cociña moitísimo t", "role": "accent"},
+                {"emoji": "☀️", "label": "Sol", "role": "step"},
+            ],
+        )
+        vis2 = res["scenes"][2]["visual"]
+        self.assertEqual(vis2["type"], "math_blocks")
+        self.assertEqual(len(vis2["formula"]), 32)
+
+
+class CallExplainFallbackTests(unittest.TestCase):
+    def setUp(self):
+        self._orig_urlopen = app.urllib.request.urlopen
+        self._orig_key = app.API_KEY
+        app.API_KEY = "test-key"
+
+    def tearDown(self):
+        app.urllib.request.urlopen = self._orig_urlopen
+        app.API_KEY = self._orig_key
+
+    def _fake_resp(self, payload_obj):
+        raw = json.dumps({"choices": [{"message": {"content": json.dumps(payload_obj)}}]}).encode("utf-8")
+
+        class _Resp:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return False
+
+            def read(self):
+                return raw
+
+        return _Resp()
+
+    def test_uses_explain_model_and_falls_back_to_model_on_invalid_or_error(self):
+        calls = []
+
+        def fake_urlopen_invalid(req, timeout=60):
+            body = json.loads(req.data.decode("utf-8"))
+            calls.append(body)
+            if body["model"] == app.EXPLAIN_MODEL:
+                return self._fake_resp({"scenes": []})
+            return self._fake_resp(_sample_lesson())
+
+        app.urllib.request.urlopen = fake_urlopen_invalid
+        res = app.call_explain("Maitê", [{"q": "Q1", "expected": "A", "given": "B"}])
+        self.assertIsNotNone(res)
+        self.assertEqual(res["lessonVer"], 3)
+        self.assertEqual([c["model"] for c in calls], [app.EXPLAIN_MODEL, app.MODEL])
+        self.assertEqual(calls[0]["max_tokens"], 1800)
+        self.assertEqual(calls[0]["temperature"], 0.65)
+        self.assertEqual(calls[1]["max_tokens"], 1800)
+        self.assertEqual(calls[1]["temperature"], 0.65)
+
+        calls.clear()
+
+        def fake_urlopen_error(req, timeout=60):
+            body = json.loads(req.data.decode("utf-8"))
+            calls.append(body)
+            if body["model"] == app.EXPLAIN_MODEL:
+                raise urllib.error.URLError("timeout")
+            return self._fake_resp(_sample_lesson())
+
+        app.urllib.request.urlopen = fake_urlopen_error
+        res2 = app.call_explain("Maitê", [{"q": "Q1", "expected": "A", "given": "B"}])
+        self.assertIsNotNone(res2)
+        self.assertEqual([c["model"] for c in calls], [app.EXPLAIN_MODEL, app.MODEL])
 
 
 class ExplainEndpointTests(unittest.TestCase):
